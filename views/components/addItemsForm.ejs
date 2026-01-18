@@ -1,0 +1,30 @@
+<form action="/inventory" method="post">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label for="name" class="form-label">Nome</label>
+                <input type="text" class="form-control" name="name" placeholder="Nome">
+            </div>
+            <div class="mb-3">
+                <label for="qty" class="form-label">Quantità</label>
+                <input type="text" class="form-control" name="qty" placeholder="Quantità">
+            </div>
+            <div class="mb-3">
+                <label for="price" class="form-label">Prezzo</label>
+                <input type="number" class="form-control" name="price" placeholder="Prezzo">
+            </div>
+            <div class="mb-3">
+                <label for="imageUrl" class="form-label">URL immagine</label>
+                <input type="text" class="form-control"  oninput="changeImg(this)" name="imageUrl" id="imageUrl" placeholder="URL immagine">
+            </div>
+            
+            <button type="submit"   class="btn btn-primary">Aggiungi</button>
+        </div>
+
+        <div class="col-md-6">
+            <div class="centeredImage">
+                <img id="previewImage" class="previewImageBig" src="daw" alt="Immagine prodotto">
+            </div>
+        </div>
+    </div>
+</form>

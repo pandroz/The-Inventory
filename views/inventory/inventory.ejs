@@ -1,40 +1,31 @@
 <%- include('../includes/header.ejs') %>
+<link rel="stylesheet" href="/css/inventory.css">
 </head>
 <body>
+    <%- include('../components/navigation.ejs') %>
     <div class="container">
-        <h1>Dispensa di Ale</h1>
+        <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+            Aggiungi prodotti
+        </button>
 
-        <form action="/inventory" method="post">
-            <input type="text" name="name" placeholder="Nome">
-            <input type="text" name="qty" placeholder="Quantità">
-            <input type="text" name="price" placeholder="Prezzo">
-            <input type="text" name="imageUrl" placeholder="URL immagine">
-            <button type="submit">Aggiungi</button>
-        </form>
+        <div class="collapse addProductsCollapse" id="collapseExample">
+            <div class="card card-body">
+                <div>
+                    <%- include('../components/addItemsForm.ejs') %>
+                </div>
+            </div>
+        </div>
 
+        
     </div>
 
     <div class="container">
-        <% items.forEach(item => { %>
-            
-                <article class="item">
-                    <h2><%= item.name %></h2>
-                    <p>Quantità: <%= item.qty %></p>
-                    <p>Prezzo: <%= item.price %></p>
-                    <img src="<%= item.imageUrl || 'https://placehold.co/100x100' %>" alt="<%= item.name %>">
-                    
-                    <button class="btn btn-primary">Modifica</button>
-                    
-                    <form action="/inventory/deleteItem" method="post">
-                        <input type="hidden" name="itemId" value="<%= item._id %>">
-                        <button class="btn btn-danger">Rimuovi</button>
-                    </form>
-                </article>
-            
-        <% }); %>
+        <h1>Elenco prodotti</h1>
+        <hr>
+        <%- include('../components/listItems.ejs') %>
     </div>
 
 
 
-
+<script src="/js/inventory.js"></script>
 <%- include('../includes/footer.ejs') %>

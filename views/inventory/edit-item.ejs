@@ -1,0 +1,40 @@
+<%- include('../includes/header.ejs') %>
+<%- include('../components/navigation.ejs') %>
+</head>
+<body>
+    <div class="container">
+        <h1>Edit Item <%= item.name %></h1>
+        <div class="row">
+            <div class="col-md-6">
+                <form action="/inventory/edit-item" method="post">
+                    
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Nome</label>
+                        <input type="text" class="form-control" name="name" placeholder="Nome" value="<%= item.name %>">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="qty" class="form-label">Quantità</label>
+                        <input type="text" class="form-control" name="qty" placeholder="Quantità" value="<%= item.qty %>">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="price" class="form-label">Prezzo</label>
+                        <input type="number" class="form-control" name="price" placeholder="Prezzo" value="<%= item.price %>">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="imageUrl" class="form-label">URL immagine</label>
+                        <input type="text" class="form-control" name="imageUrl" placeholder="URL immagine" value="<%= item.imageUrl %>">
+                    </div>
+                    
+                    <button type="submit" class="btn btn-success">Salva</button>
+                    <input type="hidden" name="itemId" value="<%= item._id %>">
+                </form>
+            </div>
+        </div>
+    </div>
+
+    
+
+<%- include('../includes/footer.ejs') %>

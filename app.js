@@ -18,9 +18,8 @@ const inventoryRoutes = require('./routes/inventory');
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-
+app.use(inventoryRoutes);
 app.use('/inventory', inventoryRoutes);
-
 
 
 console.log('Connecting to DB...')

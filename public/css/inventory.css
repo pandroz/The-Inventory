@@ -1,0 +1,24 @@
+.previewImage {
+    max-width: 150px;
+    max-height: 150px;
+    object-fit: contain;
+}
+
+.previewImageBig {
+    max-width: 350px;
+    max-height: 350px;
+    object-fit: contain;
+}
+
+.centeredImage {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+}
+
+.addProductsCollapse {
+    margin-top: 3px;
+    margin-bottom: 10px;
+}

@@ -1,0 +1,56 @@
+<% items.forEach(item => { %>
+    <article class="item">
+        <div class="row">
+            <h2><%= item.name %></h2>
+        </div>
+        <div class="row">
+            <div class="col-md-5">
+                <div class="row">
+                    <span><b>Quantità:</b> <%= item.qty %></span>
+                </div>
+                <div class="row">
+                    <span><b>Prezzo:</b> <%= item.price %></span>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-2">
+                        <a href="/inventory/edit-item/<%= item._id %>?edit=true" class="btn btn-primary">Modifica</a>
+                    </div>
+                    
+                    <div class="col-md-2">
+                        <form action="/inventory/deleteItem" method="post">
+                            <button class="btn btn-danger">Rimuovi</button>
+                            <input type="hidden" name="itemId" value="<%= item._id %>">
+                        </form>
+                    </div>
+
+                    <div class="col-md-1">
+                        <form action="/inventory/edit-quantity" method="post">
+                            <button class="btn btn-warning">-1</button>
+                            <input type="hidden" name="itemId" value="<%= item._id %>">
+                            <input type="hidden" name="qty" value="<%= item.qty - 1 %>">
+                        </form>
+                    </div>
+
+                    <div class="col-md-1">
+                        <form action="/inventory/edit-quantity" method="post">
+                            <button class="btn btn-success">+1</button>
+                            <input type="hidden" name="itemId" value="<%= item._id %>">
+                            <input type="hidden" name="qty" value="<%= item.qty + 1 %>">
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+            
+            <div class="col-md-6">
+                <img src="<%= item.imageUrl || 'https://placehold.co/150?text=No+Image' %>" class="previewImage" alt="<%= item.name %>">
+            </div>
+            
+        </div>
+
+        <hr>
+    </article>
+    
+
+<% }); %>
