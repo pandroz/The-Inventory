@@ -17,6 +17,7 @@ const inventoryRoutes = require('./routes/inventory');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.json());
 
 app.use(inventoryRoutes);
 app.use('/inventory', inventoryRoutes);
@@ -24,7 +25,6 @@ app.use('/inventory', inventoryRoutes);
 
 console.log('Connecting to DB...')
 mongoose.connect(`mongodb+srv://${process.env.APPUSERNAME}:${process.env.APPPWD}@inventario-spesa.ru11fas.mongodb.net/${process.env.DBNAME}?appName=inventario-spesa`)
-
 .then(client => {
     console.log('Connected to DB');
     app.listen(3000);

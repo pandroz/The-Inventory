@@ -60,7 +60,8 @@ exports.postDeleteItem = (req, res, next) => {
     })
         .then(result => {
             console.log('Deleted item', result);
-            res.redirect('/inventory');
+            // res.redirect('/inventory');
+            res.status(200).json({message: 'Item deleted successfully' });
         }).catch(err => {
             console.log('Error deleting item', err);
         });
@@ -83,14 +84,14 @@ exports.postEditItem = (req, res, next) => {
         item.imageUrl = imageUrl;
         return item.save();
     }).then(result => {
-            console.log('Updated item', result);
-            res.redirect('/inventory');
-        }).catch(err => {
-            console.log('Error updating item', err);
-        });
+        console.log('Updated item', result);
+        res.redirect('/inventory');
+    }).catch(err => {
+        console.log('Error updating item', err);
+    });
 }
 
-    
+
 exports.postEditQuantity = (req, res, next) => {
     const id = req.body.itemId;
     const qty = req.body.qty;
