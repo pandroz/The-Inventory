@@ -1,5 +1,4 @@
 <%- include('../includes/header.ejs') %>
-<%- include('../components/navigation.ejs') %>
 </head>
 <body>
     <div class="container">
@@ -20,7 +19,7 @@
 
                     <div class="mb-3">
                         <label for="price" class="form-label">Prezzo</label>
-                        <input type="number" class="form-control" name="price" placeholder="Prezzo" value="<%= item.price %>">
+                        <input type="number" class="form-control" step="0.01" name="price" placeholder="Prezzo" value="<%= item.price %>">
                     </div>
 
                     <div class="mb-3">

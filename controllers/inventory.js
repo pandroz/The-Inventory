@@ -5,7 +5,7 @@ exports.getInvetory = (req, res, next) => {
     Item.find()
         .then(items => {
             res.render('inventory/inventory', {
-                pageTitle: 'Dispensa di Ale',
+                pageTitle: 'Dispensa',
                 path: '/inventory',
                 items: items
             });
@@ -57,14 +57,13 @@ exports.postDeleteItem = (req, res, next) => {
     const id = req.body.itemId;
     Item.deleteOne({
         _id: id
-    })
-        .then(result => {
-            console.log('Deleted item', result);
-            // res.redirect('/inventory');
-            res.status(200).json({message: 'Item deleted successfully' });
-        }).catch(err => {
-            console.log('Error deleting item', err);
-        });
+    }).then(result => {
+        console.log('Deleted item', result);
+        // res.redirect('/inventory');
+        res.status(200).json({ message: 'Item deleted successfully' });
+    }).catch(err => {
+        console.log('Error deleting item', err);
+    });
 }
 
 
@@ -75,7 +74,7 @@ exports.postEditItem = (req, res, next) => {
     const price = req.body.price;
     const imageUrl = req.body.imageUrl;
 
-    Item.find({
+    Item.findById({
         _id: id
     }).then(item => {
         item.name = name;
@@ -94,20 +93,18 @@ exports.postEditItem = (req, res, next) => {
 
 exports.postEditQuantity = (req, res, next) => {
     const id = req.body.itemId;
-    const qty = req.body.qty;
+    const diff = req.body.diff;
 
-    Item.updateOne({
+    Item.findById({
         _id: id
-    }, {
-        $set: {
-            qty: qty
-        }
-    })
-        .then(result => {
-            console.log('Updated item', result);
-            res.redirect('/inventory');
-        }).catch(err => {
-            console.log('Error updating item', err);
-        });
-
+    }).then(item => {
+        item.qty += diff;
+        return item.save();
+    }).then(result => {
+        console.log('Updated item', result);
+        res.status(200).json({ message: 'Item updated successfully', qty: result.qty });
+    }).catch(err => {
+        res.status(500).json({ message: 'Error updating item: ' + err, itemName: result.name });
+        console.log('Error updating item', err);
+    });
 }

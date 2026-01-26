@@ -1,47 +1,16 @@
 
-// deleteItem.addEventListener("click", () => {
-// console.log(e);
-//     console.log(this.className); // logs the className of myElement
-//     console.log(e.currentTarget === this); // logs `true`
-// });
-
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('DOM fully loaded and parsed');
-
-
-
+    // console.log('DOM fully loaded and parsed');
 
     document.getElementById('itemList').addEventListener('click', (e) => {
-
-
-        /*
-            let iconDelete = button.querySelector('.icon-delete');
-            let spinnerDelete = button.querySelector('.spinner-delete');
-            iconDelete.style.display = 'none';
-            spinnerDelete.style.display = 'block';
-
-
-            // then
-            iconDelete.style.display = 'block';
-            spinnerDelete.style.display = 'none';
-        */
-
 
         // DELETE ITEM
         if (e.target.classList.contains('deleteItem')) {
             const button = e.target;
             const itemId = button.dataset.itemId;
             const itemName = button.dataset.itemName;
-            
-            const toastMessage = document.getElementById('toastMessage');
-            const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastMessage)
-            
-            const toastBody = document.getElementById('toastBody');
-            const toastTitle = document.getElementById('toastTitle');
 
-            toastMessage.get
-            
-            fetch('/inventory/deleteItem', {
+            fetch('/inventory/delete-item', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -53,20 +22,54 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (response.status === 200) {
                     document.getElementById(`article_${itemId}`).remove();
                     console.log('Item deleted successfully');
-                    toastTitle.textContent = 'Item deleted';
-                    toastBody.textContent = `Item "${itemName}" deleted successfully!`;
-                    toastBootstrap.show();
+                    toastMessage('success', 'Item deleted successfully', `Item ${itemName} deleted successfully`);
                 } else {
-                    toastTitle.textContent = 'Error';
-                    toastBody.textContent = 'Failed to delete item';
-                    toastBootstrap.show();
+                    toastMessage('error', 'Error deleting item', `Error deleting item ${itemName}`);
                     console.error('Failed to delete item');
                 }
             }).catch(error => {
                 console.error('Error deleting item', error);
             });
+        }
+
+        // EDIT ITEM
+        if (e.target.classList.contains('editItem')) {
+            const button = e.target;
+            const itemId = button.dataset.itemId;
+            window.location.href = `/inventory/edit-item/${itemId}`;
+        }
+
+
+        // ADD ONE ITEM
+        if (e.target.classList.contains('moreQuantity') || e.target.classList.contains('lessQuantity')) {
+            const button = e.target;
+            const itemId = button.dataset.itemId;
+            const diff = parseFloat(button.dataset.itemDiff);
+
+            axios.post('/inventory/edit-quantity', {
+                itemId: itemId,
+                diff: diff
+            }, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(res => {
+                if (res.status == 200) {
+                    document.getElementById(`article_${itemId}_qty`).innerHTML = res.data.qty;
+                } else {
+                    toastMessage('error', 'Error deleting item', `Error deleting item ${res.data.itemName}`);
+                    console.error('Failed to delete item');
+                }
+            }).catch(err => {
+                console.error('Failed to delete item');
+            });
+
 
         }
+
+
+
     });
     document.getElementById('loading').style.display = 'none';
+    console.log('(Inventory) DOM fully loaded and parsed');
 });

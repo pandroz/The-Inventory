@@ -7,68 +7,43 @@
             <div class="col-md-2">
                 <img src="<%= item.imageUrl || 'https://placehold.co/150?text=No+Image' %>" class="previewImage" alt="<%= item.name %>">
             </div>
-            <div class="col-md-5">
+
+            <div class="col-md-9">
                 <div class="row">
-                    <span><b>Quantità:</b> <%= item.qty %></span>
+                    <div class="col-md-3"><span><b>Quantità:</b></span></div>
+                    <div class="col-md-6" id="article_<%= item._id %>_qty"><%= item.qty %></div>
                 </div>
                 <div class="row">
-                    <span><b>Prezzo:</b> <%= item.price %></span>
+                    <div class="col-md-3"><span><b>Prezzo:</b></span></div>
+                    <div class="col-md-6"><%= item.price %> €</div>
                 </div>
-                
+            </div>
+
+            <div class="col-md-1">
+                <!-- BUTTONS -->
                 <div class="row">
-
-
-
-                    
                     <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
-                        <div class="btn-group me-2" role="group" aria-label="First group">
+                        <div class="btn-group-vertical me-2" role="group" aria-label="First group">
                             
                             <!-- EDIT -->
-                            <a href="/inventory/edit-item/<%= item._id %>?edit=true" class="btn btn-primary"><i class="fa-solid fa-pencil"></i></a>
+                            <button data-item-id="<%= item._id %>" class="btn btn-primary editItem">
+                                <i class="fa-solid fa-pencil"></i></a>
+                            </button>
                             
                             <!-- DELETE -->
                             <button data-item-id="<%= item._id %>" data-item-name="<%= item.name %>" class="btn btn-danger deleteItem">
-                                <span class="spinner-border spinner-border-sm spinner-delete" role="status" aria-hidden="true" style="display: none;"></span>
                                 <i class="fa-solid fa-x icon-delete"></i>
+                                <span class="spinner-border spinner-border-sm spinner-delete" role="status" aria-hidden="true" style="display: none;"></span>
                             </button>
                             
-                            <!-- -1 -->
-                            <button data-item-id="<%= item._id %>" class="btn btn-warning lessQuantity"><i class="fa-solid fa-minus"></i></button>
-                            
                             <!-- +1 -->
-                            <button data-item-id="<%= item._id %>" class="btn btn-success moreQuantity"><i class="fa-solid fa-plus"></i></button>
+                            <button data-item-id="<%= item._id %>" data-item-diff="1" class="btn btn-success moreQuantity"><i class="fa-solid fa-plus"></i></button>
+                            
+                            <!-- -1 -->
+                            <button data-item-id="<%= item._id %>" data-item-diff="-1" class="btn btn-warning lessQuantity"><i class="fa-solid fa-minus"></i></button>
                         </div>
-                        
                     </div>
-                    
-                    <!-- <div class="col-md-1">
-                        <a href="/inventory/edit-item/<%= item._id %>?edit=true" class="btn btn-primary"><i class="fa-solid fa-pencil"></i></a>
-                    </div> -->
-
-                    <!-- <div class="col-md-1">
-                        <form action="/inventory/deleteItem" method="post">
-                            <button class="btn btn-danger"><i class="fa-solid fa-x"></i></button>
-                            <input type="hidden" name="itemId" value="<%= item._id %>">
-                        </form>
-                    </div>
-
-                    <div class="col-md-1">
-                        <form action="/inventory/edit-quantity" method="post">
-                            <button class="btn btn-warning"><i class="fa-solid fa-minus"></i></button>
-                            <input type="hidden" name="itemId" value="<%= item._id %>">
-                            <input type="hidden" name="qty" value="<%= item.qty - 1 %>">
-                        </form>
-                    </div>
-
-                    <div class="col-md-1">
-                        <form action="/inventory/edit-quantity" method="post">
-                            <button class="btn btn-success"><i class="fa-solid fa-plus"></i></button>
-                            <input type="hidden" name="itemId" value="<%= item._id %>">
-                            <input type="hidden" name="qty" value="<%= item.qty + 1 %>">
-                        </form>
-                    </div> -->
                 </div>
-
             </div>
             
             

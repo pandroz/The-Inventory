@@ -2,15 +2,12 @@
 <link rel="stylesheet" href="/css/inventory.css">
 </head>
 <body>
-    <%- include('../components/loader.ejs') %>
-    <%- include('../components/toast.ejs') %>
-    <%- include('../components/navigation.ejs') %>
-    <div class="container">
-        <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
-            Aggiungi prodotti
-        </button>
 
-        <div class="collapse addProductsCollapse" id="collapseExample">
+
+    <div class="container">
+        
+        <div id="addItem"></div>
+        <div class="collapse addProductsCollapse" id="addItemCollapse">
             <div class="card card-body">
                 <div>
                     <%- include('../components/addItemsForm.ejs') %>
@@ -19,14 +16,14 @@
         </div>
 
         
+        
+        <div id="itemList">
+            <h1>Elenco prodotti</h1>
+            <hr>
+            <%- include('../components/listItems.ejs') %>
+        </div>
+        
     </div>
-
-    <div class="container" id="itemList">
-        <h1>Elenco prodotti</h1>
-        <hr>
-        <%- include('../components/listItems.ejs') %>
-    </div>
-
 
 
 <script src="/js/inventory.js"></script>

@@ -14,9 +14,9 @@ router.get('/edit-item/:itemId', inventoryController.getEditItemPage);
 
 
 // POST
-router.post('/', inventoryController.postAddItem);
+router.post('/add-item', inventoryController.postAddItem);
 
-router.post('/deleteItem', inventoryController.postDeleteItem);
+router.post('/delete-item', inventoryController.postDeleteItem);
 
 router.post('/edit-item', inventoryController.postEditItem);
 

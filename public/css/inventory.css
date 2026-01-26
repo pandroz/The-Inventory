@@ -22,3 +22,8 @@
     margin-top: 3px;
     margin-bottom: 10px;
 }
+
+button > i,
+button > svg {
+    pointer-events: none;
+}
