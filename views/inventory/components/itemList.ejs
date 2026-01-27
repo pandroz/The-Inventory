@@ -25,15 +25,15 @@
                     <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
                         <div class="btn-group-vertical me-2" role="group" aria-label="First group">
                             
-                            <!-- EDIT -->
-                            <button data-item-id="<%= item._id %>" class="btn btn-primary editItem">
-                                <i class="fa-solid fa-pencil"></i></a>
-                            </button>
-                            
                             <!-- DELETE -->
                             <button data-item-id="<%= item._id %>" data-item-name="<%= item.name %>" class="btn btn-danger deleteItem">
                                 <i class="fa-solid fa-x icon-delete"></i>
                                 <span class="spinner-border spinner-border-sm spinner-delete" role="status" aria-hidden="true" style="display: none;"></span>
+                            </button>
+                            
+                            <!-- EDIT -->
+                            <button data-item-id="<%= item._id %>" class="btn btn-primary editItem">
+                                <i class="fa-solid fa-pencil"></i></a>
                             </button>
                             
                             <!-- +1 -->

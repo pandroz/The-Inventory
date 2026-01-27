@@ -14,13 +14,18 @@ app.set('view engine', 'ejs');
 app.set('views', 'views');
 
 const inventoryRoutes = require('./routes/inventory');
+const todoRoutes = require('./routes/todo');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 
-app.use(inventoryRoutes);
 app.use('/inventory', inventoryRoutes);
+app.use('/todo', todoRoutes);
+
+
+app.use(inventoryRoutes);
+app.use(todoRoutes);
 
 
 console.log('Connecting to DB...')

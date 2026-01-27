@@ -1,0 +1,26 @@
+<form action="/todo/add-todo" id="addTodoForm" method="post">
+    <div class="row">
+        <div class="col-md-6">
+
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control" id="description" name="description" placeholder="Attività" required>
+                <label for="description" class="form-label">Attività</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control" id="addDescr" name="addDescr" placeholder="Descrizione aggiuntiva">
+                <label for="addDescr" class="form-label">Descrizione aggiuntiva</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input type="date" class="form-control" id="completeBy" name="completeBy" placeholder="Da completare entro il">
+                <label for="completeBy" class="form-label">Da completare entro il</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control datepicker" name="category" id="category" placeholder="Categoria">
+                <label for="category" class="form-label">Categoria</label>
+            </div>
+            
+            <button type="submit" id="addTodo" class="btn btn-primary">Aggiungi</button>
+        </div>
+
+    </div>
+</form>

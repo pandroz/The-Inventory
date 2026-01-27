@@ -3,6 +3,7 @@ const Item = require('../models/item');
 // GET
 exports.getInvetory = (req, res, next) => {
     Item.find()
+        .sort({ createdAt: -1 })
         .then(items => {
             res.render('inventory/inventory', {
                 pageTitle: 'Dispensa',
@@ -22,7 +23,7 @@ exports.getEditItemPage = (req, res, next) => {
         .then(item => {
             res.render('inventory/edit-item', {
                 pageTitle: 'Edit Item',
-                path: '/inventory/edit-item',
+                path: '/inventory',
                 item: item
             });
         }).catch(err => {
@@ -40,7 +41,8 @@ exports.postAddItem = (req, res, next) => {
         name: req.body.name,
         qty: req.body.qty,
         price: req.body.price,
-        imageUrl: req.body.imageUrl
+        imageUrl: req.body.imageUrl,
+        createdAt: new Date()
     });
 
     item.save()

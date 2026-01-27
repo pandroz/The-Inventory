@@ -21,6 +21,15 @@ const itemSchema = new Schema({
         type: String,
         required: false,
         default: ''
+    },
+    updated: {
+        type: Date,
+        required: false
+    },
+    createdAt: {
+        type: Date,
+        required: false,
+        default: Date.now
     }
 });
 

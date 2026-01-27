@@ -1,0 +1,4 @@
+button > i,
+button > svg {
+    pointer-events: none;
+}
