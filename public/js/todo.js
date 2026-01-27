@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     // console.log('DOM fully loaded and parsed');
 
-    document.getElementById('itemList').addEventListener('click', (e) => {
+    document.getElementById('todoList').addEventListener('click', (e) => {
 
         // DELETE ITEM
         if (e.target.classList.contains('deleteTodo')) {
@@ -19,32 +19,13 @@ document.addEventListener('DOMContentLoaded', () => {
         // }
 
 
-        // // ADD ONE ITEM
-        // if (e.target.classList.contains('moreQuantity') || e.target.classList.contains('lessQuantity')) {
-        //     const button = e.target;
-        //     const itemId = button.dataset.itemId;
-        //     const diff = parseFloat(button.dataset.itemDiff);
-
-        //     axios.post('/inventory/edit-quantity', {
-        //         itemId: itemId,
-        //         diff: diff
-        //     }, {
-        //         headers: {
-        //             'Content-Type': 'application/json'
-        //         }
-        //     }).then(res => {
-        //         if (res.status == 200) {
-        //             document.getElementById(`article_${itemId}_qty`).innerHTML = res.data.qty;
-        //         } else {
-        //             toastMessage('error', 'Error deleting item', `Error deleting item ${res.data.itemName}`);
-        //             console.error('Failed to delete item');
-        //         }
-        //     }).catch(err => {
-        //         console.error('Failed to delete item');
-        //     });
-
-
-        // }
+        // UPDATE DONE STATUS
+        if (e.target.classList.contains('todoDone')) {
+            const checkbox = e.target;
+            const todoId = checkbox.dataset.todoId;
+            const done = checkbox.checked;
+            updateStatus(todoId, done);
+        }
 
 
 
@@ -54,6 +35,11 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
+/**
+ * Deletes a ToDo item
+ * @param {string} todoId - The ID of the ToDo item to delete
+ * @param {string} todoDesc - The description of the ToDo item to delete
+ */
 const deleteTodo = (todoId, todoDesc) => {
     axios.post('/todo/delete-todo', {
         todoId: todoId
@@ -72,5 +58,31 @@ const deleteTodo = (todoId, todoDesc) => {
         }
     }).catch(err => {
         console.error('Failed to delete item');
+    });
+}
+
+/**
+ * Update the status of a ToDo
+ * @param {string} todoId - The ID of the ToDo to update
+ * @param {boolean} done - The new status of the ToDo
+ */
+const updateStatus = (todoId, done) => {
+    axios.post('/todo/todo-status', {
+        todoId: todoId,
+        done: done
+    }, {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }).then(res => {
+        if (res.status == 200) {
+            console.log('ToDo completed!');
+            document.getElementById(`todo_${todoId}_completedOn`).innerHTML = res.data.done ? res.data.completedOn : '-';
+        } else {
+            toastMessage('error', 'Error updating ToDo status', `Error updateing ToDo status ${res.data.message}`);
+            console.error('Failed to update ToDo status');
+        }
+    }).catch(err => {
+        console.error('Failed to update ToDo status', err);
     });
 }

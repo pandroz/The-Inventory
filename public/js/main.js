@@ -1,6 +1,4 @@
 function changeImg(input) {
-    console.log('Change image', input.value);
-
     document.getElementById('previewImage').src = input.value;
     return true;
 }
@@ -61,3 +59,27 @@ function toastMessage(type, title, body) {
     toastTitle.textContent = title;
     toast.show();
 }
+
+
+function search(value, searchType) {
+    let list = document.getElementById(`${searchType}List`).getElementsByTagName('article');
+    value = _.trim(value);
+
+    _.filter(list, (item) => {
+        let titleContent = item.getElementsByClassName('LIST_ITEM_TITLE')[0].textContent.toLowerCase();
+        let descriptionContent = item.getElementsByClassName('LIST_ITEM_DESC')[0].textContent.toLowerCase();
+
+        let textContent = titleContent + ' ' + descriptionContent;
+        textContent.includes(value.toLowerCase()) ? item.style.display = 'block' : item.style.display = 'none';
+    });
+}
+
+document.getElementById("searchBar").addEventListener("keydown", event => {
+    if (event.key === 'Enter') {
+        const searchBar = document.getElementById("searchBar");
+        const searchType = searchBar.dataset.searchType;
+        const value = searchBar.value;
+
+        search(value, searchType);
+    }
+});

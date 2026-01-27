@@ -8,6 +8,8 @@ exports.getInvetory = (req, res, next) => {
             res.render('inventory/inventory', {
                 pageTitle: 'Dispensa',
                 path: '/inventory',
+                searchType: 'item',
+                itemAmount: items.length,
                 items: items
             });
         }).catch(err => {

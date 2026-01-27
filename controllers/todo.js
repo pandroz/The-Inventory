@@ -10,6 +10,8 @@ exports.getTodo = (req, res, next) => {
             res.render('todo/todo', {
                 pageTitle: 'To Do List',
                 path: '/todo',
+                searchType: 'todo',
+                todoAmount: todos.length,
                 todos: todos,
                 moment: moment,
                 _: _
@@ -19,7 +21,7 @@ exports.getTodo = (req, res, next) => {
         });
 }
 
-exports.postAddTodo = (req, res, next) => {
+exports.addTodo = (req, res, next) => {
     const todo = new Todo({
         description: req.body.description,
         addDescr: req.body.addDescr,
@@ -41,7 +43,7 @@ exports.postAddTodo = (req, res, next) => {
 }
 
 
-exports.postDeleteTodo = (req, res, next) => {
+exports.deleteTodo = (req, res, next) => {
     const id = req.body.todoId;
     Todo.deleteOne({
         _id: id
@@ -50,5 +52,28 @@ exports.postDeleteTodo = (req, res, next) => {
         res.status(200).json({ message: 'Todo deleted successfully' });
     }).catch(err => {
         console.log('Error deleting todo', err);
+    });
+}
+
+
+exports.updateStatus = (req, res, next) => {
+    const id = req.body.todoId;
+    const done = req.body.done;
+    Todo.findById({
+        _id: id
+    }).then(todo => {
+        todo.done = done;
+        todo.completedOn = done ? new Date() : null;
+        return todo.save();
+    }).then(result => {
+        console.log('Updated todo', result);
+        res.status(200).json({
+            message: 'Todo updated successfully',
+            done: result.done,
+            completedOn: moment(result.completedOn).format('L')
+        });
+    }).catch(err => {
+        res.status(500).json({ message: 'Error updating todo: ' + err, todoName: result.name });
+        console.log('Error updating todo', err);
     });
 }

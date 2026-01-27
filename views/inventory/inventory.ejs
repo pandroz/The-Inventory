@@ -15,11 +15,16 @@
             </div>
         </div>
 
+        <%- include('../components/searchBar.ejs') %>
         
-        
+        <div class="row">
+            <div class="col-md-11"><h1>Elenco prodotti</h1></div>
+            <div class="col-md-1 align-text-bottom">
+                Prodotti: <span id="totalItems"><%= itemAmount %></span>
+            </div>
+        </div>
+        <hr>
         <div id="itemList">
-            <h1>Elenco prodotti</h1>
-            <hr>
             <%- include('./components/itemList.ejs') %>
         </div>
         

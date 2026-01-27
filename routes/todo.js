@@ -8,8 +8,10 @@ const router = express.Router();
 router.get('/', todoController.getTodo);
 
 // POST
-router.post('/add-todo', todoController.postAddTodo);
+router.post('/add-todo', todoController.addTodo);
 
-router.post('/delete-todo', todoController.postDeleteTodo);
+router.post('/delete-todo', todoController.deleteTodo);
+
+router.post('/todo-status', todoController.updateStatus);
 
 module.exports = router;
