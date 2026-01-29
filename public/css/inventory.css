@@ -27,3 +27,22 @@ button > i,
 button > svg {
     pointer-events: none;
 }
+
+.image-search {
+    position: relative;
+}
+
+.icon-search {
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: gray
+}
+
+
+.selectImage:hover {
+    cursor: pointer;
+    border: 3px solid #0d6efd !important;
+}

@@ -21,33 +21,33 @@ function toastMessage(type, title, body) {
 
     switch (type) {
         case 'success':
-            toastHeader.classList.remove('error');
-            toastHeader.classList.remove('warning');
-            toastHeader.classList.add('success');
+            toastHeader.classList.remove('bg-danger');
+            toastHeader.classList.remove('bg-warning');
+            toastHeader.classList.add('bg-success');
 
-            toastMessage.classList.remove('error');
-            toastMessage.classList.remove('warning');
-            toastMessage.classList.add('success');
+            toastMessage.classList.remove('bg-danger');
+            toastMessage.classList.remove('bg-warning');
+            toastMessage.classList.add('bg-success');
             break;
 
         case 'error':
-            toastHeader.classList.remove('success');
-            toastHeader.classList.remove('warning');
-            toastHeader.classList.add('error');
+            toastHeader.classList.remove('bg-success');
+            toastHeader.classList.remove('bg-warning');
+            toastHeader.classList.add('bg-danger');
 
-            toastMessage.classList.remove('success');
-            toastMessage.classList.remove('warning');
-            toastMessage.classList.add('error');
+            toastMessage.classList.remove('bg-success');
+            toastMessage.classList.remove('bg-warning');
+            toastMessage.classList.add('bg-danger');
             break;
 
         case 'warning':
-            toastHeader.classList.remove('success');
-            toastHeader.classList.remove('error');
-            toastHeader.classList.add('warning');
+            toastHeader.classList.remove('bg-success');
+            toastHeader.classList.remove('bg-danger');
+            toastHeader.classList.add('bg-warning');
 
-            toastMessage.classList.remove('success');
-            toastMessage.classList.remove('error');
-            toastMessage.classList.add('warning');
+            toastMessage.classList.remove('bg-success');
+            toastMessage.classList.remove('bg-danger');
+            toastMessage.classList.add('bg-warning');
             break;
 
         default:
@@ -61,17 +61,25 @@ function toastMessage(type, title, body) {
 }
 
 
-function search(value, searchType) {
-    let list = document.getElementById(`${searchType}List`).getElementsByTagName('article');
+function search(value, searchType, force = false) {
     value = _.trim(value);
 
-    _.filter(list, (item) => {
-        let titleContent = item.getElementsByClassName('LIST_ITEM_TITLE')[0].textContent.toLowerCase();
-        let descriptionContent = item.getElementsByClassName('LIST_ITEM_DESC')[0].textContent.toLowerCase();
+    if (_.size(value) >= 3 || force) {
+        let list = document.getElementById(`${searchType}List`).getElementsByTagName('article');
 
-        let textContent = titleContent + ' ' + descriptionContent;
-        textContent.includes(value.toLowerCase()) ? item.style.display = 'block' : item.style.display = 'none';
-    });
+        _.filter(list, (item) => {
+            let titleContent = item.getElementsByClassName('LIST_ITEM_TITLE')[0].textContent.toLowerCase();
+            let descriptionContent = item.getElementsByClassName('LIST_ITEM_DESC')[0].textContent.toLowerCase();
+
+            let textContent = titleContent + ' ' + descriptionContent;
+            textContent.includes(value.toLowerCase()) ? item.style.display = 'block' : item.style.display = 'none';
+        });
+    } else {
+        let list = document.getElementById(`${searchType}List`).getElementsByTagName('article');
+        _.forEach(list, (item) => {
+            item.style.display = 'block';
+        });
+    }
 }
 
 document.getElementById("searchBar").addEventListener("keydown", event => {
@@ -80,6 +88,6 @@ document.getElementById("searchBar").addEventListener("keydown", event => {
         const searchType = searchBar.dataset.searchType;
         const value = searchBar.value;
 
-        search(value, searchType);
+        search(value, searchType, true);
     }
 });

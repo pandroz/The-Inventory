@@ -1,40 +1,95 @@
 <% todos.forEach(todo => { %>
-    <article class="todo mt-3" id="todo_<%= todo._id %>">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card shadow bg-body-tertiary rounded">
-                    
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <div class="LIST_ITEM_TITLE"><%= todo.description %></div>
-                        <div><button class="btn deleteTodo" data-todo-desc="<%= todo.description %>" data-todo-id="<%= todo._id %>"><i class="fa-solid fa-xmark"></i></button></div>
+<article class="todo mt-3" id="todo_<%= todo._id %>">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card shadow-sm border-0 rounded-3 overflow-hidden">
+                
+                <!-- Header with title and delete button -->
+                <div class="card-header bg-white border-0 d-flex justify-content-between align-items-start pt-4 px-4 pb-3">
+                    <div class="flex-grow-1 pe-3">
+                        <h4 class="mb-1 fw-semibold text-dark LIST_ITEM_TITLE"><%= todo.description %></h4>
+                        <span class="badge bg-light text-dark border px-3 py-2 mt-2 fs-6 fw-normal cursor-pointer LIST_ITEM_CATEGORY" data-type="filter" data-todo-category="<%= todo.category %>">
+                            <%= todo.category %>
+                        </span>
                     </div>
+                    <button class="btn btn-link text-muted deleteTodo p-0" data-todo-desc="<%= todo.description %>" data-todo-id="<%= todo._id %>" aria-label="Delete todo">
+                        <i class="fa-solid fa-xmark fs-4"></i>
+                    </button>
+                </div>
 
-                    <div class="card-body">
-                        <h5 class="card-title"><%= todo.category %></h5>
+                <!-- Body with organized information -->
+                <div class="card-body px-4 pb-4">
+                    
+                    <!-- Description -->
+                    <% if (todo.addDescr && todo.addDescr.trim()) { %>
+                    <div class="mb-3">
+                        <p class="text-secondary mb-0 LIST_ITEM_DESC"><%= todo.addDescr %></p>
+                    </div>
+                    <% } %>
+
+                    <!-- Dates and Status Grid -->
+                    <div class="row g-3 align-items-center">
                         
-                        <div class="row">
-                            <div class="col-md-10">
-                                <p class="card-text LIST_ITEM_DESC"><%= todo.addDescr %></p>
-                                <p class="card-text">Complete by: <%= !_.isNil(todo.completeBy) ? moment(todo.completeBy).format('L') : '-' %></p>
-                                <p class="card-text">Completed on: <span id="todo_<%= todo._id %>_completedOn"><%= !_.isNil(todo.completedOn) ? moment(todo.completedOn).format('L') : '-' %></span></p>
-                                <!-- <p class="card-text">Aggiunta il: <%= !_.isNil(todo.createdAt) ? moment(todo.createdAt).format('YYYY/MM/DD HH:mm') : '-' %></p> -->
-                                <p class="card-text">Aggiunta: <%= handleCreatedAt(todo.createdAt) %></p>
-                            </div>
-                            
-                            <div class="col-md-2">
-                                <div class="form-check">
-                                    <input class="form-check-input todoDone" data-todo-id="<%= todo._id %>" type="checkbox" value="" <% if (todo.done) {  %> checked="on" <% } %> id="checkDefault">
-                                    <label class="form-check-label" for="checkDefault">
-                                        Done
-                                    </label>
+                        <!-- Date Information -->
+                        <div class="col-md-9 col-lg-10">
+                            <div class="row g-3">
+                                
+                                <!-- Complete By Date -->
+                                <div class="col-sm-6 col-md-4">
+                                    <div class="d-flex align-items-start">
+                                        <i class="fa-regular fa-calendar text-primary me-2 mt-1"></i>
+                                        <div>
+                                            <small class="text-muted d-block mb-1">Due Date</small>
+                                            <span class="fw-medium text-dark">
+                                                <%= !_.isNil(todo.completeBy) ? moment(todo.completeBy).format('L') : 'Not set' %>
+                                            </span>
+                                        </div>
+                                    </div>
                                 </div>
+
+                                <!-- Completed On Date -->
+                                <div class="col-sm-6 col-md-4">
+                                    <div class="d-flex align-items-start">
+                                        <i id="todo_<%= todo._id %>_completedIcon" class="fa-regular <%= todo.done ? 'fa-circle-check text-success' : 'fa-circle-xmark text-secondary' %>  me-2 mt-1"></i>
+                                        <div>
+                                            <small class="text-muted d-block mb-1">Completed</small>
+                                            <span class="fw-medium text-dark" id="todo_<%= todo._id %>_completedOn">
+                                                <%= !_.isNil(todo.completedOn) ? moment(todo.completedOn).format('L') : '-' %>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Created At -->
+                                <div class="col-sm-6 col-md-4">
+                                    <div class="d-flex align-items-start">
+                                        <i class="fa-regular fa-clock text-info me-2 mt-1"></i>
+                                        <div>
+                                            <small class="text-muted d-block mb-1">Added</small>
+                                            <span class="fw-medium text-dark">
+                                                <%= handleCreatedAt(todo.createdAt) %>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
+
+                        <!-- Status Checkbox -->
+                        <div class="col-md-3 col-lg-2">
+                            <div class="form-check form-switch d-flex align-items-center justify-content-md-end">
+                                <input class="form-check-input todoDone me-2 cursor-pointer" data-todo-id="<%= todo._id %>" type="checkbox" role="switch" <% if (todo.done) { %> checked <% } %> id="check_<%= todo._id %>" style="width: 3rem; height: 1.5rem;">
+                                <label class="form-check-label fw-medium text-dark cursor-pointer" for="check_<%= todo._id %>"> Done </label>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
         </div>
-    </article>
+    </div>
+</article>
 <% }); %>
 
 

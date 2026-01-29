@@ -21,6 +21,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }).then(response => {
                 if (response.status === 200) {
                     document.getElementById(`article_${itemId}`).remove();
+                    const totalItems = parseInt(document.getElementById('totalItems').innerHTML) - 1
+                    document.getElementById('totalItems').innerHTML = totalItems
                     console.log('Item deleted successfully');
                     toastMessage('success', 'Item deleted successfully', `Item ${itemName} deleted successfully`);
                 } else {
@@ -73,3 +75,43 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('loading').style.display = 'none';
     console.log('(Inventory) DOM fully loaded and parsed');
 });
+
+document.getElementById('imageSearchIcon').addEventListener('click', () => {
+    
+    let imageUrl = document.getElementById('imageUrl').value;
+    console.log('imageUrl', imageUrl);  
+
+    if(_.size(imageUrl) > 3) {
+        
+        axios.get('/api/search-images', {
+            params: {
+                q: imageUrl
+            }
+        })
+        .then(res => {
+            if (res.status == 200) {
+                if(_.size(res.data.images) > 0) {
+                    images = res.data.images;
+                    _.each(images, (imageUrl, i) => {
+                        console.log('imageUrl', imageUrl, 'i = ', i);
+                        let img = document.getElementById(`img.preview-${i}`);
+                        console.log('image', img);
+                        img.src = imageUrl;
+                    });
+                }
+            }
+        }).catch(err => {
+            console.error('Failed to gather images', err);
+        })
+    }
+});
+
+
+function selectThisImage(img) {
+    const selectedImageUrl = img.src;
+
+    if(!_.startsWith(selectedImageUrl, 'https://placehold')) {
+        document.getElementById('imageUrl').value = selectedImageUrl;
+        document.getElementById('previewImage').src = selectedImageUrl;
+    }
+}

@@ -2,3 +2,80 @@ button > i,
 button > svg {
     pointer-events: none;
 }
+
+#badge_checked > span, #badge_checked > i {
+    pointer-events: none;
+}
+
+/* Enhanced Todo Card Styling */
+.todo .card {
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+    background: #ffffff;
+    border-left: 4px solid transparent;
+}
+
+/* .todo .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.1) !important;
+    } */
+
+/* Done state styling */
+.todo .card:has(.todoDone:checked) {
+    border-left-color: #198754;
+    background: #f8fdf9;
+}
+
+.todo .card:has(.todoDone:checked) .LIST_ITEM_TITLE {
+    text-decoration: line-through;
+    opacity: 0.6;
+}
+
+/* Badge styling */
+.todo .badge {
+    font-weight: 500;
+    letter-spacing: 0.3px;
+}
+
+/* Delete button hover */
+.todo .deleteTodo {
+    transition: all 0.2s ease;
+    opacity: 0.5;
+    text-decoration: none;
+}
+
+.todo .deleteTodo:hover {
+    opacity: 1;
+    color: #dc3545 !important;
+    transform: scale(1.1);
+}
+
+/* Switch styling */
+.todo .form-check-input:checked {
+    background-color: #198754;
+    border-color: #198754;
+}
+
+/* Icon styling */
+.todo .fa-calendar,
+.todo .fa-circle-check,
+.todo .fa-clock {
+    font-size: 1.1rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .todo .card-header {
+        padding: 1rem !important;
+    }
+
+    .todo .card-body {
+        padding: 1rem !important;
+    }
+
+    .todo .form-check-input {
+        width: 2.5rem !important;
+        height: 1.25rem !important;
+    }
+}

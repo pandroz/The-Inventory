@@ -14,9 +14,28 @@
                 <input type="number" step="0.01" class="form-control" id="price" name="price" placeholder="Prezzo">
                 <label for="price" class="form-label">Prezzo</label>
             </div>
-            <div class="form-floating mb-3">
-                <input type="text" class="form-control"  oninput="changeImg(this)" name="imageUrl" id="imageUrl" placeholder="URL immagine">
-                <label for="imageUrl" class="form-label">URL immagine</label>
+            <div class="form-floating mb-3 image-search">
+                <input type="text" class="form-control"  oninput="changeImg(this)" name="imageUrl" id="imageUrl" placeholder="URL immagine o ricerca">
+                <label for="imageUrl" class="form-label">URL immagine o ricerca</label>
+                <i class="fa-solid fa-magnifying-glass icon-search" id="imageSearchIcon"></i>
+            </div>
+
+            <div class="form-floating mb-3 row">
+                <div class="col-md-3 align-self-center">
+                    <img alt="+" id="img.preview-0" onclick="selectThisImage(this)" class="previewImage selectImage rounded border border-secondary" src="https://placehold.co/150?text=No+Image">
+                </div>
+
+                <div class="col-md-3 align-self-center">
+                    <img alt="+" id="img.preview-1" onclick="selectThisImage(this)" class="previewImage selectImage rounded border border-secondary" src="https://placehold.co/150?text=No+Image">
+                </div>
+
+                <div class="col-md-3 align-self-center">
+                    <img alt="+" id="img.preview-2" onclick="selectThisImage(this)" class="previewImage selectImage rounded border border-secondary" src="https://placehold.co/150?text=No+Image">
+                </div>
+
+                <div class="col-md-3 align-self-center">
+                    <img alt="+" id="img.preview-3" onclick="selectThisImage(this)" class="previewImage selectImage rounded border border-secondary" src="https://placehold.co/150?text=No+Image">
+                </div>
             </div>
             
             <button type="submit"   class="btn btn-primary">Aggiungi</button>

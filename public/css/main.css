@@ -4,14 +4,8 @@ body {
     background-color: #ddd !important;
 }
 
-.error {
-    background-color: rgb(255, 131, 131) !important;
-    color: black;
-}
-
-.success {
-    background-color: rgb(92, 210, 92) !important;
-    color: black;
+.small-header-text {
+    font-size: 0.8rem;
 }
 
 /* Sidebar */
@@ -47,4 +41,8 @@ body {
     padding-top: 0.5rem;
     overflow-x: hidden;
     overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+}
+
+.cursor-pointer {
+    cursor: pointer;
 }
