@@ -1,0 +1,152 @@
+/* Shopping Item Card */
+.shopping-item {
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+    background: #ffffff;
+    border-left: 4px solid transparent !important;
+}
+
+.shopping-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.1) !important;
+    border-left-color: #0d6efd !important;
+}
+
+/* Item Icon */
+.shopping-item .item-icon {
+    width: 45px;
+    height: 45px;
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+}
+
+/* Quantity Control */
+.quantity-control-wrapper {
+    max-width: 280px;
+}
+
+.quantity-control {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 0.4rem;
+}
+
+.quantity-control .btn-qty {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+    background: white;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.quantity-control .btn-qty:hover {
+    background: #0d6efd;
+    border-color: #0d6efd;
+    color: white;
+    transform: scale(1.05);
+}
+
+.quantity-control .btn-qty:active {
+    transform: scale(0.95);
+}
+
+.quantity-control .qty-input {
+    width: 80px;
+    height: 40px;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    background: white;
+    transition: border-color 0.2s ease;
+}
+
+.quantity-control .qty-input:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+}
+
+/* Remove spinner arrows from number input */
+.quantity-control .qty-input::-webkit-inner-spin-button,
+.quantity-control .qty-input::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.quantity-control .qty-input[type="number"] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+/* Delete Button */
+.shopping-item .delete-item {
+    transition: all 0.2s ease;
+    opacity: 0.5;
+    text-decoration: none;
+}
+
+.shopping-item .delete-item:hover {
+    opacity: 1;
+    color: #dc3545 !important;
+    transform: scale(1.1);
+}
+
+/* Empty State */
+.shopping-list-container:empty::after {
+    content: "No items in your shopping list";
+    display: block;
+    text-align: center;
+    padding: 3rem;
+    color: #6c757d;
+    font-size: 1.1rem;
+}
+
+/* Animation for new items */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.shopping-item {
+    animation: slideIn 0.3s ease;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .shopping-item .item-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+
+    .quantity-control-wrapper {
+        max-width: 100%;
+    }
+
+    .quantity-control .btn-qty {
+        width: 36px;
+        height: 36px;
+    }
+
+    .quantity-control .qty-input {
+        width: 70px;
+        height: 36px;
+        font-size: 1rem;
+    }
+}

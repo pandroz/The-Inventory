@@ -1,0 +1,32 @@
+<%- include('../includes/header.ejs') %>
+<link rel="stylesheet" href="/css/shoppingManager.css">
+</head>
+<body>
+    <div class="container">
+
+        <div class="row">
+            <div class="col-md-12">
+                <h1>Lista della spesa</h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <form action="/shopping-manager/add-item" method="post">
+                    <div class="mb-3">
+                        <label for="itemName" class="form-label">Nome del prodotto</label>
+                        <input type="text" class="form-control" id="itemName" name="itemName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="itemQty" class="form-label">Quantità</label>
+                        <input type="number" class="form-control" id="itemQty" name="itemQty" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Aggiungi</button>
+                </form>
+            </div>
+        </div>
+        <div id="shoppingManangerList" class="row">
+            <%- include('./components/shoppingManagerList.ejs') %>
+        </div>
+    </div>
+    <script src="/js/shoppingManager.js"></script>
+<%- include('../includes/footer.ejs') %>

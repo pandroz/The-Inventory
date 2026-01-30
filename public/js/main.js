@@ -82,12 +82,15 @@ function search(value, searchType, force = false) {
     }
 }
 
-document.getElementById("searchBar").addEventListener("keydown", event => {
-    if (event.key === 'Enter') {
-        const searchBar = document.getElementById("searchBar");
-        const searchType = searchBar.dataset.searchType;
-        const value = searchBar.value;
+const searchBar = document.getElementById("searchBar")
 
-        search(value, searchType, true);
-    }
-});
+if(searchBar)
+    searchBar.addEventListener("keydown", event => {
+        if (event.key === 'Enter') {
+            const searchBar = document.getElementById("searchBar");
+            const searchType = searchBar.dataset.searchType;
+            const value = searchBar.value;
+
+            search(value, searchType, true);
+        }
+    });

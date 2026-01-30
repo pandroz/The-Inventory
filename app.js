@@ -15,6 +15,7 @@ app.set('views', 'views');
 
 const inventoryRoutes = require('./routes/inventory');
 const todoRoutes = require('./routes/todo');
+const shoppingManagerRoutes = require('./routes/shoppingManager');
 const apiRoutes = require('./routes/api');
 
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -23,6 +24,7 @@ app.use(express.json());
 
 app.use('/inventory', inventoryRoutes);
 app.use('/todo', todoRoutes);
+app.use('/shopping-manager', shoppingManagerRoutes);
 app.use('/api', apiRoutes);
 
 

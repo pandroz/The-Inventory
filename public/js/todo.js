@@ -33,14 +33,21 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('(Inventory) DOM fully loaded and parsed');
 });
 
+const IGNORED_FILTERS = ['completed', 'uncompleted', 'unset'];
+
+var filters = {
+    categories: [],
+    status: 'unset'
+}
+
 // FILTER CHECKED TODOs
 document.getElementById('badge_checked').addEventListener('click', (e) => {
     const todoCategory = e.target.dataset.todoCategory;
     let toggle = e.target.dataset.stateSearch;
     let icon = document.getElementById('badge_checked_icon');
-    switch(toggle) {
-        case 'unset':
-            e.target.dataset.stateSearch = 'true';
+    switch (toggle) {
+        case 'unset': // STEP TO TRUE
+            e.target.dataset.stateSearch = 'completed';
             e.target.classList.remove('text-dark');
             e.target.classList.remove('text-danger');
             e.target.classList.add('text-success');
@@ -48,10 +55,11 @@ document.getElementById('badge_checked').addEventListener('click', (e) => {
             icon.classList.remove('fa-circle');
             icon.classList.add('fa-circle-check');
             document.getElementById('badge_checked_text').innerHTML = 'Completed';
-            filterTodos('completed');
+            filters.status = 'completed';
+            filterTodos();
             break;
-        case 'true':
-            e.target.dataset.stateSearch = 'false';
+        case 'completed': // STEP TO FALSE
+            e.target.dataset.stateSearch = 'uncompleted';
             e.target.classList.remove('text-dark');
             e.target.classList.remove('text-success');
             e.target.classList.add('text-danger');
@@ -59,9 +67,10 @@ document.getElementById('badge_checked').addEventListener('click', (e) => {
             icon.classList.remove('fa-circle-check');
             icon.classList.add('fa-circle-xmark');
             document.getElementById('badge_checked_text').innerHTML = 'Uncompleted';
-            filterTodos('uncompleted');
+            filters.status = 'uncompleted';
+            filterTodos();
             break;
-        case 'false':
+        case 'uncompleted': // STEP TO UNSET
             e.target.dataset.stateSearch = 'unset';
             e.target.classList.remove('text-success');
             e.target.classList.remove('text-danger');
@@ -70,7 +79,8 @@ document.getElementById('badge_checked').addEventListener('click', (e) => {
             icon.classList.remove('fa-circle-check');
             icon.classList.add('fa-circle');
             document.getElementById('badge_checked_text').innerHTML = 'Any';
-            filterTodos('CLEARFILTER');
+            filters.status = 'unset';
+            filterTodos();
             break;
     }
     return;
@@ -137,81 +147,108 @@ const updateStatus = (todoId, done) => {
 }
 
 
-/**
- * Filters the list of ToDo items based on the given category
- * @param {string} category - The category to filter the ToDo items by
- * @example
- * filterTodos('WORK') // Will show only the ToDo items with the category 'WORK'
- * @example
- * filterTodos('CLEARFILTER') // Will show all the ToDo items
- */
 const filterTodos = (category) => {
-    const todoList = document.getElementById('todoList');
-    const todoItems = todoList.querySelectorAll('article');
+    console.log('filtering per category ', category);
+    const todoItems = document.getElementById('todoList').querySelectorAll('article');
+
+    if (category) {
+        let badgeList = document.getElementById('badgeList').children
+        badgeList = Array.from(badgeList).filter(item => item.classList.contains('FILTER_BADGE'));
+        console.log('badgeList', badgeList);
+
+        if (_.size(badgeList) == 0) {
+            filters.categories.push({
+                category: category,
+                hasBadge: false
+            });
+        } else {
+            badgeList.forEach(item => {
+                let badgeCategory = _.get(item, 'dataset.todoCategory');
+                if (category && !filters.categories.includes(badgeCategory)) {
+                    filters.categories.push({
+                        category: category,
+                        hasBadge: false
+                    });
+                } else if (category) {
+                    filters.categories.splice(_.findIndex(filters.categories, {
+                        "category": category
+                    }), 1);
+                }
+            });
+        }
+    }
+
+    console.log('filters', filters);
 
 
     let badgeToAdd = false;
+    if (_.size(filters.categories) > 0) {
+        _.each(filters.categories, (cat, i) => {
+            _.each(todoItems, todo => {
+                let thisTodo = {
+                    checked: _.head(todo.getElementsByClassName('todoDone')).checked,
+                    category: _.head(todo.getElementsByClassName('LIST_ITEM_CATEGORY')).dataset.todoCategory
+                }
 
-    todoItems.forEach(todo => {
-        const todoCategory = _.head(todo.getElementsByClassName('LIST_ITEM_CATEGORY')).dataset.todoCategory;
+                if (checkForStatus(thisTodo, filters.status) && checkForCategory(thisTodo, cat, category))
+                    todo.style.display = 'block';
+                else
+                    todo.style.display = 'none';
 
-        if (category === 'CLEARFILTER') {
-            todo.style.display = 'block';
-            return;
-        }
-
-        if (category === 'completed') {
-            let isChecked = _.head(todo.getElementsByClassName('todoDone')).checked
-            todo.style.display = isChecked ? 'block' : 'none';
-            return;
-        }
-
-        if (category === 'uncompleted') {
-            let isChecked = _.head(todo.getElementsByClassName('todoDone')).checked
-            todo.style.display = !isChecked ? 'block' : 'none';
-            return;
-        }
-
-        if (category === todoCategory) {
-            todo.style.display = 'block';
-            badgeToAdd = true;
-        } else {
-            todo.style.display = 'none';
-        }
-
-    });
-
-    if (badgeToAdd) {
-        addBadge(category);
+                manageBadge(cat, i);
+            });
+        });
+    } else {
+        _.each(todoItems, todo => {
+            let thisTodo = {
+                checked: _.head(todo.getElementsByClassName('todoDone')).checked
+            }
+            if (checkForStatus(thisTodo, filters.status))
+                todo.style.display = 'block';
+            else
+                todo.style.display = 'none';
+        });
     }
+
+
 }
 
 
-/**
- * Adds a badge to the filter list
- * @param {string} category - The category of the badge to add
- * If a badge with the same category already exists, it will be removed and the filter will be cleared
- */
-const addBadge = (category) => {
-    badgeList = document.getElementById('badgeList');
+const checkForCategory = (todo, cat, category) => {
+    return category === cat.category && todo.category === category;
+}
 
-    let badge = document.querySelector(`div[data-filter-value="${category}"]`);
-    if (badge) {
-        removeBadge(category);
-        filterTodos('CLEARFILTER');
-        return;
+const checkForStatus = (todo, statusCheck) => {
+    if (statusCheck === 'unset')
+        return true;
+    else if (statusCheck === 'completed')
+        return todo.checked;
+    else if (statusCheck === 'uncompleted')
+        return !todo.checked;
+}
+
+
+
+const manageBadge = (cat, ix) => {
+    let category = cat.category;
+    const badgeList = document.getElementById('badgeList');
+    // let badge = badgeList.querySelector(`div[data-filter-value="${category}"]`);
+
+    if (!cat.hasBadge) {
+        _.set(filters.categories[ix], 'hasBadge', true);
+        let newBadge = document.createElement('div');
+        newBadge.className = 'badge bg-light text-dark border px-2 py-2 fs-normal cursor-pointer mx-2-2 FILTER_BADGE';
+        newBadge.dataset.type = 'filter';
+        newBadge.dataset.filterValue = category;
+        newBadge.dataset.todoCategory = category;
+        newBadge.id = `badge_${category}`;
+        newBadge.innerHTML = category;
+        newBadge.onclick = () => removeBadge(category);
+        newBadge.style.marginLeft = '5px';
+        badgeList.appendChild(newBadge);
+    } else {
+        _.set(filters.categories[ix], 'hasBadge', false);
     }
-
-    badge = document.createElement('div');
-    badge.className = 'badge bg-light text-dark border px-2 py-2 fs-normal cursor-pointer mx-2-2';
-    badge.dataset.type = 'filter';
-    badge.dataset.filterValue = category;
-    badge.dataset.todoCategory = category;
-    badge.id = `badge_${category}`;
-    badge.innerHTML = category;
-    badge.onclick = () => removeBadge(category);
-    badge.style.marginLeft = '5px';
-    badgeList.appendChild(badge);
 }
 
 
@@ -223,5 +260,5 @@ const addBadge = (category) => {
 const removeBadge = (category) => {
     badge = document.getElementById(`badge_${category}`);
     badge.remove();
-    filterTodos('CLEARFILTER');
+    filterTodos();
 }
