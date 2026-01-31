@@ -42,3 +42,25 @@ exports.deleteItem = (req, res, next) => {
         console.log('Error deleting item', err);
     });
 }
+
+exports.editItemQty = (req, res, next) => {
+    const itemId = req.body.itemId;
+    const quantity = req.body.quantity;
+
+    ShoppingManager.findOne({
+        _id: itemId
+    })
+    .then(item => {
+        item.itemQty = quantity;
+        return item.save()
+    })
+    .then(result => {
+        console.log('Updated item', result);
+        res.status(200).json({ message: 'Item updated successfully', qty: result.qty });
+    })
+    .catch(err => {
+        res.status(500).json({ message: 'Error updating item: ' + err });
+        console.log('Error updating item', err);
+    });
+    
+}

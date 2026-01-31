@@ -10,5 +10,7 @@ router.post('/add-item', shoppingManagerController.addItem);
 
 router.post('/delete-item', shoppingManagerController.deleteItem);
 
+router.post('/edit-qty', shoppingManagerController.editItemQty);
+
 
 module.exports = router;
