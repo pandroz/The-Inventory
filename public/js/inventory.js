@@ -77,41 +77,71 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 document.getElementById('imageSearchIcon').addEventListener('click', () => {
-    
-    let imageUrl = document.getElementById('imageUrl').value;
-    console.log('imageUrl', imageUrl);  
 
-    if(_.size(imageUrl) > 3) {
-        
+    let imageUrl = document.getElementById('imageUrl').value;
+    console.log('imageUrl', imageUrl);
+
+    if (_.size(imageUrl) > 3) {
+
         axios.get('/api/search-images', {
             params: {
                 q: imageUrl
             }
         })
-        .then(res => {
-            if (res.status == 200) {
-                if(_.size(res.data.images) > 0) {
-                    images = res.data.images;
-                    _.each(images, (imageUrl, i) => {
-                        console.log('imageUrl', imageUrl, 'i = ', i);
-                        let img = document.getElementById(`img.preview-${i}`);
-                        console.log('image', img);
-                        img.src = imageUrl;
-                    });
+            .then(res => {
+                if (res.status == 200) {
+                    if (_.size(res.data.images) > 0) {
+                        images = res.data.images;
+                        _.each(images, (imageUrl, i) => {
+                            console.log('imageUrl', imageUrl, 'i = ', i);
+                            let img = document.getElementById(`img.preview-${i}`);
+                            console.log('image', img);
+                            img.src = imageUrl;
+                        });
+                    }
                 }
-            }
-        }).catch(err => {
-            console.error('Failed to gather images', err);
-        })
+            }).catch(err => {
+                console.error('Failed to gather images', err);
+            })
     }
 });
 
 
-function selectThisImage(img) {
-    const selectedImageUrl = img.src;
 
-    if(!_.startsWith(selectedImageUrl, 'https://placehold')) {
-        document.getElementById('imageUrl').value = selectedImageUrl;
-        document.getElementById('previewImage').src = selectedImageUrl;
-    }
+function selectThisImage(imgElement) {
+    // Remove previous selection
+    document.querySelectorAll(".previewImage").forEach(img => {
+        img.classList.remove("selected");
+    });
+
+    // Add selection to clicked image
+    imgElement.classList.add("selected");
+
+    // Store selected image URL in hidden input
+    document.getElementById("selectedImage").value = imgElement.src;
+
+    // Optional: Visual feedback
+    imgElement.style.animation = "pulse 0.3s ease";
+    setTimeout(() => {
+        imgElement.style.animation = "";
+    }, 300);
 }
+
+// Pulse animation for selection feedback
+const style = document.createElement("style");
+style.textContent = `
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(0.95); }
+        }
+    `;
+document.head.appendChild(style);
+
+// Clear image selections on form reset
+document.getElementById("shoppingListForm")?.addEventListener("reset", function () {
+    document.querySelectorAll(".previewImage").forEach((img, index) => {
+        img.src = "https://placehold.co/150?text=No+Image";
+        img.classList.remove("selected");
+    });
+    document.getElementById("selectedImage").value = "";
+});

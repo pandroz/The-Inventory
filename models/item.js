@@ -7,15 +7,44 @@ const itemSchema = new Schema({
         type: String,
         required: true
     },
+    category: {
+        type: String,
+        required: false
+    },
     qty: {
         type: Number,
         required: true,
         default: 0
     },
+    unit: {
+        type: String,
+        required: false
+    },
+    lowStockAlert: {
+        type: Number,
+        required: false,
+        default: 0
+    },
+    storageLocation: {
+        type: String,
+        required: false
+    },
+    expirationDate: {
+        type: Date,
+        required: false
+    },
     price: {
         type: Number,
         required: false,
         default: 0
+    },
+    preferredSupplier: {
+        type: String,
+        required: false
+    },
+    notes: {
+        type: String,
+        required: false
     },
     imageUrl: {
         type: String,

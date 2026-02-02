@@ -54,22 +54,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     
     // Change item name
-    document.getElementById('shoppingManangerList').addEventListener('click', e => {
-        
-        // document.addEventListener('click', function (e) {
-        //     if (!e.target.classList.contains('itemNameForm')) {
-        //         console.log('Clicked anywhere else')
-        
-        //         document.querySelectorAll('.itemNameForm').forEach(form => {
-            //             form.classList.add('d-none');
-        //         });
-        
-        //         document.querySelectorAll('.item-name').forEach(h5 => {
-            //             h5.classList.remove('d-none');
-        //         });
-        //     }
-        // });
-        
+    document.getElementById('shoppingManangerList').addEventListener('click', e => {        
         if (e.target.classList.contains('item-name')) {
             const h5 = e.target;
             console.log('clicked h5')
