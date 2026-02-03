@@ -6,6 +6,9 @@
 
     <div class="container">
         
+        <div id="addItem">&nbsp;</div>
+        <%- include('../components/searchBar.ejs') %>
+        
         <!-- Add Item Button -->
         <div class="mb-4">
             <button
@@ -21,11 +24,10 @@
                 <i class="fa-solid fa-chevron-down ms-2 collapse-icon"></i>
             </button>
         </div>
-        <div id="addItem">&nbsp;</div>
+        
+        
         <%- include('./components/addItemsForm.ejs') %>
-            
-
-        <%- include('../components/searchBar.ejs') %>
+        
         
         <div class="row">
             <div class="col-md-11"><h1>Elenco prodotti</h1></div>

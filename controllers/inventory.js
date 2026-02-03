@@ -39,10 +39,19 @@ exports.getEditItemPage = (req, res, next) => {
 
 // POST
 exports.postAddItem = (req, res, next) => {
+    console.log('req.body', req.body);
+
     const item = new Item({
         name: req.body.name,
+        category: req.body.category,
         qty: req.body.qty,
+        unit: req.body.unit,
+        lowStockAlert: req.body.lowStockAlert,
+        storageLocation: req.body.storageLocation,
+        expirationDate: req.body.expirationDate,
         price: req.body.price,
+        preferredSupplier: req.body.preferredSupplier,
+        notes: req.body.notes,
         imageUrl: req.body.imageUrl,
         createdAt: new Date()
     });

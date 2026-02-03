@@ -3,13 +3,18 @@
 </head>
 <body>
     <div class="container">
-
+        <div id="addItem">&nbsp;</div>
+        <%- include('../components/searchBar.ejs') %>
+        
         <div class="row">
             <div class="col-md-12">
                 <h1>Lista della spesa</h1>
             </div>
         </div>
-        <div class="row">
+
+        <%- include('./components/shoppingManagerAddForm.ejs') %>
+
+        <!-- <div class="row">
             <div class="col-md-12">
                 <form action="/shopping-manager/add-item" method="post">
                     <div class="mb-3">
@@ -23,7 +28,7 @@
                     <button type="submit" class="btn btn-primary">Aggiungi</button>
                 </form>
             </div>
-        </div>
+        </div> -->
         <div id="shoppingManangerList" class="row">
             <%- include('./components/shoppingManagerList.ejs') %>
         </div>

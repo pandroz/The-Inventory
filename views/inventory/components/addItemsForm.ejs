@@ -1,50 +1,326 @@
-<form action="/inventory/add-item" method="post">
-    <div class="row">
-        <div class="col-md-6">
-
-            <div class="form-floating mb-3">
-                <input type="text" class="form-control" id="name" name="name" placeholder="Nome">
-                <label for="name" class="form-label">Nome</label>
-            </div>
-            <div class="form-floating mb-3">
-                <input type="number" class="form-control" id="qty" name="qty" placeholder="Quantità">
-                <label for="qty" class="form-label">Quantità</label>
-            </div>
-            <div class="form-floating mb-3">
-                <input type="number" step="0.01" class="form-control" id="price" name="price" placeholder="Prezzo">
-                <label for="price" class="form-label">Prezzo</label>
-            </div>
-            <div class="form-floating mb-3 image-search">
-                <input type="text" class="form-control"  oninput="changeImg(this)" name="imageUrl" id="imageUrl" placeholder="URL immagine o ricerca">
-                <label for="imageUrl" class="form-label">URL immagine o ricerca</label>
-                <i class="fa-solid fa-magnifying-glass icon-search" id="imageSearchIcon"></i>
-            </div>
-
-            <div class="form-floating mb-3 row">
-                <div class="col-md-3 align-self-center">
-                    <img alt="+" id="img.preview-0" onclick="selectThisImage(this)" class="previewImage selectImage rounded border border-secondary" src="https://placehold.co/150?text=No+Image">
-                </div>
-
-                <div class="col-md-3 align-self-center">
-                    <img alt="+" id="img.preview-1" onclick="selectThisImage(this)" class="previewImage selectImage rounded border border-secondary" src="https://placehold.co/150?text=No+Image">
-                </div>
-
-                <div class="col-md-3 align-self-center">
-                    <img alt="+" id="img.preview-2" onclick="selectThisImage(this)" class="previewImage selectImage rounded border border-secondary" src="https://placehold.co/150?text=No+Image">
-                </div>
-
-                <div class="col-md-3 align-self-center">
-                    <img alt="+" id="img.preview-3" onclick="selectThisImage(this)" class="previewImage selectImage rounded border border-secondary" src="https://placehold.co/150?text=No+Image">
-                </div>
-            </div>
-            
-            <button type="submit"   class="btn btn-primary">Aggiungi</button>
+<!-- Collapsible Form -->
+<div class="collapse mb-4" id="addItemForm">
+    <div class="card border-0 shadow-sm rounded-3">
+        <div class="card-header bg-white border-0 pt-4 px-3 px-md-4 pb-3">
+            <h5 class="mb-0 fw-semibold text-dark">
+                <i class="fa-solid fa-cart-plus text-primary me-2"></i>
+                Add Item to Inventory
+            </h5>
         </div>
 
-        <div class="col-md-6">
-            <div class="centeredImage">
-                <img id="previewImage" class="previewImageBig" src="" alt="Immagine prodotto">
-            </div>
+        <div class="card-body p-3 p-md-4">
+            <form id="shoppingListForm" method="POST" action="/inventory/add-item">
+                <div class="row g-3">
+                    <!-- Item Name -->
+                    <div class="col-12 col-md-6">
+                        <label for="name" class="form-label fw-semibold">
+                            <i class="fa-solid fa-tag text-primary me-1"></i>
+                            <span class="d-none d-md-inline">Nome </span>
+                            <span class="d-md-none">Nome </span>
+                            <span class="text-danger">*</span>
+                        </label>
+                        <input
+                            type="text"
+                            class="form-control form-control-lg"
+                            id="name"
+                            name="name"
+                            placeholder="es. Latte, Pane, Mele"
+                            required
+                        />
+                    </div>
+
+                    <!-- Category -->
+                    <div class="col-12 col-md-6">
+                        <label for="category" class="form-label fw-semibold">
+                            <i class="fa-solid fa-folder text-warning me-1"></i>
+                            Categoria
+                        </label>
+                        <select class="form-select form-select-lg" id="category" name="category" >
+                            <option value="">Selezione categoria</option>
+                            <option value="Frutta e Verdura">🥬 Frutta e Verdura</option>
+                            <option value="Latticini & Uova">🥛 Latticini & Uova</option>
+                            <option value="Carne & Pesce">🥩 Carne & Pesce</option>
+                            <option value="Panetteria">🍞 Panetteria</option>
+                            <option value="Must Have">🫙 Must Have</option>
+                            <option value="Surgelati">❄️ Surgelati</option>
+                            <option value="Bevande">🥤 Bevande</option>
+                            <option value="Snacks">🍿 Snacks</option>
+                            <option value="Pulizia Casa">🧹 Pulizia Casa</option>
+                            <option value="Personal Care">🧴 Personal Care</option>
+                            <option value="Altro">📦 Altro</option>
+                        </select>
+                    </div>
+
+                    <!-- Image Search Section -->
+                    <div class="col-12">
+                        <label for="imageUrl" class="form-label fw-semibold">
+                            <i class="fa-solid fa-image text-danger me-1"></i>
+                            Immagine
+                        </label>
+                        <div class="image-search-wrapper position-relative">
+                            <input
+                                type="text"
+                                class="form-control form-control-lg pe-5"
+                                name="imageUrl"
+                                id="imageUrl"
+                                placeholder="Inserire url dell'immagine o il termine di ricerca"
+                            />
+                            <i class="fa-solid fa-magnifying-glass icon-search position-absolute"
+                                id="imageSearchIcon"
+                            ></i>
+                        </div>
+                        <small class="form-text text-muted d-block mt-1">
+                            Search for product images or paste a direct URL
+                        </small>
+                    </div>
+
+                    <!-- Image Preview Grid -->
+                    <div class="col-12">
+                        <div class="image-preview-grid">
+                            <div class="row g-2 g-md-3">
+                                <div class="col-6 col-sm-3">
+                                    <div class="image-preview-container">
+                                        <img
+                                            alt="Preview 1"
+                                            id="img.preview-0"
+                                            onclick="selectThisImage(this)"
+                                            class="previewImage img-fluid rounded border border-2 border-secondary"
+                                            src="https://placehold.co/150?text=No+Image"
+                                        />
+                                        <div class="image-overlay">
+                                            <i class="fa-solid fa-check"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-sm-3">
+                                    <div class="image-preview-container">
+                                        <img
+                                            alt="Preview 2"
+                                            id="img.preview-1"
+                                            onclick="selectThisImage(this)"
+                                            class="previewImage img-fluid rounded border border-2 border-secondary"
+                                            src="https://placehold.co/150?text=No+Image"
+                                        />
+                                        <div class="image-overlay">
+                                            <i class="fa-solid fa-check"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-sm-3">
+                                    <div class="image-preview-container">
+                                        <img
+                                            alt="Preview 3"
+                                            id="img.preview-2"
+                                            onclick="selectThisImage(this)"
+                                            class="previewImage img-fluid rounded border border-2 border-secondary"
+                                            src="https://placehold.co/150?text=No+Image"
+                                        />
+                                        <div class="image-overlay">
+                                            <i class="fa-solid fa-check"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-sm-3">
+                                    <div class="image-preview-container">
+                                        <img
+                                            alt="Preview 4"
+                                            id="img.preview-3"
+                                            onclick="selectThisImage(this)"
+                                            class="previewImage img-fluid rounded border border-2 border-secondary"
+                                            src="https://placehold.co/150?text=No+Image"
+                                        />
+                                        <div class="image-overlay">
+                                            <i class="fa-solid fa-check"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" name="selectedImage" id="selectedImage" />
+                    </div>
+
+                    <!-- Current Quantity -->
+                    <div class="col-6 col-sm-4">
+                        <label for="qty" class="form-label fw-semibold">
+                            <i class="fa-solid fa-boxes-stacked text-success me-1 d-none d-md-inline"></i>
+                            <span class="d-none d-md-inline">Quantità Presente </span><span class="text-danger">*</span>
+                        </label>
+                        <input
+                            type="number"
+                            class="form-control form-control-lg"
+                            id="qty"
+                            name="qty"
+                            min="0"
+                            value="1"
+                            required
+                        />
+                    </div>
+
+                    <!-- Unit of Measurement -->
+                    <div class="col-6 col-sm-4">
+                        <label for="unit" class="form-label fw-semibold">
+                            <i class="fa-solid fa-ruler text-info me-1 d-none d-md-inline"></i>
+                            Unità
+                        </label>
+                        <select class="form-select form-select-lg" id="unit" name="unit">
+                            <option value="">Selezione unità</option>
+                            <option value="pezzi">Pezzi</option>
+                            <option value="kg">KG</option>
+                            <option value="g">g</option>
+                            <option value="L">L</option>
+                            <option value="mL">mL</option>
+                            <option value="bottiglie">Bottiglie</option>
+                            <option value="barattoli">Barattoli</option>
+                            <option value="scatole">Scatole</option>
+                            <option value="buste">Buste</option>
+                            <option value="pacchi">Pacchi</option>
+                        </select>
+                    </div>
+
+                    <!-- Minimum Stock Alert -->
+                    <div class="col-12 col-sm-4">
+                        <label for="lowStockAlert" class="form-label fw-semibold">
+                            <i class="fa-solid fa-bell text-danger me-1 d-none d-md-inline"></i>
+                            <span class="d-none d-lg-inline">Avviso di bassa qtà </span>
+                        </label>
+                        <input
+                            type="number"
+                            class="form-control form-control-lg"
+                            id="lowStockAlert"
+                            name="lowStockAlert"
+                            min="0"
+                            placeholder="Qtà minima"
+                        />
+                        <small class="form-text text-muted d-none d-md-block">
+                            Verrai notificato quando la quantità minima verra raggiunta
+                        </small>
+                    </div>
+
+                    <!-- Location/Storage -->
+                    <div class="col-12 col-md-6">
+                        <label for="storageLocation" class="form-label fw-semibold">
+                            <i class="fa-solid fa-location-dot text-secondary me-1 d-none d-md-inline"></i>
+                            Dove mantenere
+                        </label>
+                        <select
+                            class="form-select form-select-lg"
+                            id="storageLocation"
+                            name="storageLocation"
+                        >
+                            <option value="">Selezionare luogo</option>
+                            <option value="frigorifero">🧊 Frigorifero</option>
+                            <option value="freezer">❄️ Freezer</option>
+                            <option value="dispensa">🚪 Dispensa</option>
+                            <option value="armadietto">🗄️ Armadietto</option>
+                            <option value="piano">🪑 Piano</option>
+                            <option value="altro">📍 Altro</option>
+                        </select>
+                    </div>
+
+                    <!-- Expiration Date -->
+                    <div class="col-12 col-md-6">
+                        <label for="expirationDate" class="form-label fw-semibold">
+                            <i
+                                class="fa-solid fa-calendar-xmark text-warning me-1 d-none d-md-inline"
+                            ></i>
+                            Data di Scadenza
+                        </label>
+                        <input
+                            type="date"
+                            class="form-control form-control-lg"
+                            id="expirationDate"
+                            name="expirationDate"
+                        />
+                        <small class="form-text text-muted d-none d-md-block">
+                            Per tracciare ciò che può scadere
+                        </small>
+                    </div>
+
+                    <!-- Price per Unit (Optional) -->
+                    <div class="col-12 col-sm-6">
+                        <label for="price" class="form-label fw-semibold">
+                            <i
+                                class="fa-solid fa-euro-sign text-success me-1 d-none d-md-inline"
+                            ></i>
+                            Prezzo per Unità
+                        </label>
+                        <div class="input-group input-group-lg">
+                            <span class="input-group-text">€</span>
+                            <input
+                                type="number"
+                                class="form-control"
+                                id="price"
+                                name="price"
+                                step="0.01"
+                                min="0"
+                                placeholder="0.00"
+                            />
+                        </div>
+                        <small class="form-text text-muted d-none d-md-block">
+                            Per tenere traccia dei prezzi
+                        </small>
+                    </div>
+
+                    <!-- Store/Supplier -->
+                    <div class="col-12 col-sm-6">
+                        <label for="preferredSupplier" class="form-label fw-semibold">
+                            <i class="fa-solid fa-store text-primary me-1 d-none d-md-inline"></i>
+                            <span class="d-none d-lg-inline">Dove acquistare </span>
+                        </label>
+                        <input
+                            type="text"
+                            class="form-control form-control-lg"
+                            id="preferredSupplier"
+                            name="preferredSupplier"
+                            placeholder="es. Esselunga, Aldi, Leroy Merlin"
+                        />
+                        <small class="form-text text-muted d-none d-md-block">
+                            Luogo preferito per acquistare
+                        </small>
+                    </div>
+
+                    <!-- Notes -->
+                    <div class="col-12">
+                        <label for="notes" class="form-label fw-semibold">
+                            <i
+                                class="fa-solid fa-note-sticky text-info me-1 d-none d-md-inline"
+                            ></i>
+                            Note
+                        </label>
+                        <textarea
+                            class="form-control"
+                            id="notes"
+                            name="notes"
+                            rows="3"
+                            placeholder="Informazioni aggiuntive..."
+                        ></textarea>
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="d-flex flex-column flex-sm-row gap-2 mt-4 pt-3 border-top">
+                    <button
+                        type="submit"
+                        class="btn btn-primary btn-lg flex-grow-1 flex-sm-grow-0 px-4 px-md-5"
+                    >
+                        <i class="fa-solid fa-check me-2"></i>
+                        Add Item
+                    </button>
+                    <button type="reset" class="btn btn-outline-secondary btn-lg px-3 px-md-4">
+                        <i class="fa-solid fa-rotate-left me-2"></i>
+                        Clear
+                    </button>
+                    <button
+                        type="button"
+                        class="btn btn-outline-secondary btn-lg px-3 px-md-4"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#addItemForm"
+                    >
+                        <i class="fa-solid fa-xmark me-2"></i>
+                        Cancel
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
-</form>
+</div>
