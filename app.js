@@ -31,13 +31,19 @@ app.use('/api', apiRoutes);
 app.use(inventoryRoutes);
 app.use(todoRoutes);
 
+app.use((req, res, next) => {
+    res.status(404).render('error/error', {
+        pageTitle: 'Page Not Found', path: 'error'
+    });
+})
+
 
 console.log('Connecting to DB...')
 mongoose.connect(`mongodb+srv://${process.env.APPUSERNAME}:${process.env.APPPWD}@inventario-spesa.ru11fas.mongodb.net/${process.env.DBNAME}?appName=inventario-spesa`)
-.then(client => {
-    console.log('Connected to DB');
-    app.listen(3000);
-})
-.catch(err => {
-    console.log('Error connecting to DB', err);
-})
+    .then(client => {
+        console.log('Connected to DB');
+        app.listen(3000);
+    })
+    .catch(err => {
+        console.log('Error connecting to DB', err);
+    })
