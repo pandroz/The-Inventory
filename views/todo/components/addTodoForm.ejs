@@ -1,26 +1,75 @@
 <form action="/todo/add-todo" id="addTodoForm" method="post">
-    <div class="row">
-        <div class="col-md-6">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card border-0">
+                <div class="card-body p-4">
+                    <h4 class="card-title mb-4 text-center">
+                        <i class="bi bi-plus-circle me-2"></i>Nuova Attività
+                    </h4>
 
-            <div class="form-floating mb-3">
-                <input type="text" class="form-control" id="description" name="description" placeholder="Attività" required>
-                <label for="description" class="form-label">Attività</label>
+                    <div class="form-floating mb-3">
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="description"
+                            name="description"
+                            placeholder="Attività"
+                            required
+                        />
+                        <label for="description"> <i class="bi bi-pencil me-2"></i>Attività </label>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <textarea
+                            class="form-control"
+                            id="addDescr"
+                            name="addDescr"
+                            placeholder="Descrizione aggiuntiva"
+                            style="height: 100px"
+                        ></textarea>
+                        <label for="addDescr">
+                            <i class="bi bi-text-paragraph me-2"></i>Descrizione aggiuntiva
+                        </label>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input
+                                    type="date"
+                                    class="form-control"
+                                    id="completeBy"
+                                    name="completeBy"
+                                    placeholder="Da completare entro il"
+                                />
+                                <label for="completeBy">
+                                    <i class="bi bi-calendar-event me-2"></i>Scadenza
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    name="category"
+                                    id="category"
+                                    placeholder="Categoria"
+                                />
+                                <label for="category">
+                                    <i class="bi bi-tag me-2"></i>Categoria
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" id="addTodo" class="btn btn-primary btn-lg">
+                            <i class="bi bi-check-circle me-2"></i>Aggiungi Attività
+                        </button>
+                    </div>
+                </div>
             </div>
-            <div class="form-floating mb-3">
-                <input type="text" class="form-control" id="addDescr" name="addDescr" placeholder="Descrizione aggiuntiva">
-                <label for="addDescr" class="form-label">Descrizione aggiuntiva</label>
-            </div>
-            <div class="form-floating mb-3">
-                <input type="date" class="form-control" id="completeBy" name="completeBy" placeholder="Da completare entro il">
-                <label for="completeBy" class="form-label">Da completare entro il</label>
-            </div>
-            <div class="form-floating mb-3">
-                <input type="text" class="form-control datepicker" name="category" id="category" placeholder="Categoria">
-                <label for="category" class="form-label">Categoria</label>
-            </div>
-            
-            <button type="submit" id="addTodo" class="btn btn-primary">Aggiungi</button>
         </div>
-
     </div>
 </form>

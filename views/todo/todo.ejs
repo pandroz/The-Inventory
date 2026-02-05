@@ -5,8 +5,26 @@
 
 
     <div class="container">
-        
         <div id="addItem">&nbsp;</div>
+        <%- include('../components/searchBar.ejs') %>
+        
+        <!-- Add Item Button -->
+        <div class="mb-4">
+            <button
+                class="btn btn-primary btn-lg w-100 w-md-auto px-4 py-3 d-flex align-items-center justify-content-center collapsed"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#addItemCollapse"
+                aria-expanded="false"
+                aria-controls="addItemCollapse"
+            >
+                <i class="fa-solid fa-plus me-2"></i>
+                <span class="add-item-text">Add New Item</span>
+                <i class="fa-solid fa-chevron-down ms-2 collapse-icon"></i>
+            </button>
+        </div>
+
+        
         <div class="collapse addProductsCollapse" id="addItemCollapse">
             <div class="card card-body">
                 <div>
@@ -15,7 +33,6 @@
             </div>
         </div>
         
-        <%- include('../components/searchBar.ejs') %>
 
         <div class="row">
             <div class="col-md-11"><h1>Elenco To-Do</h1></div>

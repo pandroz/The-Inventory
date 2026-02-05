@@ -3,7 +3,8 @@ button > svg {
     pointer-events: none;
 }
 
-#badge_checked > span, #badge_checked > i {
+#badge_checked > span,
+#badge_checked > i {
     pointer-events: none;
 }
 
@@ -78,4 +79,31 @@ button > svg {
         width: 2.5rem !important;
         height: 1.25rem !important;
     }
+}
+
+#addTodoForm .card {
+    border-radius: 12px;
+    transition: transform 0.2s ease;
+}
+
+#addTodoForm .form-control:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+}
+
+#addTodoForm .btn-primary {
+    border-radius: 8px;
+    padding: 12px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+#addTodoForm .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
+}
+
+#addTodoForm .card-title {
+    color: #495057;
+    font-weight: 600;
 }
