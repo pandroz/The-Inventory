@@ -19,14 +19,7 @@
                             <span class="d-md-none">Nome </span>
                             <span class="text-danger">*</span>
                         </label>
-                        <input
-                            type="text"
-                            class="form-control form-control-lg"
-                            id="name"
-                            name="name"
-                            placeholder="es. Latte, Pane, Mele"
-                            required
-                        />
+                        <input type="text" class="form-control form-control-lg" id="name" name="name" placeholder="es. Latte, Pane, Mele" required />
                     </div>
 
                     <!-- Category -->
@@ -58,16 +51,8 @@
                             Immagine
                         </label>
                         <div class="image-search-wrapper position-relative">
-                            <input
-                                type="text"
-                                class="form-control form-control-lg pe-5"
-                                name="imageUrl"
-                                id="imageUrl"
-                                placeholder="Inserire url dell'immagine o il termine di ricerca"
-                            />
-                            <i class="fa-solid fa-magnifying-glass icon-search position-absolute"
-                                id="imageSearchIcon"
-                            ></i>
+                            <input type="text" class="form-control form-control-lg pe-5" name="imageUrl" id="imageUrl" placeholder="Inserire url dell'immagine o il termine di ricerca" />
+                            <i class="fa-solid fa-magnifying-glass icon-search position-absolute cursor-pointer" id="imageSearchIcon"></i>
                         </div>
                         <small class="form-text text-muted d-block mt-1">
                             Search for product images or paste a direct URL
@@ -80,13 +65,7 @@
                             <div class="row g-2 g-md-3">
                                 <div class="col-6 col-sm-3">
                                     <div class="image-preview-container">
-                                        <img
-                                            alt="Preview 1"
-                                            id="img.preview-0"
-                                            onclick="selectThisImage(this)"
-                                            class="previewImage img-fluid rounded border border-2 border-secondary"
-                                            src="https://placehold.co/150?text=No+Image"
-                                        />
+                                        <img alt="Preview 1" id="img.preview-0" onclick="selectThisImage(this)" class="previewImage img-fluid rounded border border-2 border-secondary" src="https://placehold.co/150?text=No+Image" />
                                         <div class="image-overlay">
                                             <i class="fa-solid fa-check"></i>
                                         </div>
@@ -208,12 +187,13 @@
                             name="storageLocation"
                         >
                             <option value="">Selezionare luogo</option>
-                            <option value="frigorifero">🧊 Frigorifero</option>
-                            <option value="freezer">❄️ Freezer</option>
-                            <option value="dispensa">🚪 Dispensa</option>
-                            <option value="armadietto">🗄️ Armadietto</option>
-                            <option value="piano">🪑 Piano</option>
-                            <option value="altro">📍 Altro</option>
+                            <option value="Frigorifero">🧊 Frigorifero</option>
+                            <option value="Freezer">❄️ Freezer</option>
+                            <option value="Dispensa">🚪 Dispensa</option>
+                            <option value="Armadietto">🗄️ Armadietto</option>
+                            <option value="Piano">🪑 Piano</option>
+                            <option value="Ripostiglio">📦 Ripostiglio</option>
+                            <option value="Altro">📍 Altro</option>
                         </select>
                     </div>
 

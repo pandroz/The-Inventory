@@ -52,7 +52,7 @@ exports.postAddItem = (req, res, next) => {
         price: req.body.price,
         preferredSupplier: req.body.preferredSupplier,
         notes: req.body.notes,
-        imageUrl: req.body.imageUrl,
+        imageUrl: req.body.selectedImage,
         createdAt: new Date()
     });
 
@@ -82,18 +82,22 @@ exports.postDeleteItem = (req, res, next) => {
 
 exports.postEditItem = (req, res, next) => {
     const id = req.body.itemId;
-    const name = req.body.name;
-    const qty = req.body.qty;
-    const price = req.body.price;
-    const imageUrl = req.body.imageUrl;
 
     Item.findById({
         _id: id
     }).then(item => {
-        item.name = name;
-        item.qty = qty;
-        item.price = price;
-        item.imageUrl = imageUrl;
+        item.name = req.body.name;
+        item.category = req.body.category;
+        item.qty = req.body.qty;
+        item.unit = req.body.unit;
+        item.lowStockAlert = req.body.lowStockAlert;
+        item.storageLocation = req.body.storageLocation;
+        item.expirationDate = req.body.expirationDate;
+        item.price = req.body.price;
+        item.preferredSupplier = req.body.preferredSupplier;
+        item.notes = req.body.notes;
+        item.imageUrl = req.body.imageUrl;
+        item.updated = new Date();
         return item.save();
     }).then(result => {
         console.log('Updated item', result);
@@ -106,16 +110,16 @@ exports.postEditItem = (req, res, next) => {
 
 exports.postEditQuantity = (req, res, next) => {
     const id = req.body.itemId;
-    const diff = req.body.diff;
-
+    const newQty = req.body.newQty;
+    
     Item.findById({
         _id: id
     }).then(item => {
-        item.qty += diff;
+        item.qty = newQty;
         return item.save();
     }).then(result => {
         console.log('Updated item', result);
-        res.status(200).json({ message: 'Item updated successfully', qty: result.qty });
+        res.status(200).json({ message: 'Item updated successfully'});
     }).catch(err => {
         res.status(500).json({ message: 'Error updating item: ' + err, itemName: result.name });
         console.log('Error updating item', err);

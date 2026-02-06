@@ -1,39 +1,294 @@
 <%- include('../includes/header.ejs') %>
+<link rel="stylesheet" href="/css/editItem.css">
+<script src="/js/editItem.js"></script>
+
 </head>
 <body>
-    <div class="container">
-        <h1>Edit Item <%= item.name %></h1>
-        <div class="row">
-            <div class="col-md-6">
-                <form action="/inventory/edit-item" method="post">
+    <div class="edit-item-container">
+        <div class="container py-4">
+            
+            <!-- Page Header -->
+            <div class="page-header mb-4">
+                <div class="d-flex align-items-center gap-3">
+                    <a href="/inventory" class="btn btn-back" aria-label="Back to inventory">
+                        <i class="fa-solid fa-arrow-left"></i>
+                    </a>
+                    <div>
+                        <h1 class="page-title mb-1">Modifica Articolo</h1>
+                        <p class="page-subtitle mb-0">
+                            <i class="fa-solid fa-box me-2"></i>
+                            <%= item.name %>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Main Edit Form -->
+            <div class="row g-4">
+                
+                <!-- Left Column - Form Fields -->
+                <div class="col-lg-8">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-white border-0 pt-4 px-4">
+                            <h5 class="mb-0 fw-semibold">
+                                <i class="fa-solid fa-circle-info text-primary me-2"></i>
+                                Informazioni Prodotto
+                            </h5>
+                        </div>
+                        
+                        <div class="card-body p-4">
+                            <form action="/inventory/edit-item" method="post" id="editItemForm">
+                                
+                                <div class="row g-3">
+                                    
+                                    <!-- Item Name -->
+                                    <div class="col-12">
+                                        <label for="name" class="form-label fw-semibold">
+                                            <i class="fa-solid fa-tag text-primary me-1"></i>
+                                            Nome Articolo <span class="text-danger">*</span>
+                                        </label>
+                                        <input type="text" class="form-control form-control-lg" name="name" id="name" placeholder="e.g., Pasta, Latte, Detersivo" value="<%= item.name %>" required>
+                                    </div>
+                                    
+                                    <!-- Category -->
+                                    <div class="col-md-6">
+                                        <label for="category" class="form-label fw-semibold">
+                                            <i class="fa-solid fa-folder text-warning me-1"></i>
+                                            Categoria
+                                        </label>
+                                        <select class="form-select form-select-lg" name="category" id="category">
+                                            <option value="">Seleziona categoria</option>
+                                            <option value="Frutta e Verdura" <%= item.category === 'Frutta e Verdura' ? 'selected' : '' %>>🥬 Frutta e Verdura</option>
+                                            <option value="Latticini & Uova" <%= item.category === 'Latticini & Uova' ? 'selected' : '' %>>🥛 Latticini e Uova</option>
+                                            <option value="Carne & Pesce" <%= item.category === 'Carne & Pesce' ? 'selected' : '' %>>🥩 Carne e Pesce</option>
+                                            <option value="Panetteria" <%= item.category === 'Panetteria' ? 'selected' : '' %>>🍞 Panetteria</option>
+                                            <option value="Must Have" <%= item.category === 'Must Have' ? 'selected' : '' %>>🫙 Dispensa</option>
+                                            <option value="Surgelati" <%= item.category === 'Surgelati' ? 'selected' : '' %>>❄️ Surgelati</option>
+                                            <option value="Bevande" <%= item.category === 'Bevande' ? 'selected' : '' %>>🥤 Bevande</option>
+                                            <option value="Snacks" <%= item.category === 'Snacks' ? 'selected' : '' %>>🍿 Snack</option>
+                                            <option value="Pulizia Casa" <%= item.category === 'Pulizia Casa' ? 'selected' : '' %>>🧹 Casa</option>
+                                            <option value="Personal Care" <%= item.category === 'Personal Care' ? 'selected' : '' %>>🧴 Cura Personale</option>
+                                            <option value="Altro" <%= item.category === 'Altro' ? 'selected' : '' %>>📦 Altro</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <!-- Storage Location -->
+                                    <div class="col-md-6">
+                                        <label for="storageLocation" class="form-label fw-semibold">
+                                            <i class="fa-solid fa-location-dot text-secondary me-1"></i>
+                                            Posizione <%= item.storageLocation %>
+                                        </label>
+                                        <select class="form-select form-select-lg" name="storageLocation" id="storageLocation"> 
+                                            <option value="">Seleziona posizione</option>
+                                            <option value="Frigorifero" <%= item.storageLocation === 'Frigorifero' ? 'selected' : '' %>>🧊 Frigorifero</option>
+                                            <option value="Freezer" <%= item.storageLocation === 'Freezer' ? 'selected' : '' %>>❄️ Congelatore</option>
+                                            <option value="Dispensa" <%= item.storageLocation === 'Dispensa' ? 'selected' : '' %>>🚪 Dispensa</option>
+                                            <option value="Armadietto" <%= item.storageLocation === 'Armadietto' ? 'selected' : '' %>>🗄️ Armadietto</option>
+                                            <option value="Piano" <%= item.storageLocation === 'Piano' ? 'selected' : '' %>>🪑 Piano Cucina</option>
+                                            <option value="Ripostiglio" <%= item.storageLocation === 'Storage Room' ? 'selected' : '' %>>📦 Ripostiglio</option>
+                                            <option value="Altro" <%= item.storageLocation === 'Altro' ? 'selected' : '' %>>📍 Altro</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <!-- Quantity and Unit -->
+                                    <div class="col-md-6">
+                                        <label for="qty" class="form-label fw-semibold">
+                                            <i class="fa-solid fa-boxes-stacked text-success me-1"></i>
+                                            Quantità <span class="text-danger">*</span>
+                                        </label>
+                                        <input type="number" class="form-control form-control-lg" name="qty" id="qty" min="0" placeholder="0" value="<%= item.qty %>" required>
+                                    </div>
+                                    
+                                    <div class="col-md-6">
+                                        <label for="unit" class="form-label fw-semibold">
+                                            <i class="fa-solid fa-ruler text-info me-1"></i>
+                                            Unità di Misura
+                                        </label>
+                                        <select class="form-select form-select-lg" name="unit" id="unit">
+                                            <option value="pieces" <%= item.unit === 'pieces' ? 'selected' : '' %>>Pezzi</option>
+                                            <option value="kg" <%= item.unit === 'kg' ? 'selected' : '' %>>Kilogrammi (kg)</option>
+                                            <option value="g" <%= item.unit === 'g' ? 'selected' : '' %>>Grammi (g)</option>
+                                            <option value="L" <%= item.unit === 'L' ? 'selected' : '' %>>Litri (L)</option>
+                                            <option value="mL" <%= item.unit === 'mL' ? 'selected' : '' %>>Millilitri (mL)</option>
+                                            <option value="bottles" <%= item.unit === 'bottles' ? 'selected' : '' %>>Bottiglie</option>
+                                            <option value="cans" <%= item.unit === 'cans' ? 'selected' : '' %>>Lattine</option>
+                                            <option value="boxes" <%= item.unit === 'boxes' ? 'selected' : '' %>>Scatole</option>
+                                            <option value="bags" <%= item.unit === 'bags' ? 'selected' : '' %>>Sacchetti</option>
+                                            <option value="packs" <%= item.unit === 'packs' ? 'selected' : '' %>>Confezioni</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <!-- Low Stock Alert -->
+                                    <div class="col-md-6">
+                                        <label for="lowStockAlert" class="form-label fw-semibold">
+                                            <i class="fa-solid fa-bell text-danger me-1"></i>
+                                            Avviso Scorta Minima
+                                        </label>
+                                        <input type="number" class="form-control form-control-lg" name="lowStockAlert" id="lowStockAlert" min="0" placeholder="Avvisa quando sotto questa quantità" value="<%= item.lowStockAlert || '' %>">
+                                        <small class="form-text text-muted">Riceverai un avviso quando la quantità scende sotto questo valore</small>
+                                    </div>
+                                    
+                                    <!-- Expiration Date -->
+                                    <div class="col-md-6">
+                                        <label for="expirationDate" class="form-label fw-semibold">
+                                            <i class="fa-solid fa-calendar-xmark text-warning me-1"></i>
+                                            Data di Scadenza
+                                        </label>
+                                        <input type="date" class="form-control form-control-lg" name="expirationDate" id="expirationDate" value="<%= item.expirationDate ? new Date(item.expirationDate).toISOString().split('T')[0] : '' %>">
+                                        <small class="form-text text-muted">Traccia i prodotti deperibili</small>
+                                    </div>
+                                    
+                                    <!-- Price -->
+                                    <div class="col-md-6">
+                                        <label for="price" class="form-label fw-semibold">
+                                            <i class="fa-solid fa-euro-sign text-success me-1"></i>
+                                            Prezzo Unitario
+                                        </label>
+                                        <div class="input-group input-group-lg">
+                                            <span class="input-group-text">€</span>
+                                            <input type="number" class="form-control" step="0.01" name="price" id="price" placeholder="0.00" value="<%= item.price || '' %>">
+                                        </div>
+                                        <small class="form-text text-muted">Traccia il valore dell'inventario</small>
+                                    </div>
+                                    
+                                    <!-- Preferred Supplier -->
+                                    <div class="col-md-6">
+                                        <label for="preferredSupplier" class="form-label fw-semibold">
+                                            <i class="fa-solid fa-store text-primary me-1"></i>
+                                            Fornitore Preferito
+                                        </label>
+                                        <input type="text" class="form-control form-control-lg" name="preferredSupplier" id="preferredSupplier" placeholder="e.g., Supermercato locale, Amazon" value="<%= item.preferredSupplier || '' %>">
+                                        <small class="form-text text-muted">Ricorda dove acquistare</small>
+                                    </div>
+                                    
+                                    <!-- Image URL with Preview -->
+                                    <div class="col-12">
+                                        <label for="imageUrl" class="form-label fw-semibold">
+                                            <i class="fa-solid fa-image text-danger me-1"></i>
+                                            URL Immagine
+                                        </label>
+                                        <input type="text" class="form-control form-control-lg" name="imageUrl" id="imageUrl" placeholder="https://example.com/image.jpg" value="<%= item.imageUrl || '' %>">
+                                        <small class="form-text text-muted">Inserisci l'URL di un'immagine del prodotto</small>
+                                    </div>
+                                    
+                                    <!-- Notes -->
+                                    <div class="col-12">
+                                        <label for="notes" class="form-label fw-semibold">
+                                            <i class="fa-solid fa-note-sticky text-info me-1"></i>
+                                            Note
+                                        </label>
+                                        <textarea class="form-control" name="notes" id="notes" rows="4" placeholder="Aggiungi note, preferenze di marca, idee per ricette, ecc."><%= item.notes || '' %></textarea>
+                                    </div>
+                                </div>
+                                
+                                <!-- Hidden Fields -->
+                                <input type="hidden" name="itemId" value="<%= item._id %>">
+                                
+                                <!-- Form Actions -->
+                                <div class="d-flex gap-3 mt-4 pt-4 border-top">
+                                    <button type="submit" class="btn btn-primary btn-lg px-5">
+                                        <i class="fa-solid fa-check me-2"></i>
+                                        Salva Modifiche
+                                    </button>
+                                    <a href="/inventory" class="btn btn-outline-secondary btn-lg px-4">
+                                        <i class="fa-solid fa-xmark me-2"></i>
+                                        Annulla
+                                    </a>
+                                    <button type="button" class="btn btn-outline-danger btn-lg px-4 ms-auto" id="deleteBtn">
+                                        <i class="fa-solid fa-trash-can me-2"></i>
+                                        Elimina Articolo
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <!-- Right Column - Preview & Info -->
+                <div class="col-lg-4">
+
+                    <!-- Image Preview Card -->
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-header bg-white border-0 pt-4 px-4">
+                            <h6 class="mb-0 fw-semibold">
+                                <i class="fa-solid fa-eye text-primary me-2"></i>
+                                Anteprima Immagine
+                            </h6>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="image-preview-wrapper">
+                                <img src="<%= item.imageUrl || 'https://placehold.co/400?text=No+Image' %>" class="preview-image img-fluid rounded" alt="Preview" id="imagePreview">
+                            </div>
+                        </div>
+                    </div>
                     
-                    <div class="mb-3">
-                        <label for="name" class="form-label">Nome</label>
-                        <input type="text" class="form-control" name="name" placeholder="Nome" value="<%= item.name %>">
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="qty" class="form-label">Quantità</label>
-                        <input type="text" class="form-control" name="qty" placeholder="Quantità" value="<%= item.qty %>">
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="price" class="form-label">Prezzo</label>
-                        <input type="number" class="form-control" step="0.01" name="price" placeholder="Prezzo" value="<%= item.price %>">
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="imageUrl" class="form-label">URL immagine</label>
-                        <input type="text" class="form-control" name="imageUrl" placeholder="URL immagine" value="<%= item.imageUrl %>">
+                    <!-- Quick Stats Card -->
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-header bg-white border-0 pt-4 px-4">
+                            <h6 class="mb-0 fw-semibold">
+                                <i class="fa-solid fa-chart-simple text-success me-2"></i>
+                                Statistiche Rapide
+                            </h6>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="stats-list">
+                                <div class="stat-item">
+                                    <div class="stat-icon">
+                                        <i class="fa-solid fa-calendar-plus"></i>
+                                    </div>
+                                    <div class="stat-content">
+                                        <div class="stat-label">Aggiunto il</div>
+                                        <div class="stat-value">
+                                            <%= item.createdAt ? new Date(item.createdAt).toLocaleDateString('it-IT') : 'N/A' %>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <% if (item.updatedAt) { %>
+                                    <div class="stat-item">
+                                        <div class="stat-icon text-primary">
+                                            <i class="fa-solid fa-clock-rotate-left"></i>
+                                        </div>
+                                        <div class="stat-content">
+                                            <div class="stat-label">Ultima modifica</div>
+                                            <div class="stat-value">
+                                                <%= new Date(item.updatedAt).toLocaleDateString('it-IT') %>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <% } %>
+                                    
+                                <div class="stat-item">
+                                    <div class="stat-icon text-success">
+                                        <i class="fa-solid fa-coins"></i>
+                                    </div>
+                                    <div class="stat-content">
+                                        <div class="stat-label">Valore Totale</div>
+                                        <div class="stat-value" id="totalValue">
+                                            €<%= item.price && item.qty ? (parseFloat(item.price) * parseFloat(item.qty)).toFixed(2) : '0.00' %>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     
-                    <button type="submit" class="btn btn-success">Salva</button>
-                    <input type="hidden" name="itemId" value="<%= item._id %>">
-                </form>
+                    <!-- Help Card -->
+                    <div class="card border-0 bg-light">
+                        <div class="card-body p-4">
+                            <h6 class="fw-semibold mb-3">
+                                <i class="fa-solid fa-lightbulb text-warning me-2"></i>
+                                Suggerimenti
+                            </h6>
+                            <ul class="help-list mb-0">
+                                <li>Imposta l'<strong>avviso scorta</strong> per essere notificato quando un articolo sta per finire</li>
+                                <li>Aggiungi la <strong>data di scadenza</strong> per i prodotti deperibili</li>
+                                <li>Usa le <strong>note</strong> per ricordare preferenze di marca o idee</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-
-    
 
 <%- include('../includes/footer.ejs') %>

@@ -1,57 +1,219 @@
-<% items.forEach(item => { %>
-    <article class="item" id="article_<%= item._id %>">
-        <div class="row">
-            <h2 class="LIST_ITEM_TITLE LIST_ITEM_DESC"><%= item.name %></h2>
-        </div>
-        <div class="row">
-            <div class="col-md-2">
-                <img src="<%= item.imageUrl || 'https://placehold.co/150?text=No+Image' %>" class="previewImage" alt="<%= item.name %>">
-            </div>
-
-            <div class="col-md-9">
-                <div class="row">
-                    <div class="col-md-3"><span><b>Quantità:</b></span></div>
-                    <div class="col-md-6" id="article_<%= item._id %>_qty"><%= item.qty %></div>
+<% items.forEach((item, index) => { %>
+    <article class="inventory-item card border-0 shadow-sm mb-3" id="article_<%= item._id %>" data-item-id="<%= item._id %>">
+        <div class="card-body p-3 p-md-4">
+            <div class="row g-3 g-md-4">
+                
+                <!-- Product Image -->
+                <div class="col-12 col-md-3 col-lg-2">
+                    <div class="item-image-wrapper">
+                        <img src="<%= item.imageUrl || 'https://placehold.co/200?text=No+Image' %>" 
+                                class="item-image img-fluid rounded" 
+                                alt="<%= item.name %>">
+                        
+                        <!-- Low Stock Badge -->
+                        <% if (item.lowStockAlert && item.qty <= item.lowStockAlert) { %>
+                            <div class="low-stock-badge">
+                                <i class="fa-solid fa-triangle-exclamation"></i>
+                                <span>Low Stock</span>
+                            </div>
+                        <% } %>
+                        
+                        <!-- Expiring Soon Badge -->
+                        <% if (item.expirationDate) { 
+                            const daysUntilExpiration = Math.ceil((new Date(item.expirationDate) - new Date()) / (1000 * 60 * 60 * 24));
+                            if (daysUntilExpiration <= 7 && daysUntilExpiration >= 0) { %>
+                                <div class="expiring-soon-badge">
+                                    <i class="fa-solid fa-clock"></i>
+                                    <span><%= daysUntilExpiration %>d</span>
+                                </div>
+                            <% } else if (daysUntilExpiration < 0) { %>
+                                <div class="expired-badge">
+                                    <i class="fa-solid fa-xmark"></i>
+                                    <span>Expired</span>
+                                </div>
+                            <% } %>
+                        <% } %>
+                    </div>
                 </div>
-                <div class="row">
-                    <div class="col-md-3"><span><b>Prezzo:</b></span></div>
-                    <div class="col-md-6"><%= item.price %> €</div>
-                </div>
-            </div>
 
-            <div class="col-md-1">
-                <!-- BUTTONS -->
-                <div class="row">
-                    <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
-                        <div class="btn-group-vertical me-2" role="group" aria-label="First group">
-                            
-                            <!-- DELETE -->
-                            <button data-item-id="<%= item._id %>" data-item-name="<%= item.name %>" class="btn btn-danger deleteItem">
-                                <i class="fa-solid fa-x icon-delete"></i>
-                                <span class="spinner-border spinner-border-sm spinner-delete" role="status" aria-hidden="true" style="display: none;"></span>
+                <!-- Product Information -->
+                <div class="col-12 col-md-9 col-lg-8">
+                    
+                    <!-- Header with Name and Category -->
+                    <div class="item-header mb-3">
+                        <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+                            <div>
+                                <h3 class="item-name mb-1"><%= item.name %></h3>
+                                <% if (item.category) { %>
+                                    <span class="badge category-badge">
+                                        <%= item.category %>
+                                    </span>
+                                <% } %>
+                            </div>
+                            <% if (item.price) { %>
+                                <div class="item-price">
+                                    <span class="price-label">Prezzo:</span>
+                                    <span class="price-value">€<%= parseFloat(item.price).toFixed(2) %></span>
+                                </div>
+                            <% } %>
+                        </div>
+                    </div>
+
+                    <!-- Quantity Control -->
+                    <div class="quantity-section mb-3">
+                        <div class="quantity-label">
+                            <i class="fa-solid fa-boxes-stacked me-1"></i>
+                            Quantità
+                        </div>
+                        <div class="quantity-controls d-flex align-items-center gap-2">
+                            <button class="btn btn-quantity btn-decrease lessQuantity" 
+                                    data-item-id="<%= item._id %>" 
+                                    data-item-diff="-1"
+                                    aria-label="Decrease quantity">
+                                <i class="fa-solid fa-minus"></i>
                             </button>
                             
-                            <!-- EDIT -->
-                            <button data-item-id="<%= item._id %>" class="btn btn-primary editItem">
-                                <i class="fa-solid fa-pencil"></i></a>
+                            <div class="quantity-display" id="article_<%= item._id %>_qty">
+                                <span class="qty-number"><%= item.qty %></span>
+                                <% if (item.unit) { %>
+                                    <span class="qty-unit"><%= item.unit %></span>
+                                <% } %>
+                            </div>
+                            
+                            <button class="btn btn-quantity btn-increase moreQuantity" 
+                                    data-item-id="<%= item._id %>" 
+                                    data-item-diff="1"
+                                    aria-label="Increase quantity">
+                                <i class="fa-solid fa-plus"></i>
                             </button>
+                        </div>
+                    </div>
+
+                    <!-- Details Grid -->
+                    <div class="item-details">
+                        <div class="row g-2 g-md-3">
                             
-                            <!-- +1 -->
-                            <button data-item-id="<%= item._id %>" data-item-diff="1" class="btn btn-success moreQuantity"><i class="fa-solid fa-plus"></i></button>
+                            <!-- Storage Location -->
+                            <% if (item.storageLocation) { %>
+                                <div class="col-6 col-sm-4">
+                                    <div class="detail-item">
+                                        <div class="detail-icon">
+                                            <i class="fa-solid fa-location-dot"></i>
+                                        </div>
+                                        <div class="detail-content">
+                                            <div class="detail-label">Posizione</div>
+                                            <div class="detail-value capitalize"><%= item.storageLocation %></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% } %>
+
+                            <!-- Expiration Date -->
+                            <% if (item.expirationDate) { %>
+                                <div class="col-6 col-sm-4">
+                                    <div class="detail-item">
+                                        <div class="detail-icon text-warning">
+                                            <i class="fa-solid fa-calendar-xmark"></i>
+                                        </div>
+                                        <div class="detail-content">
+                                            <div class="detail-label">Scadenza</div>
+                                            <div class="detail-value">
+                                                <%= new Date(item.expirationDate).toLocaleDateString('it-IT') %>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% } %>
+
+                            <!-- Preferred Supplier -->
+                            <% if (item.preferredSupplier) { %>
+                                <div class="col-6 col-sm-4">
+                                    <div class="detail-item">
+                                        <div class="detail-icon text-primary">
+                                            <i class="fa-solid fa-store"></i>
+                                        </div>
+                                        <div class="detail-content">
+                                            <div class="detail-label">Fornitore</div>
+                                            <div class="detail-value"><%= item.preferredSupplier %></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% } %>
+
+                            <!-- Low Stock Alert -->
+                            <% if (item.lowStockAlert) { %>
+                                <div class="col-6 col-sm-4">
+                                    <div class="detail-item">
+                                        <div class="detail-icon text-danger">
+                                            <i class="fa-solid fa-bell"></i>
+                                        </div>
+                                        <div class="detail-content">
+                                            <div class="detail-label">Avviso Scorta</div>
+                                            <div class="detail-value">
+                                                < <%= item.lowStockAlert %> <%= item.unit || '' %>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% } %>
+
+                        </div>
+
+                        <!-- Notes Section -->
+                        <% if (item.notes && item.notes.trim()) { %>
+                            <div class="item-notes mt-3">
+                                <div class="notes-header">
+                                    <i class="fa-solid fa-note-sticky me-1"></i>
+                                    Note
+                                </div>
+                                <div class="notes-content">
+                                    <%= item.notes %>
+                                </div>
+                            </div>
+                        <% } %>
+                    </div>
+
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="col-12 col-lg-2">
+                    <div class="item-actions">
+                        <div class="d-flex d-lg-block gap-2">
                             
-                            <!-- -1 -->
-                            <button data-item-id="<%= item._id %>" data-item-diff="-1" class="btn btn-warning lessQuantity"><i class="fa-solid fa-minus"></i></button>
+                            <!-- Edit Button -->
+                            <button class="btn btn-action btn-edit editItem w-100" 
+                                    data-item-id="<%= item._id %>"
+                                    aria-label="Edit item">
+                                <i class="fa-solid fa-pencil me-2"></i>
+                                <span>Modifica</span>
+                            </button>
+
+                            <!-- Delete Button -->
+                            <button class="btn btn-action btn-delete deleteItem w-100" 
+                                    data-item-id="<%= item._id %>" 
+                                    data-item-name="<%= item.name %>"
+                                    aria-label="Delete item">
+                                <i class="fa-solid fa-trash-can me-2"></i>
+                                <span>Elimina</span>
+                                <span class="spinner-border spinner-border-sm spinner-delete" 
+                                        role="status" 
+                                        aria-hidden="true" 
+                                        style="display: none;"></span>
+                            </button>
+
+                            <!-- Add to Shopping List (Optional) -->
+                            <button class="btn btn-action btn-add-to-list w-100" 
+                                    data-item-id="<%= item._id %>"
+                                    aria-label="Add to shopping list">
+                                <i class="fa-solid fa-cart-plus me-2"></i>
+                                <span>Aggiungi a Lista</span>
+                            </button>
+
                         </div>
                     </div>
                 </div>
+
             </div>
-            
-            
-            
         </div>
-
-        <hr>
     </article>
-    
-
 <% }); %>
