@@ -84,15 +84,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
+    const filter = {};
+    // FILTERS
+    document.getElementById('filterCollapse').addEventListener('change', (e) => {
+        const target = e.target;
+        const id = target.id;
 
+        if (id === 'statusFilter')
+            target.value !== '' ? _.set(filter, 'done', target.value) : _.unset(filter, 'done');
+
+        if (id === 'categoryFilter')
+            target.value !== '' ? _.set(filter, 'category', target.value) : _.unset(filter, 'category');
+
+        if (id === 'priorityFilter')
+            target.value !== '' ? _.set(filter, 'priority', target.value) : _.unset(filter, 'priority');
+
+        if (id === 'assigneeFilter')
+            target.value !== '' ? _.set(filter, 'assignedTo', target.value) : _.unset(filter, 'assignedTo');
+
+        getTodoList(filter);
+    });
 
 
 
     // TODO LIST
     document.getElementById('todoList').addEventListener('click', (e) => {
 
+        const target = e.target;
+        const dataset = target.dataset;
+        const classList = target.classList;
+
         // DELETE ITEM
-        if (e.target.classList.contains('deleteTodo')) {
+        if (classList.contains('deleteTodo')) {
             const button = e.target;
             const todoId = button.dataset.todoId;
             const todoDesc = button.dataset.todoDesc;
@@ -101,18 +124,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // UPDATE DONE STATUS
-        if (e.target.classList.contains('todoDone')) {
+        if (classList.contains('todoDone')) {
             const checkbox = e.target;
             const todoId = checkbox.dataset.todoId;
             const done = checkbox.checked;
             updateStatus(todoId, done);
-            return;
-        }
-
-        // FILTER TODOs
-        if (e.target.dataset.type === 'filter') {
-            const todoCategory = e.target.dataset.todoCategory;
-            filterTodos(todoCategory);
             return;
         }
 
@@ -182,3 +198,49 @@ const updateStatus = (todoId, done) => {
     });
 }
 
+
+const getTodoList = (filter) => {
+    axios.post('/todo/filter-todos', {
+        filter: filter
+    }, {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }).then(res => {
+        if (res.status == 200) {
+            filterTodoList(res.data.todos);
+        } else {
+            toastMessage('error', 'Error getting ToDo list', `Error getting ToDo list ${res.data.message}`);
+            console.error('Failed to get ToDo list');
+        }
+    }).catch(err => {
+        console.error('Failed to get ToDo list', err);
+    });
+}
+
+
+const filterTodoList = (todos) => {
+    const filteredTodoIds = todos.map(todo => 'todo_' + todo._id);
+    const todoList = _.filter(_.map(document.getElementById('todoList').childNodes, 'id'), _.identity);
+
+    // RESET TODOS DISPLAY
+    _.each(todoList, todoId => {
+        document.getElementById(todoId).style.display = 'block';
+    });
+
+    _.difference(todoList, filteredTodoIds).forEach(todoId => {
+        document.getElementById(todoId).style.display = 'none';
+    });
+}
+
+
+
+
+
+// Initialize Bootstrap tooltips
+document.addEventListener('DOMContentLoaded', function () {
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+});

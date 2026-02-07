@@ -14,4 +14,6 @@ router.post('/delete-todo', todoController.deleteTodo);
 
 router.post('/todo-status', todoController.updateStatus);
 
+router.post('/filter-todos', todoController.filterTodos);
+
 module.exports = router;

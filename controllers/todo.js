@@ -85,3 +85,16 @@ exports.updateStatus = (req, res, next) => {
         console.log('Error updating todo', err);
     });
 }
+
+
+exports.filterTodos = (req, res, next) => {
+    console.log('filter', req.body.filter);
+    const filter = req.body.filter;
+    Todo.find(filter)
+        .then(todos => {
+            res.status(200).json({ todos: todos });
+        }).catch(err => {
+            res.status(500).json({ message: 'Error fetching filtered To-Dos: ' + err });
+            console.log('Error fetching filtered To-Dos', err);
+        });
+}
