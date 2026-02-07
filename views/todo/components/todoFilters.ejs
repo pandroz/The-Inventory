@@ -1,12 +1,63 @@
 <div class="hidden">
     <div class="row">
         <div class="col-sm-12 d-flex align-items-center" id="badgeList">
-            <div>
-                <span class="">Filters: </span>
-            </div>
-            <div class="badge bg-light text-dark border px-2 py-2 fs-normal cursor-pointer mx-2" data-state-search="unset" id="badge_checked">
-                <i id="badge_checked_icon" class="fa-regular fa-circle"></i>
-                <span id="badge_checked_text">Any</span>
+            <div class="accordion w-100" id="accordionFilter">
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#filterCollapse" aria-expanded="false" aria-controls="filterCollapse" >
+                            Filter
+                        </button>
+                    </h2>
+                    <div
+                        id="filterCollapse"
+                        class="accordion-collapse collapse"
+                        data-bs-parent="#accordionExample"
+                    >
+                        <div class="accordion-body">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <label for="statusFilter" class="form-label">Stato</label>
+                                    <select class="form-select" aria-label="Default select example" id="statusFilter">
+                                        <option value="">Tutte</option>
+                                        <option value="true">Completed</option>
+                                        <option value="false">Uncompleted</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <label for="categoryFilter" class="form-label">Categoria</label>
+                                    <select class="form-select" aria-label="Default select example" id="categoryFilter">
+                                        <option value="" active></option>
+                                        <% categories.forEach((category) => { %>
+                                            <option value="<%= category %>"><%= category %></option>
+                                        <% }) %>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <label for="priorityFilter" class="form-label">Priority</label>
+                                    <select class="form-select" aria-label="Default select example" id="priorityFilter">
+                                        <option value="" active></option>
+                                        <option value="Bassa">🟢 Bassa</option>
+                                        <option value="Media">🟡 Media</option>
+                                        <option value="Alta">🔴 Alta</option>
+                                        <option value="Urgente">🚨 Urgente</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <label for="assigneeFilter" class="form-label">Stato</label>
+                                    <select class="form-select" aria-label="Default select example" id="assigneeFilter">
+                                        <option value="" active></option>
+                                        <% assignees.forEach((assignee) => { %>
+                                            <option value="<%= assignee %>"><%= assignee %></option>
+                                        <% }) %>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

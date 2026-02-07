@@ -15,6 +15,10 @@ const todoSchema = new Schema({
         type: Boolean,
         default: false
     },
+    priority: {
+        type: String,
+        required: false
+    },
     category: {
         type: String,
         required: false
@@ -28,6 +32,34 @@ const todoSchema = new Schema({
         type: Date,
         required: false,
         default: null
+    },
+    recurringPattern: {
+        type: String,
+        required: false
+    },
+    recurringStartDate: {
+        type: Date,
+        required: false,
+        default: null
+    },
+    recurringEndDate: {
+        type: Date,
+        required: false,
+        default: null
+    },
+    remindMe: {
+        type: Boolean,
+        required: false,
+        default: false
+    },
+    reminderDate: {
+        type: Date,
+        required: false,
+        default: null
+    },
+    assignedTo: {
+        type: String,
+        required: false
     },
     createdAt: {
         type: Date,

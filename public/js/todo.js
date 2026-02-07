@@ -1,6 +1,94 @@
 document.addEventListener('DOMContentLoaded', () => {
     // console.log('DOM fully loaded and parsed');
+    const form = document.getElementById("addTodoForm");
+    const remindMeCheckbox = document.getElementById("remindMe");
+    const reminderDateInput = document.getElementById("reminderDate");
+    const recurringPattern = document.getElementById("recurringPattern");
+    const recurringStartDate = document.getElementById("recurringStartDate");
+    const recurringEndDate = document.getElementById("recurringEndDate");
 
+    // Enable/disable reminder date based on checkbox
+    remindMeCheckbox?.addEventListener("change", function () {
+        if (this.checked) {
+            reminderDateInput.required = true;
+            reminderDateInput.parentElement.classList.add("border-warning");
+        } else {
+            reminderDateInput.required = false;
+            reminderDateInput.value = "";
+            reminderDateInput.parentElement.classList.remove("border-warning");
+        }
+    });
+
+    // Enable/disable recurring dates based on pattern selection
+    recurringPattern?.addEventListener("change", function () {
+        if (this.value && this.value !== "") {
+            recurringStartDate.parentElement.parentElement.classList.add("border-info");
+            recurringEndDate.parentElement.parentElement.classList.add("border-info");
+        } else {
+            recurringStartDate.value = "";
+            recurringEndDate.value = "";
+            recurringStartDate.parentElement.parentElement.classList.remove("border-info");
+            recurringEndDate.parentElement.parentElement.classList.remove("border-info");
+        }
+    });
+
+    // Validate dates
+    form?.addEventListener("submit", function (e) {
+        const completeBy = document.getElementById("completeBy").value;
+        const reminderDate = reminderDateInput.value;
+
+        // Check if reminder date is before complete by date
+        if (completeBy && reminderDate) {
+            const completeByDate = new Date(completeBy);
+            const reminder = new Date(reminderDate);
+
+            if (reminder > completeByDate) {
+                e.preventDefault();
+                alert("La data del promemoria non può essere successiva alla scadenza!");
+                return false;
+            }
+        }
+
+        // Check recurring dates
+        const startDate = recurringStartDate.value;
+        const endDate = recurringEndDate.value;
+
+        if (startDate && endDate) {
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+
+            if (end < start) {
+                e.preventDefault();
+                alert("La data di fine ricorrenza non può essere precedente alla data di inizio!");
+                return false;
+            }
+        }
+
+        // If remind me is checked, reminder date is required
+        if (remindMeCheckbox.checked && !reminderDate) {
+            e.preventDefault();
+            alert("Se attivi il promemoria, devi specificare una data!");
+            reminderDateInput.focus();
+            return false;
+        }
+    });
+
+    // Set minimum date for completeBy to today
+    const today = new Date().toISOString().split("T")[0];
+    document.getElementById("completeBy").min = today;
+    reminderDateInput.min = new Date().toISOString().slice(0, 16);
+    recurringStartDate.min = today;
+
+
+
+
+
+
+
+
+
+
+    // TODO LIST
     document.getElementById('todoList').addEventListener('click', (e) => {
 
         // DELETE ITEM
@@ -29,63 +117,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
     });
+
+
     document.getElementById('loading').style.display = 'none';
     console.log('(Inventory) DOM fully loaded and parsed');
 });
-
-const IGNORED_FILTERS = ['completed', 'uncompleted', 'unset'];
-
-var filters = {
-    categories: [],
-    status: 'unset'
-}
-
-// FILTER CHECKED TODOs
-document.getElementById('badge_checked').addEventListener('click', (e) => {
-    const todoCategory = e.target.dataset.todoCategory;
-    let toggle = e.target.dataset.stateSearch;
-    let icon = document.getElementById('badge_checked_icon');
-    switch (toggle) {
-        case 'unset': // STEP TO TRUE
-            e.target.dataset.stateSearch = 'completed';
-            e.target.classList.remove('text-dark');
-            e.target.classList.remove('text-danger');
-            e.target.classList.add('text-success');
-            icon.classList.remove('fa-circle-xmark');
-            icon.classList.remove('fa-circle');
-            icon.classList.add('fa-circle-check');
-            document.getElementById('badge_checked_text').innerHTML = 'Completed';
-            filters.status = 'completed';
-            filterTodos();
-            break;
-        case 'completed': // STEP TO FALSE
-            e.target.dataset.stateSearch = 'uncompleted';
-            e.target.classList.remove('text-dark');
-            e.target.classList.remove('text-success');
-            e.target.classList.add('text-danger');
-            icon.classList.remove('fa-circle');
-            icon.classList.remove('fa-circle-check');
-            icon.classList.add('fa-circle-xmark');
-            document.getElementById('badge_checked_text').innerHTML = 'Uncompleted';
-            filters.status = 'uncompleted';
-            filterTodos();
-            break;
-        case 'uncompleted': // STEP TO UNSET
-            e.target.dataset.stateSearch = 'unset';
-            e.target.classList.remove('text-success');
-            e.target.classList.remove('text-danger');
-            e.target.classList.add('text-dark');
-            icon.classList.remove('fa-circle-xmark');
-            icon.classList.remove('fa-circle-check');
-            icon.classList.add('fa-circle');
-            document.getElementById('badge_checked_text').innerHTML = 'Any';
-            filters.status = 'unset';
-            filterTodos();
-            break;
-    }
-    return;
-})
-
 
 /**
  * Deletes a ToDo item
@@ -146,119 +182,3 @@ const updateStatus = (todoId, done) => {
     });
 }
 
-
-const filterTodos = (category) => {
-    console.log('filtering per category ', category);
-    const todoItems = document.getElementById('todoList').querySelectorAll('article');
-
-    if (category) {
-        let badgeList = document.getElementById('badgeList').children
-        badgeList = Array.from(badgeList).filter(item => item.classList.contains('FILTER_BADGE'));
-        console.log('badgeList', badgeList);
-
-        if (_.size(badgeList) == 0) {
-            filters.categories.push({
-                category: category,
-                hasBadge: false
-            });
-        } else {
-            badgeList.forEach(item => {
-                let badgeCategory = _.get(item, 'dataset.todoCategory');
-                if (category && !filters.categories.includes(badgeCategory)) {
-                    filters.categories.push({
-                        category: category,
-                        hasBadge: false
-                    });
-                } else if (category) {
-                    filters.categories.splice(_.findIndex(filters.categories, {
-                        "category": category
-                    }), 1);
-                }
-            });
-        }
-    }
-
-    console.log('filters', filters);
-
-
-    let badgeToAdd = false;
-    if (_.size(filters.categories) > 0) {
-        _.each(filters.categories, (cat, i) => {
-            _.each(todoItems, todo => {
-                let thisTodo = {
-                    checked: _.head(todo.getElementsByClassName('todoDone')).checked,
-                    category: _.head(todo.getElementsByClassName('LIST_ITEM_CATEGORY')).dataset.todoCategory
-                }
-
-                if (checkForStatus(thisTodo, filters.status) && checkForCategory(thisTodo, cat, category))
-                    todo.style.display = 'block';
-                else
-                    todo.style.display = 'none';
-
-                manageBadge(cat, i);
-            });
-        });
-    } else {
-        _.each(todoItems, todo => {
-            let thisTodo = {
-                checked: _.head(todo.getElementsByClassName('todoDone')).checked
-            }
-            if (checkForStatus(thisTodo, filters.status))
-                todo.style.display = 'block';
-            else
-                todo.style.display = 'none';
-        });
-    }
-
-
-}
-
-
-const checkForCategory = (todo, cat, category) => {
-    return category === cat.category && todo.category === category;
-}
-
-const checkForStatus = (todo, statusCheck) => {
-    if (statusCheck === 'unset')
-        return true;
-    else if (statusCheck === 'completed')
-        return todo.checked;
-    else if (statusCheck === 'uncompleted')
-        return !todo.checked;
-}
-
-
-
-const manageBadge = (cat, ix) => {
-    let category = cat.category;
-    const badgeList = document.getElementById('badgeList');
-    // let badge = badgeList.querySelector(`div[data-filter-value="${category}"]`);
-
-    if (!cat.hasBadge) {
-        _.set(filters.categories[ix], 'hasBadge', true);
-        let newBadge = document.createElement('div');
-        newBadge.className = 'badge bg-light text-dark border px-2 py-2 fs-normal cursor-pointer mx-2-2 FILTER_BADGE';
-        newBadge.dataset.type = 'filter';
-        newBadge.dataset.filterValue = category;
-        newBadge.dataset.todoCategory = category;
-        newBadge.id = `badge_${category}`;
-        newBadge.innerHTML = category;
-        newBadge.onclick = () => removeBadge(category);
-        newBadge.style.marginLeft = '5px';
-        badgeList.appendChild(newBadge);
-    } else {
-        _.set(filters.categories[ix], 'hasBadge', false);
-    }
-}
-
-
-/**
- * Removes a badge from the filter list
- * @param {string} category - The category of the badge to remove
- * If a badge with the same category exists, it will be removed and the filter will be cleared
- */
-const removeBadge = (category) => {
-    badge = document.getElementById(`badge_${category}`);
-    badge.remove();
-    filterTodos();
-}

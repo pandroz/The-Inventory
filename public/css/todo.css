@@ -3,9 +3,160 @@ button > svg {
     pointer-events: none;
 }
 
-#badge_checked > span,
-#badge_checked > i {
-    pointer-events: none;
+/* Todo Form Card */
+.todo-form-card {
+    border-left: 4px solid #0d6efd !important;
+    animation: slideInUp 0.4s ease;
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Section Titles */
+.section-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #495057;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.section-subtitle {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #495057;
+}
+
+/* Form Controls */
+.form-control:focus,
+.form-select:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+}
+
+.form-floating > label {
+    color: #6c757d;
+}
+
+.form-floating > .form-control:focus ~ label,
+.form-floating > .form-control:not(:placeholder-shown) ~ label,
+.form-floating > .form-select ~ label {
+    color: #0d6efd;
+}
+
+/* Required Fields Section */
+.required-fields-section {
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    border-radius: 12px;
+    padding: 1.5rem;
+    border: 1px solid #e9ecef;
+}
+
+/* Optional Sections */
+.optional-section {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 1.25rem;
+    border: 1px solid #e9ecef;
+}
+
+/* Accordion Styling */
+.accordion-button {
+    border-radius: 10px !important;
+    font-size: 1rem;
+    padding: 1rem 1.25rem;
+}
+
+.accordion-button:not(.collapsed) {
+    background: linear-gradient(135deg, #e7f3ff 0%, #d4e9ff 100%);
+    color: #0d6efd;
+    box-shadow: 0 2px 8px rgba(13, 110, 253, 0.15);
+}
+
+.accordion-button:focus {
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+}
+
+.accordion-button::after {
+    filter: brightness(0) saturate(100%) invert(36%) sepia(88%) saturate(1795%) hue-rotate(201deg)
+        brightness(97%) contrast(101%);
+}
+
+.accordion-body {
+    background: white;
+    border-radius: 0 0 10px 10px;
+}
+
+/* Reminder Switch Styling */
+.form-check-input:checked {
+    background-color: #ffc107;
+    border-color: #ffc107;
+}
+
+.form-check-input:focus {
+    box-shadow: 0 0 0 0.25rem rgba(255, 193, 7, 0.25);
+}
+
+/* Alert Info */
+.alert-info {
+    background: linear-gradient(135deg, #e1f5fe 0%, #b3e5fc 100%);
+    border: 1px solid #0288d1;
+    color: #01579b;
+}
+
+/* Submit Button */
+.btn-primary {
+    background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+    border: none;
+    padding: 0.75rem 2rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #0a58ca 0%, #084298 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(13, 110, 253, 0.3);
+}
+
+.btn-outline-secondary:hover {
+    transform: translateY(-2px);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .section-title {
+        font-size: 0.85rem;
+    }
+
+    .section-subtitle {
+        font-size: 0.8rem;
+    }
+
+    .required-fields-section,
+    .optional-section {
+        padding: 1rem;
+    }
+
+    .accordion-button {
+        font-size: 0.9rem;
+        padding: 0.875rem 1rem;
+    }
+
+    .form-check-input[role="switch"] {
+        width: 2.5rem !important;
+        height: 1.25rem !important;
+    }
 }
 
 /* Enhanced Todo Card Styling */
@@ -17,14 +168,185 @@ button > svg {
     border-left: 4px solid transparent;
 }
 
-/* .todo .card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.1) !important;
-    } */
+.todo .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Priority-based Left Border Colors */
+.todo-card.priority-high {
+    border-left-color: #dc3545 !important;
+}
+
+.todo-card.priority-medium {
+    border-left-color: #ffc107 !important;
+}
+
+.todo-card.priority-low {
+    border-left-color: #28a745 !important;
+}
+
+/* Priority Badge Styling */
+.priority-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.75rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border: 2px solid;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.priority-badge:hover {
+    transform: scale(1.05);
+}
+
+.priority-icon {
+    font-size: 0.5rem;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%,
+    100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.6;
+    }
+}
+
+/* High Priority (Red) */
+.priority-badge-alta {
+    background: linear-gradient(135deg, #ffe5e9 0%, #ffd1d9 100%);
+    color: #dc3545;
+    border-color: #dc3545;
+}
+
+.priority-badge-alta .priority-icon {
+    color: #dc3545;
+}
+
+/* Medium Priority (Yellow/Orange) */
+.priority-badge-media {
+    background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
+    color: #ff8f00;
+    border-color: #ffc107;
+}
+
+.priority-badge-media .priority-icon {
+    color: #ffc107;
+}
+
+/* Low Priority (Green) */
+.priority-badge-bassa {
+    background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+    color: #2e7d32;
+    border-color: #28a745;
+}
+
+.priority-badge-bassa .priority-icon {
+    color: #28a745;
+}
+
+/* Recurring Badge */
+.badge-recurring {
+    background: linear-gradient(135deg, #e1f5fe 0%, #b3e5fc 100%);
+    color: #01579b;
+    border: 2px solid #0288d1;
+    font-weight: 600;
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+}
+
+.badge-recurring:hover {
+    background: linear-gradient(135deg, #b3e5fc 0%, #81d4fa 100%);
+    transform: translateY(-2px);
+}
+
+/* Reminder Badge */
+.badge-reminder {
+    background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+    color: #e65100;
+    border: 2px solid #ff9800;
+    font-weight: 600;
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+}
+
+.badge-reminder-active {
+    animation: reminderPulse 2s ease-in-out infinite;
+}
+
+@keyframes reminderPulse {
+    0%,
+    100% {
+        box-shadow: 0 0 0 0 rgba(255, 152, 0, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 0 6px rgba(255, 152, 0, 0);
+    }
+}
+
+.badge-reminder-past {
+    opacity: 0.6;
+}
+
+.badge-reminder:hover {
+    background: linear-gradient(135deg, #ffe0b2 0%, #ffcc80 100%);
+    transform: translateY(-2px);
+}
+
+/* Assigned Badge */
+.badge-assigned {
+    background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+    color: #6a1b9a;
+    border: 2px solid #9c27b0;
+    font-weight: 600;
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+}
+
+.badge-assigned:hover {
+    background: linear-gradient(135deg, #e1bee7 0%, #ce93d8 100%);
+    transform: translateY(-2px);
+}
+
+/* Category Badge */
+.LIST_ITEM_CATEGORY {
+    transition: all 0.2s ease;
+}
+
+.LIST_ITEM_CATEGORY:hover {
+    background: #e9ecef !important;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Recurring Info Section */
+.recurring-info {
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    border-left: 3px solid #0288d1;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+}
+
+.recurring-info-content {
+    display: flex;
+    align-items: center;
+    color: #01579b;
+}
 
 /* Done state styling */
 .todo .card:has(.todoDone:checked) {
-    border-left-color: #198754;
     background: #f8fdf9;
 }
 
@@ -33,10 +355,11 @@ button > svg {
     opacity: 0.6;
 }
 
-/* Badge styling */
-.todo .badge {
-    font-weight: 500;
-    letter-spacing: 0.3px;
+.todo .card:has(.todoDone:checked) .priority-badge,
+.todo .card:has(.todoDone:checked) .badge-recurring,
+.todo .card:has(.todoDone:checked) .badge-reminder,
+.todo .card:has(.todoDone:checked) .badge-assigned {
+    opacity: 0.5;
 }
 
 /* Delete button hover */
@@ -61,8 +384,27 @@ button > svg {
 /* Icon styling */
 .todo .fa-calendar,
 .todo .fa-circle-check,
+.todo .fa-circle-xmark,
 .todo .fa-clock {
     font-size: 1.1rem;
+}
+
+/* Cursor pointer helper */
+.cursor-pointer {
+    cursor: pointer;
+}
+
+/* Hover effects for priority cards */
+.todo-card.priority-high:hover {
+    box-shadow: 0 0.5rem 1.5rem rgba(220, 53, 69, 0.2) !important;
+}
+
+.todo-card.priority-medium:hover {
+    box-shadow: 0 0.5rem 1.5rem rgba(255, 193, 7, 0.2) !important;
+}
+
+.todo-card.priority-low:hover {
+    box-shadow: 0 0.5rem 1.5rem rgba(40, 167, 69, 0.2) !important;
 }
 
 /* Responsive adjustments */
@@ -79,31 +421,49 @@ button > svg {
         width: 2.5rem !important;
         height: 1.25rem !important;
     }
+
+    .priority-badge,
+    .badge-recurring,
+    .badge-reminder,
+    .badge-assigned {
+        font-size: 0.7rem;
+        padding: 0.3rem 0.6rem;
+    }
+
+    .LIST_ITEM_TITLE {
+        font-size: 1.1rem;
+    }
+
+    .LIST_ITEM_CATEGORY {
+        font-size: 0.85rem !important;
+    }
+
+    /* Stack badges vertically on very small screens */
+    .card-header .d-flex.flex-wrap {
+        flex-direction: column;
+        align-items: flex-start !important;
+    }
+
+    .recurring-info {
+        padding: 0.5rem 0.75rem;
+    }
+
+    .recurring-info-content {
+        font-size: 0.85rem;
+    }
 }
 
-#addTodoForm .card {
-    border-radius: 12px;
-    transition: transform 0.2s ease;
-}
+@media (max-width: 576px) {
+    .priority-badge {
+        font-size: 0.65rem;
+        padding: 0.25rem 0.5rem;
+    }
 
-#addTodoForm .form-control:focus {
-    border-color: #0d6efd;
-    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
-}
-
-#addTodoForm .btn-primary {
-    border-radius: 8px;
-    padding: 12px;
-    font-weight: 500;
-    transition: all 0.3s ease;
-}
-
-#addTodoForm .btn-primary:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
-}
-
-#addTodoForm .card-title {
-    color: #495057;
-    font-weight: 600;
+    .badge-recurring,
+    .badge-reminder,
+    .badge-assigned,
+    .LIST_ITEM_CATEGORY {
+        font-size: 0.75rem !important;
+        padding: 0.35rem 0.6rem !important;
+    }
 }

@@ -1,17 +1,64 @@
 <% todos.forEach(todo => { %>
-<article class="todo mt-3" id="todo_<%= todo._id %>">
+<article class="todo mt-3" id="todo_<%= todo._id %>" data-priority="<%= todo.priority ? todo.priority.toLowerCase() : '' %>">
     <div class="row">
         <div class="col-md-12">
-            <div class="card shadow-sm border-0 rounded-3 overflow-hidden">
+            <div class="card shadow-sm border-0 rounded-3 overflow-hidden todo-card priority-<%= todo.priority ? todo.priority.toLowerCase().replace(/\s+/g, '-') : 'none' %>">
                 
-                <!-- Header with title and delete button -->
+                <!-- Header with title, priority, and delete button -->
                 <div class="card-header bg-white border-0 d-flex justify-content-between align-items-start pt-4 px-4 pb-3">
                     <div class="flex-grow-1 pe-3">
-                        <h4 class="mb-1 fw-semibold text-dark LIST_ITEM_TITLE"><%= todo.description %></h4>
-                        <span class="badge bg-light text-dark border px-3 py-2 mt-2 fs-6 fw-normal cursor-pointer LIST_ITEM_CATEGORY" data-type="filter" data-todo-category="<%= todo.category %>">
-                            <%= todo.category %>
-                        </span>
+                        <div class="d-flex align-items-start justify-content-between gap-2 mb-2">
+                            <h4 class="mb-0 fw-semibold text-dark LIST_ITEM_TITLE flex-grow-1"><%= todo.description %></h4>
+                            <!-- Priority Badge -->
+                            <% if (todo.priority) { 
+                                const priorityClass = todo.priority.toLowerCase().replace(/\s+/g, '-');
+                            %>
+                                <span class="badge priority-badge priority-badge-<%= priorityClass %>">
+                                    <i class="priority-icon fa-solid fa-circle"></i>
+                                    <%= todo.priority %>
+                                </span>
+                            <% } %>
+                        </div>
+                        
+                        <!-- Badges Row: Category, Recurring, Reminder, Assigned -->
+                        <div class="d-flex flex-wrap gap-2 mt-2">
+                            <!-- Category Badge -->
+                            <span class="badge bg-light text-dark border px-3 py-2 fs-6 fw-normal cursor-pointer LIST_ITEM_CATEGORY" data-type="filter" data-todo-category="<%= todo.category %>">
+                                <i class="fa-solid fa-tag me-1"></i>
+                                <%= todo.category %>
+                            </span>
+                            
+                            <!-- Recurring Badge -->
+                            <% if (todo.recurringPattern) { %>
+                                <span class="badge badge-recurring" data-bs-toggle="tooltip" data-bs-placement="top" title="Ricorre <%= todo.recurringPattern %>">
+                                    <i class="fa-solid fa-rotate me-1"></i>
+                                    <%= todo.recurringPattern %>
+                                </span>
+                            <% } %>
+                            
+                            <!-- Reminder Badge -->
+                            <% if (todo.remindMe && todo.reminderDate) { 
+                                const reminderDate = new Date(todo.reminderDate);
+                                const now = new Date();
+                                const isUpcoming = reminderDate > now;
+                            %>
+                                <span class="badge badge-reminder <%= isUpcoming ? 'badge-reminder-active' : 'badge-reminder-past' %>" data-bs-toggle="tooltip" data-bs-placement="top" title="Promemoria: <%= moment(todo.reminderDate).format('L LT') %>">
+                                    <i class="fa-solid fa-bell me-1"></i>
+                                    <%= moment(todo.reminderDate).format('L LT') %>
+                                </span>
+                            <% } %>
+                            
+                            <!-- Assigned To Badge -->
+                            <% if (todo.assignedTo) { %>
+                                <span class="badge badge-assigned" data-bs-toggle="tooltip" data-bs-placement="top" title="Assegnato a <%= todo.assignedTo %>">
+                                    <i class="fa-solid fa-user me-1"></i>
+                                    <%= todo.assignedTo %>
+                                </span>
+                            <% } %>
+                        </div>
                     </div>
+                    
+                    <!-- Delete Button -->
                     <button class="btn btn-link text-muted deleteTodo p-0" data-todo-desc="<%= todo.description %>" data-todo-id="<%= todo._id %>" aria-label="Delete todo">
                         <i class="fa-solid fa-xmark fs-4"></i>
                     </button>
@@ -50,7 +97,7 @@
                                 <!-- Completed On Date -->
                                 <div class="col-sm-6 col-md-4">
                                     <div class="d-flex align-items-start">
-                                        <i id="todo_<%= todo._id %>_completedIcon" class="fa-regular <%= todo.done ? 'fa-circle-check text-success' : 'fa-circle-xmark text-secondary' %>  me-2 mt-1"></i>
+                                        <i id="todo_<%= todo._id %>_completedIcon" class="fa-regular <%= todo.done ? 'fa-circle-check text-success' : 'fa-circle-xmark text-secondary' %> me-2 mt-1"></i>
                                         <div>
                                             <small class="text-muted d-block mb-1">Completed</small>
                                             <span class="fw-medium text-dark" id="todo_<%= todo._id %>_completedOn">
@@ -72,7 +119,6 @@
                                         </div>
                                     </div>
                                 </div>
-
                             </div>
                         </div>
 
@@ -80,10 +126,34 @@
                         <div class="col-md-3 col-lg-2">
                             <div class="form-check form-switch d-flex align-items-center justify-content-md-end">
                                 <input class="form-check-input todoDone me-2 cursor-pointer" data-todo-id="<%= todo._id %>" type="checkbox" role="switch" <% if (todo.done) { %> checked <% } %> id="check_<%= todo._id %>" style="width: 3rem; height: 1.5rem;">
-                                <label class="form-check-label fw-medium text-dark cursor-pointer" for="check_<%= todo._id %>"> Done </label>
+                                <label class="form-check-label fw-medium text-dark cursor-pointer" for="check_<%= todo._id %>">
+                                    Done
+                                </label>
                             </div>
                         </div>
+                    </div>
 
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <!-- Recurring Task Info (if present) -->
+                            <% if (todo.recurringPattern && (todo.recurringStartDate || todo.recurringEndDate)) { %>
+                            <div class="recurring-info mt-3">
+                                <div class="recurring-info-content">
+                                    <i class="fa-solid fa-rotate text-primary me-2"></i>
+                                    <span class="small">
+                                        <strong>Ricorrenza:</strong>
+                                        <% if (todo.recurringStartDate) { %>
+                                            Dal <%= moment(todo.recurringStartDate).format('L') %>
+                                        <% } %>
+                                        <% if (todo.recurringEndDate) { %>
+                                            <% if (todo.recurringStartDate) { %> - <% } %>
+                                            Fino al <%= moment(todo.recurringEndDate).format('L') %>
+                                        <% } %>
+                                    </span>
+                                </div>
+                            </div>
+                            <% } %>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -91,7 +161,6 @@
     </div>
 </article>
 <% }); %>
-
 
 <% 
     function handleCreatedAt(createdAt) {
@@ -106,3 +175,13 @@
         }
     }
 %>
+
+<script>
+    // Initialize Bootstrap tooltips
+    document.addEventListener('DOMContentLoaded', function() {
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    });
+</script>

@@ -1,71 +1,225 @@
-<form action="/todo/add-todo" id="addTodoForm" method="post">
+<form action="/todo/add-todo" class="w-100" id="addTodoForm" method="post">
     <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-6">
-            <div class="card border-0">
-                <div class="card-body p-4">
-                    <h4 class="card-title mb-4 text-center">
-                        <i class="bi bi-plus-circle me-2"></i>Nuova Attività
+        <div class="col-md-10 col-lg-12">
+            <div class="card border-0 shadow-sm todo-form-card">
+                <div class="card-header bg-white border-0 pt-4 px-4">
+                    <h4 class="card-title mb-0 fw-bold text-center">
+                        <i class="fa-solid fa-plus-circle me-2 text-primary"></i>
+                        Nuova Attività
                     </h4>
+                </div>
 
-                    <div class="form-floating mb-3">
-                        <input
-                            type="text"
-                            class="form-control"
-                            id="description"
-                            name="description"
-                            placeholder="Attività"
-                            required
-                        />
-                        <label for="description"> <i class="bi bi-pencil me-2"></i>Attività </label>
-                    </div>
+                <div class="card-body p-4">
+                    <!-- Required Fields Section -->
+                    <div class="required-fields-section mb-4">
+                        <h6 class="section-title mb-3">
+                            <i class="fa-solid fa-asterisk text-danger me-2"></i>
+                            Informazioni Obbligatorie
+                        </h6>
 
-                    <div class="form-floating mb-3">
-                        <textarea
-                            class="form-control"
-                            id="addDescr"
-                            name="addDescr"
-                            placeholder="Descrizione aggiuntiva"
-                            style="height: 100px"
-                        ></textarea>
-                        <label for="addDescr">
-                            <i class="bi bi-text-paragraph me-2"></i>Descrizione aggiuntiva
-                        </label>
-                    </div>
+                        <!-- Description -->
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control form-control-lg" id="description" name="description" placeholder="Attività" required />
+                            <label for="description">
+                                <i class="fa-solid fa-pencil me-2"></i>
+                                Titolo Attività <span class="text-danger">*</span>
+                            </label>
+                        </div>
 
-                    <div class="row g-3 mb-3">
-                        <div class="col-md-6">
-                            <div class="form-floating">
-                                <input
-                                    type="date"
-                                    class="form-control"
-                                    id="completeBy"
-                                    name="completeBy"
-                                    placeholder="Da completare entro il"
-                                />
-                                <label for="completeBy">
-                                    <i class="bi bi-calendar-event me-2"></i>Scadenza
-                                </label>
+                        <!-- Additional Description -->
+                        <div class="form-floating mb-3">
+                            <textarea class="form-control" id="addDescr" name="addDescr" placeholder="Descrizione aggiuntiva" style="height: 100px" required></textarea>
+                            <label for="addDescr">
+                                <i class="fa-solid fa-align-left me-2"></i>
+                                Descrizione Aggiuntiva <span class="text-danger">*</span>
+                            </label>
+                        </div>
+
+                        <!-- Category, Priority, Assigned To -->
+                        <div class="row g-3 mb-3">
+                            <!-- Category -->
+                            <div class="col-md-4">
+                                <div class="form-floating">
+                                    <select class="form-control form-select" name="category" id="category" required>
+                                        <option value="">Seleziona...</option>
+                                        <option value="Lavoro">💼 Lavoro</option>
+                                        <option value="Personale">👤 Personale</option>
+                                        <option value="Casa">🏠 Casa</option>
+                                        <option value="Shopping">🛒 Shopping</option>
+                                        <option value="Salute">⚕️ Salute</option>
+                                        <option value="Finanze">💰 Finanze</option>
+                                        <option value="Studio">📚 Studio</option>
+                                        <option value="Sito">🌐 Sito</option>
+                                        <option value="Altro">📌 Altro</option>
+                                    </select>
+                                    <label for="category">
+                                        <i class="fa-solid fa-tag me-2"></i>
+                                        Categoria <span class="text-danger">*</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Priority -->
+                            <div class="col-md-4">
+                                <div class="form-floating">
+                                    <select class="form-control form-select" name="priority" id="priority" required>
+                                        <option value="">Seleziona...</option>
+                                        <option value="Bassa">🟢 Bassa</option>
+                                        <option value="Media">🟡 Media</option>
+                                        <option value="Alta">🔴 Alta</option>
+                                        <option value="Urgente">🚨 Urgente</option>
+                                    </select>
+                                    <label for="priority">
+                                        <i class="fa-solid fa-exclamation-circle me-2"></i>
+                                        Priorità <span class="text-danger">*</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Assigned To -->
+                            <div class="col-md-4">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" name="assignedTo" id="assignedTo" placeholder="Assegnato a" required/>
+                                    <label for="assignedTo">
+                                        <i class="fa-solid fa-user me-2"></i>
+                                        Assegnato a <span class="text-danger">*</span>
+                                    </label>
+                                </div>
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="form-floating">
-                                <input
-                                    type="text"
-                                    class="form-control"
-                                    name="category"
-                                    id="category"
-                                    placeholder="Categoria"
-                                />
-                                <label for="category">
-                                    <i class="bi bi-tag me-2"></i>Categoria
-                                </label>
+
+                        <!-- Complete By (optional but outside accordion) -->
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="date" class="form-control" id="completeBy" name="completeBy" placeholder="Da completare entro il" />
+                                    <label for="completeBy">
+                                        <i class="fa-solid fa-calendar-check me-2"></i>
+                                        Scadenza
+                                    </label>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="d-grid gap-2">
+                    <!-- Optional Fields Accordion -->
+                    <div class="accordion accordion-flush" id="optionalFieldsAccordion">
+                        <div class="accordion-item border-0">
+                            <h2 class="accordion-header" id="headingOptional">
+                                <button class="accordion-button collapsed bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOptional" aria-expanded="false" aria-controls="collapseOptional">
+                                    <i class="fa-solid fa-sliders me-2 text-primary"></i>
+                                    <strong>Opzioni Avanzate</strong>
+                                    <small class="ms-2 text-muted">(facoltative)</small>
+                                </button>
+                            </h2>
+                            <div id="collapseOptional" class="accordion-collapse collapse" aria-labelledby="headingOptional" data-bs-parent="#optionalFieldsAccordion">
+                                <div class="accordion-body pt-4">
+                                    <!-- Reminder Section -->
+                                    <div class="optional-section mb-4">
+                                        <h6 class="section-subtitle mb-3">
+                                            <i class="fa-solid fa-bell text-warning me-2"></i>
+                                            Promemoria
+                                        </h6>
+
+                                        <div class="row g-3 mb-3">
+                                            <!-- Remind Me Checkbox -->
+                                            <div class="col-md-6">
+                                                <div class="form-check form-switch ps-0">
+                                                    <div class="d-flex align-items-center gap-3 p-3 bg-light rounded">
+                                                        <input class="form-check-input ms-0 me-0" type="checkbox" role="switch" id="remindMe" name="remindMe" style="width: 3rem; height: 1.5rem"/>
+                                                        <label class="form-check-label fw-medium mb-0" for="remindMe">
+                                                            <i class="fa-solid fa-bell-on me-2"></i>
+                                                            Attiva Promemoria
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Reminder Date -->
+                                            <div class="col-md-6">
+                                                <div class="form-floating">
+                                                    <input type="datetime-local" class="form-control" id="reminderDate" name="reminderDate" placeholder="Data promemoria" />
+                                                    <label for="reminderDate">
+                                                        <i class="fa-solid fa-calendar-days me-2"></i>
+                                                        Data e Ora Promemoria
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Recurring Task Section -->
+                                    <div class="optional-section mb-3">
+                                        <h6 class="section-subtitle mb-3">
+                                            <i class="fa-solid fa-rotate text-info me-2"></i>
+                                            Attività Ricorrente
+                                        </h6>
+
+                                        <!-- Recurring Pattern -->
+                                        <div class="form-floating mb-3">
+                                            <select class="form-control form-select" name="recurringPattern" id="recurringPattern">
+                                                <option value="">Nessuna ricorrenza</option>
+                                                <option value="Giornaliera">📅 Giornaliera</option>
+                                                <option value="Settimanale">📆 Settimanale</option>
+                                                <option value="Bisettimanale">🗓️ Bisettimanale</option>
+                                                <option value="Mensile">📊 Mensile</option>
+                                                <option value="Annuale">🎯 Annuale</option>
+                                                <option value="Custom">⚙️ Personalizzata</option>
+                                            </select>
+                                            <label for="recurringPattern">
+                                                <i class="fa-solid fa-repeat me-2"></i>
+                                                Schema Ricorrenza
+                                            </label>
+                                        </div>
+
+                                        <!-- Recurring Date Range -->
+                                        <div class="row g-3">
+                                            <div class="col-md-6">
+                                                <div class="form-floating">
+                                                    <input type="date" class="form-control" id="recurringStartDate" name="recurringStartDate" placeholder="Data inizio ricorrenza" />
+                                                    <label for="recurringStartDate">
+                                                        <i class="fa-solid fa-calendar-plus me-2"></i>
+                                                        Inizio Ricorrenza
+                                                    </label>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-6">
+                                                <div class="form-floating">
+                                                    <input type="date" class="form-control" id="recurringEndDate" name="recurringEndDate" placeholder="Data fine ricorrenza" />
+                                                    <label for="recurringEndDate">
+                                                        <i class="fa-solid fa-calendar-minus me-2"></i>
+                                                        Fine Ricorrenza
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Helper Text for Recurring -->
+                                        <div class="alert alert-info mt-3 mb-0" role="alert">
+                                            <i class="fa-solid fa-info-circle me-2"></i>
+                                            <small>
+                                                <strong>Nota:</strong> Se selezioni una ricorrenza,
+                                                puoi impostare date di inizio e fine opzionali. Se
+                                                non specifichi una data di fine, l'attività
+                                                continuerà a ripetersi indefinitamente.
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="d-flex justify-content-around mt-4 pt-3 border-top">
+                        <button type="reset" class="btn btn-outline-secondary">
+                            <i class="fa-solid fa-rotate-left me-2"></i>
+                            Cancella Tutto
+                        </button>
                         <button type="submit" id="addTodo" class="btn btn-primary btn-lg">
-                            <i class="bi bi-check-circle me-2"></i>Aggiungi Attività
+                            <i class="fa-solid fa-check-circle me-2"></i>
+                            Aggiungi Attività
                         </button>
                     </div>
                 </div>

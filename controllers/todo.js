@@ -13,6 +13,8 @@ exports.getTodo = (req, res, next) => {
                 searchType: 'todo',
                 todoAmount: todos.length,
                 todos: todos,
+                categories: _.uniq(todos.map(todo => todo.category)),
+                assignees: _.filter(_.uniq(todos.map(todo => todo.assignedTo)), _.identity),
                 moment: moment,
                 _: _
             });
@@ -26,8 +28,14 @@ exports.addTodo = (req, res, next) => {
         description: req.body.description,
         addDescr: req.body.addDescr,
         category: req.body.category,
+        priority: req.body.priority,
+        assignedTo: req.body.assignedTo,
         completeBy: req.body.completeBy,
-        done: false,
+        remindMe: req.body.remindMe === 'on',
+        reminderDate: req.body.reminderDate,
+        recurringPattern: req.body.recurringPattern,
+        recurringStartDate: req.body.recurringStartDate,
+        recurringEndDate: req.body.recurringEndDate,
         completedOn: null,
         createdAt: new Date()
     });
