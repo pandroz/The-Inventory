@@ -1,7 +1,6 @@
-
 // Quantity control functionality
 document.addEventListener('DOMContentLoaded', function () {
-    
+
     // Decrease button
     document.querySelectorAll('.btn-qty.decrease').forEach(btn => {
         btn.addEventListener('click', function () {
@@ -14,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     });
-    
+
     // Increase button
     document.querySelectorAll('.btn-qty.increase').forEach(btn => {
         btn.addEventListener('click', function () {
@@ -28,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     });
-    
+
     // Direct input change
     document.querySelectorAll('.qty-input').forEach(input => {
         input.addEventListener('change', function () {
@@ -36,15 +35,15 @@ document.addEventListener('DOMContentLoaded', function () {
             let value = parseInt(this.value) || 0;
             const min = parseInt(this.min) || 0;
             const max = parseInt(this.max) || 999;
-            
+
             // Validate value
             if (value < min) value = min;
             if (value > max) value = max;
-            
+
             this.value = value;
             processUpdateQuantity(itemId, value);
         });
-        
+
         // Prevent invalid characters
         input.addEventListener('keypress', function (e) {
             if (e.key === '-' || e.key === '+' || e.key === 'e' || e.key === 'E') {
@@ -52,29 +51,39 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     });
-    
+
     // Change item name
-    document.getElementById('shoppingManangerList').addEventListener('click', e => {        
+    document.getElementById('shoppingManangerList').addEventListener('click', e => {
         if (e.target.classList.contains('item-name')) {
             const h5 = e.target;
             console.log('clicked h5')
             h5.classList.add('d-none');
             h5.parentElement.querySelector('.itemNameForm').classList.remove('d-none');
         }
-        
+
     })
-    
-    
+
+
     // Delete item
     document.querySelectorAll('.delete-item').forEach(btn => {
         btn.addEventListener('click', function () {
             const itemId = this.dataset.itemId;
             const itemName = this.dataset.itemName;
-            
+
             if (confirm(`Are you sure you want to delete "${itemName}"?`)) {
                 deleteItem(itemId);
             }
         });
+    });
+
+
+    document.getElementById('upsertList').addEventListener('click', (e) => {
+        console.log('upsertList');
+        const target = e.target;
+        const dataset = target.dataset;
+        const classList = target.classList;
+
+        upsertList();
     });
 });
 
@@ -86,11 +95,11 @@ function updateQuantity(itemId, quantity) {
     }, {
         headers: { 'Content-Type': 'application/json' }
     })
-    .then(res => {
-        if(res.status !== 200) {
-            toastMessage('error', 'Error updating item quantity', `Error updating item quantity ${res.data.message}`);
-        }
-    })
+        .then(res => {
+            if (res.status !== 200) {
+                toastMessage('error', 'Error updating item quantity', `Error updating item quantity ${res.data.message}`);
+            }
+        })
     console.log(`Update item ${itemId} to quantity ${quantity}`);
 }
 
@@ -101,19 +110,25 @@ function deleteItem(itemId) {
     }, {
         headers: { 'Content-Type': 'application/json' }
     })
-    .then(res => {
-        if(res.status == 200) {
-            document.getElementById(`item_${itemId}`).remove();
-        } else {
-            console.error('Failed to delete item');
-            toastMessage('error', 'Error deleting item', `Error deleting item ${res.data.message}`);
-        }
-    }).catch(err => {
-        
-    });
-    
+        .then(res => {
+            if (res.status == 200) {
+                document.getElementById(`item_${itemId}`).remove();
+            } else {
+                console.error('Failed to delete item');
+                toastMessage('error', 'Error deleting item', `Error deleting item ${res.data.message}`);
+            }
+        }).catch(err => {
+
+        });
+
     console.log(`Delete item ${itemId}`);
 }
 
 
 const processUpdateQuantity = _.debounce(updateQuantity, 1000);
+
+
+const upsertList = async () => {
+    await axios.get('/shopping-manager/upsert-list');
+    window.location.reload();
+};

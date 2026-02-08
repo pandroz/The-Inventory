@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.get('/', shoppingManagerController.getShoppingList);
 
-router.post('/add-item', shoppingManagerController.addItem);
+router.get('/upsert-list', shoppingManagerController.upsertList);
 
 router.post('/delete-item', shoppingManagerController.deleteItem);
 

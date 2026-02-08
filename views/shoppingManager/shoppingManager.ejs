@@ -12,23 +12,13 @@
             </div>
         </div>
 
-        <%- include('./components/shoppingManagerAddForm.ejs') %>
-
-        <!-- <div class="row">
+        <div class="row mb-2">
             <div class="col-md-12">
-                <form action="/shopping-manager/add-item" method="post">
-                    <div class="mb-3">
-                        <label for="itemName" class="form-label">Nome del prodotto</label>
-                        <input type="text" class="form-control" id="itemName" name="itemName" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="itemQty" class="form-label">Quantità</label>
-                        <input type="number" class="form-control" id="itemQty" name="itemQty" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Aggiungi</button>
-                </form>
+                <button class="btn btn-primary" id="upsertList">Crea / Aggiorna Lista</button>
             </div>
-        </div> -->
+        </div>
+
+        
         <div id="shoppingManangerList" class="row">
             <%- include('./components/shoppingManagerList.ejs') %>
         </div>

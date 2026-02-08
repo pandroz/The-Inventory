@@ -154,7 +154,7 @@ const updateItemQuantity = (itemId, newQty) => {
     });
 }
 
-const processUpdateItemQuantity = _.debounce(updateItemQuantity, 1000);
+const processUpdateItemQuantity = _.debounce(updateItemQuantity, 500);
 
 
 const deleteItem = (itemId) => {
