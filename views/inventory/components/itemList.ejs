@@ -6,9 +6,7 @@
                 <!-- Product Image -->
                 <div class="col-12 col-md-3 col-lg-2">
                     <div class="item-image-wrapper">
-                        <img src="<%= item.imageUrl || 'https://placehold.co/200?text=No+Image' %>" 
-                                class="item-image img-fluid rounded" 
-                                alt="<%= item.name %>">
+                        <img src="<%= item.imageUrl || 'https://placehold.co/200?text=No+Image' %>" class="item-image img-fluid rounded" alt="<%= item.name %>">
                         
                         <!-- Low Stock Badge -->
                         <% if (item.lowStockAlert && item.qty <= item.lowStockAlert) { %>
@@ -43,7 +41,7 @@
                     <div class="item-header mb-3">
                         <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
                             <div>
-                                <h3 class="item-name mb-1"><%= item.name %></h3>
+                                <h3 class="item-name mb-1 LIST_ITEM_TITLE"><%= item.name %></h3>
                                 <% if (item.category) { %>
                                     <span class="badge category-badge">
                                         <%= item.category %>
@@ -166,7 +164,7 @@
                                     <i class="fa-solid fa-note-sticky me-1"></i>
                                     Note
                                 </div>
-                                <div class="notes-content">
+                                <div class="notes-content LIST_ITEM_DESC">
                                     <%= item.notes %>
                                 </div>
                             </div>
