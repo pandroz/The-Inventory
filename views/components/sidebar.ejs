@@ -25,6 +25,8 @@
     class="sidebar bg-white offcanvas-lg offcanvas-start"
     tabindex="-1"
     aria-labelledby="sidebarMenuLabel"
+    data-bs-scroll="false"
+    data-bs-backdrop="true"
 >
     <!-- Offcanvas Header (Mobile Only) -->
     <div class="offcanvas-header d-lg-none border-bottom">
@@ -36,21 +38,12 @@
             type="button"
             class="btn-close"
             data-bs-dismiss="offcanvas"
-            data-bs-target="#sidebarMenu"
             aria-label="Close"
         ></button>
     </div>
 
     <!-- Sidebar Content -->
     <div class="sidebar-content">
-        <!-- Brand/Logo Section (Optional) -->
-        <!-- <div class="sidebar-brand d-none d-lg-block">
-            <div class="brand-content">
-                <i class="fa-solid fa-house-chimney brand-icon"></i>
-                <span class="brand-text">My Home</span>
-            </div>
-        </div> -->
-
         <!-- Navigation Links -->
         <div class="sidebar-nav">
             <div class="nav-section">
@@ -95,7 +88,7 @@
                 </a>
             </div>
 
-            <!-- Additional Section (Example) -->
+            <!-- Additional Section -->
             <div class="nav-section">
                 <div class="nav-section-title">
                     <span class="section-text">Settings</span>
@@ -140,7 +133,7 @@
         --nav-item-active-bg: #e7f3ff;
         --nav-item-active-color: #0d6efd;
         --nav-text-color: #495057;
-        /* --transition-speed: 0.3s; */
+        --transition-speed: 0s;
     }
 
     /* Sidebar Toggle Button (Mobile) */
@@ -240,6 +233,8 @@
         flex-direction: column;
         overflow-x: hidden;
         overflow-y: auto;
+        position: relative;
+        z-index: 1;
     }
 
     /* Custom Scrollbar */
@@ -258,42 +253,6 @@
 
     .sidebar-content::-webkit-scrollbar-thumb:hover {
         background: #adb5bd;
-    }
-
-    /* Brand Section */
-    .sidebar-brand {
-        padding: 1.5rem 1rem;
-        border-bottom: 1px solid var(--sidebar-border);
-    }
-
-    .brand-content {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        transition: all var(--transition-speed) ease;
-    }
-
-    .brand-icon {
-        font-size: 1.8rem;
-        color: var(--nav-item-active-color);
-        min-width: 40px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .brand-text {
-        font-size: 1.3rem;
-        font-weight: 700;
-        color: var(--nav-text-color);
-        white-space: nowrap;
-        opacity: 1;
-        transition: opacity var(--transition-speed) ease;
-    }
-
-    body.sidebar-collapsed .brand-text {
-        opacity: 0;
-        width: 0;
     }
 
     /* Navigation */
@@ -338,7 +297,8 @@
         position: relative;
         transition: all 0.2s ease;
         cursor: pointer;
-        overflow: hidden;
+        overflow: visible; /* Changed from hidden to visible */
+        z-index: 1; /* Ensure links are above backdrop */
     }
 
     .nav-item:hover {
@@ -362,6 +322,7 @@
         justify-content: center;
         font-size: 1.3rem;
         transition: all 0.2s ease;
+        z-index: 1;
     }
 
     .nav-item:hover .nav-icon,
@@ -375,6 +336,7 @@
         margin-left: 0.5rem;
         opacity: 1;
         transition: opacity var(--transition-speed) ease;
+        z-index: 1;
     }
 
     body.sidebar-collapsed .nav-text {
@@ -495,14 +457,23 @@
 
     /* Mobile/Tablet Responsiveness */
     @media (max-width: 991.98px) {
+        /* CRITICAL FIX: Ensure sidebar is above backdrop */
         .sidebar {
             width: 280px;
             padding-top: 0;
-            transform: translateX(-100%);
+            z-index: 1055 !important; /* Higher than offcanvas backdrop (1050) */
         }
 
-        .sidebar.show {
-            transform: translateX(0);
+        /* Ensure all clickable elements are above backdrop */
+        .sidebar-content,
+        .nav-item,
+        .nav-icon,
+        .nav-text,
+        .offcanvas-header,
+        .btn-close {
+            position: relative;
+            z-index: 1;
+            pointer-events: auto !important;
         }
 
         body.sidebar-collapsed .sidebar {
@@ -533,8 +504,13 @@
         }
     }
 
+    /* Ensure Bootstrap offcanvas backdrop doesn't cover sidebar */
+    .offcanvas-backdrop {
+        z-index: 1050 !important;
+    }
+
     /* Animation for sidebar items */
-    /* @keyframes slideInFromLeft {
+    @keyframes slideInFromLeft {
         from {
             opacity: 0;
             transform: translateX(-20px);
@@ -543,13 +519,13 @@
             opacity: 1;
             transform: translateX(0);
         }
+    }
+/* 
+    .nav-item {
+        animation: slideInFromLeft 0.3s ease;
     } */
 
-    /* .nav-item {
-        animation: slideInFromLeft 0.3s ease;
-    }
-
-    .nav-item:nth-child(1) {
+    /* .nav-item:nth-child(1) {
         animation-delay: 0.05s;
     }
     .nav-item:nth-child(2) {
@@ -587,12 +563,11 @@
         // Auto-close mobile sidebar when clicking a link
         const navLinks = document.querySelectorAll("#sidebarMenu .nav-item");
         navLinks.forEach(link => {
-            link.addEventListener("click", function () {
+            link.addEventListener("click", function (e) {
                 // Only close on mobile
                 if (window.innerWidth < 992) {
-                    const offcanvas = bootstrap.Offcanvas.getInstance(
-                        document.getElementById("sidebarMenu"),
-                    );
+                    const offcanvasElement = document.getElementById("sidebarMenu");
+                    const offcanvas = bootstrap.Offcanvas.getInstance(offcanvasElement);
                     if (offcanvas) {
                         offcanvas.hide();
                     }
