@@ -42,9 +42,9 @@
                                 const now = new Date();
                                 const isUpcoming = reminderDate > now;
                             %>
-                                <span class="badge badge-reminder <%= isUpcoming ? 'badge-reminder-active' : 'badge-reminder-past' %>" data-bs-toggle="tooltip" data-bs-placement="top" title="Promemoria: <%= moment(todo.reminderDate).format('L LT') %>">
+                                <span class="badge badge-reminder <%= isUpcoming ? 'badge-reminder-active' : 'badge-reminder-past' %>" data-bs-toggle="tooltip" data-bs-placement="top" title="Promemoria: <%= moment(todo.reminderDate).fromNow() %>">
                                     <i class="fa-solid fa-bell me-1"></i>
-                                    <%= moment(todo.reminderDate).format('L LT') %>
+                                    <%= moment(todo.reminderDate).format('YYYY-MM-DD HH:mm') %>
                                 </span>
                             <% } %>
                             
