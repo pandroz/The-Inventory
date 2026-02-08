@@ -63,8 +63,8 @@ function search(value, searchType, force = false) {
         let list = document.getElementById(`${searchType}List`).getElementsByTagName('article');
 
         _.filter(list, (item) => {
-            let titleContent = item.getElementsByClassName('LIST_ITEM_TITLE')[0].textContent.toLowerCase();
-            let descriptionContent = item.getElementsByClassName('LIST_ITEM_DESC')[0].textContent.toLowerCase();
+            let titleContent = _.get(_.head(item.getElementsByClassName('LIST_ITEM_TITLE')), 'textContent', '').toLowerCase();
+            let descriptionContent = _.get(_.head(item.getElementsByClassName('LIST_ITEM_DESC')), 'textContent', '').toLowerCase();
 
             let textContent = titleContent + ' ' + descriptionContent;
             textContent.includes(value.toLowerCase()) ? item.style.display = 'block' : item.style.display = 'none';

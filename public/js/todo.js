@@ -221,6 +221,11 @@ const getTodoList = (filter) => {
 
 const filterTodoList = (todos) => {
     const filteredTodoIds = todos.map(todo => 'todo_' + todo._id);
+
+    const sizeFilteredIds = _.size(filteredTodoIds);
+    document.getElementById('totalItems').innerHTML = sizeFilteredIds;
+
+
     const todoList = _.filter(_.map(document.getElementById('todoList').childNodes, 'id'), _.identity);
 
     // RESET TODOS DISPLAY
