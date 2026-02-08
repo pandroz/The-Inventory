@@ -98,12 +98,26 @@ exports.upsertList = (req, res, next) => {
                 "lowStockAlert": 1,
                 "qty": 1
             }
+        },
+        {
+            "$lookup": {
+                "from": "shoppingmanager",
+                "localField": "_id",
+                "foreignField": "item",
+                "as": "shopList"
+            }
+        },
+        {
+            "$unwind": {
+                "path": "$shopList",
+                "preserveNullAndEmptyArrays": true
+            }
         }
     ]).then(itemsToAdd => {
         itemsToAdd.forEach(item => {
             let qtyToBuy = (item.lowStockAlert || 0) - (item.qty || 0);
             
-            if (qtyToBuy > 0) {
+            if (qtyToBuy > 0 && qtyToBuy !== _.get(item, 'shopList.itemQty', 0)) {
                 ShoppingManager.findOneAndUpdate({
                     item: item._id
                 }, {
