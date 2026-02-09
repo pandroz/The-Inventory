@@ -20,6 +20,11 @@ const shoppingListSchema = new Schema({
         required: false,
         default: false
     },
+    isBought: {
+        type: Boolean,
+        required: false,
+        default: false
+    },
     createdAt: {
         type: Date,
         required: false,

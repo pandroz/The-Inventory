@@ -9,7 +9,10 @@ document.addEventListener('DOMContentLoaded', function () {
             const currentValue = parseInt(input.value) || 0;
             if (currentValue > 0) {
                 input.value = currentValue - 1;
-                processUpdateQuantity(itemId, input.value);
+                processUpdateItem({
+                    itemId: itemId,
+                    newQty: input.value
+                });
             }
         });
     });
@@ -23,7 +26,10 @@ document.addEventListener('DOMContentLoaded', function () {
             const maxValue = parseInt(input.max) || 999;
             if (currentValue < maxValue) {
                 input.value = currentValue + 1;
-                processUpdateQuantity(itemId, input.value);
+                processUpdateItem({
+                    itemId: itemId,
+                    newQty: input.value
+                });
             }
         });
     });
@@ -41,7 +47,10 @@ document.addEventListener('DOMContentLoaded', function () {
             if (value > max) value = max;
 
             this.value = value;
-            processUpdateQuantity(itemId, value);
+            processUpdateItem({
+                itemId: itemId,
+                newQty: input.value
+            });
         });
 
         // Prevent invalid characters
@@ -52,17 +61,79 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // Change item name
-    document.getElementById('shoppingManangerList').addEventListener('click', e => {
+    // Bought checkbox change event
+    document.querySelectorAll('.item-bought-checkbox').forEach(checkbox => {
+        checkbox.addEventListener('change', function () {
+            const itemId = this.dataset.itemId;
+            const isBought = this.checked;
+            const card = this.closest('.shopping-item');
+
+            // Toggle bought state visually
+            if (isBought) {
+                card.classList.add('item-bought');
+            } else {
+                card.classList.remove('item-bought');
+            }
+
+            // Call backend to update bought status
+            processUpdateItem({
+                itemId: itemId,
+                isBought: isBought
+            });
+        });
+    });
+
+    // Change item name - click on name to edit
+    document.getElementById('shoppingManangerList')?.addEventListener('click', e => {
         if (e.target.classList.contains('item-name')) {
             const h5 = e.target;
-            console.log('clicked h5')
+            const itemId = h5.dataset.itemId;
+            const input = h5.parentElement.querySelector('.itemNameForm');
+
             h5.classList.add('d-none');
-            h5.parentElement.querySelector('.itemNameForm').classList.remove('d-none');
+            input.classList.remove('d-none');
+            input.focus();
+            input.select();
         }
+    });
 
-    })
+    // Save item name on blur or Enter key
+    document.querySelectorAll('.itemNameForm').forEach(input => {
+        // Save on blur (click away)
+        input.addEventListener('blur', function () {
+            const itemId = this.dataset.itemId;
+            const newName = this.value.trim();
+            const h5 = this.parentElement.querySelector('.item-name');
 
+            if (newName && newName !== h5.textContent.trim()) {
+                h5.textContent = newName;
+                updateItem({
+                    itemId: itemId,
+                    itemName: newName
+                });
+            }
+
+            this.classList.add('d-none');
+            h5.classList.remove('d-none');
+        });
+
+        // Save on Enter key
+        input.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                this.blur();
+            }
+        });
+
+        // Cancel on Escape key
+        input.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                const h5 = this.parentElement.querySelector('.item-name');
+                this.value = h5.textContent.trim();
+                this.classList.add('d-none');
+                h5.classList.remove('d-none');
+            }
+        });
+    });
 
     // Delete item
     document.querySelectorAll('.delete-item').forEach(btn => {
@@ -76,34 +147,49 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-
-    document.getElementById('upsertList').addEventListener('click', (e) => {
+    // Upsert list button
+    document.getElementById('upsertList')?.addEventListener('click', (e) => {
         console.log('upsertList');
-        const target = e.target;
-        const dataset = target.dataset;
-        const classList = target.classList;
-
         upsertList();
     });
 });
 
-// Function to update quantity (you'll need to implement the AJAX call)
-function updateQuantity(itemId, quantity) {
-    axios.post('/shopping-manager/edit-qty', {
+
+
+
+
+/**
+ * Update an item in the shopping manager list
+ * @param {Object} updateObj - Object containing the item to be updated with the following properties:
+ *   - itemId: The item ID to update
+ *   - newName: The new name of the item
+ *   - newQty: The new quantity of the item
+ *   - isBought: A boolean indicating whether the item is bought or not
+ */
+function updateItem(updateObj) {
+    const { itemId, newName, newQty, isBought } = updateObj;
+    axios.post('/shopping-manager/update-item', {
         itemId: itemId,
-        quantity: quantity
+        itemName: newName,
+        qty: newQty,
+        isBought: isBought
     }, {
         headers: { 'Content-Type': 'application/json' }
     })
         .then(res => {
-            if (res.status !== 200) {
-                toastMessage('error', 'Error updating item quantity', `Error updating item quantity ${res.data.message}`);
+            if (res.status === 200) {
+                console.log('Item name updated');
+            } else {
+                toastMessage('error', 'Error updating item name', res.data.message);
             }
         })
-    console.log(`Update item ${itemId} to quantity ${quantity}`);
+        .catch(err => {
+            console.error('Error updating item name:', err);
+            toastMessage('error', 'Error', 'Failed to update item name');
+        });
 }
 
-// Function to delete item (you'll need to implement the AJAX call)
+// Function to delete item
 function deleteItem(itemId) {
     axios.post('shopping-manager/delete-item', {
         itemId: itemId
@@ -112,23 +198,40 @@ function deleteItem(itemId) {
     })
         .then(res => {
             if (res.status == 200) {
-                document.getElementById(`item_${itemId}`).remove();
+                // Add fade out animation before removing
+                const itemElement = document.getElementById(`item_${itemId}`);
+                itemElement.style.animation = 'fadeOut 0.3s ease';
+                setTimeout(() => {
+                    itemElement.remove();
+                }, 300);
             } else {
                 console.error('Failed to delete item');
                 toastMessage('error', 'Error deleting item', `Error deleting item ${res.data.message}`);
             }
-        }).catch(err => {
-
+        })
+        .catch(err => {
+            console.error('Error deleting item:', err);
+            toastMessage('error', 'Error', 'Failed to delete item');
         });
 
     console.log(`Delete item ${itemId}`);
 }
 
+// Debounced updates
+const processUpdateItem = _.debounce(updateItem, 500);
 
-const processUpdateQuantity = _.debounce(updateQuantity, 1000);
-
-
+// Upsert list function
 const upsertList = async () => {
     await axios.get('/shopping-manager/upsert-list');
     window.location.reload();
 };
+
+// Fade out animation
+const style = document.createElement('style');
+style.textContent = `
+        @keyframes fadeOut {
+            from { opacity: 1; transform: scale(1); }
+            to { opacity: 0; transform: scale(0.95); }
+        }
+    `;
+document.head.appendChild(style);

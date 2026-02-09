@@ -51,20 +51,26 @@ exports.deleteItem = (req, res, next) => {
     });
 }
 
-exports.editItemQty = (req, res, next) => {
+exports.updateItem = (req, res, next) => {
     const itemId = req.body.itemId;
-    const quantity = req.body.quantity;
+    const itemQty = req.body.qty;
+    const itemName = req.body.itemName;
+    const isBought = req.body.isBought;
 
-    ShoppingManager.findOne({
+    let newDoc = {
+        itemQty: itemQty,
+        itemName: itemName,
+        isBought: isBought
+    };
+
+    newDoc = _.omitBy(newDoc, _.isUndefined);
+
+    ShoppingManager.findOneAndUpdate({
         _id: itemId
-    })
-        .then(item => {
-            item.itemQty = quantity;
-            return item.save()
-        })
+    }, newDoc)
         .then(result => {
             console.log('Updated item', result);
-            res.status(200).json({ message: 'Item updated successfully', qty: result.qty });
+            res.status(200).json({ message: 'Item updated successfully' });
         })
         .catch(err => {
             res.status(500).json({ message: 'Error updating item: ' + err });
