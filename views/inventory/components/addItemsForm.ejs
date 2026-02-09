@@ -119,7 +119,7 @@
                     </div>
 
                     <!-- Current Quantity -->
-                    <div class="col-6 col-sm-4">
+                    <div class="col-6 col-sm-3">
                         <label for="qty" class="form-label fw-semibold">
                             <i class="fa-solid fa-boxes-stacked text-success me-1 d-none d-md-inline"></i>
                             <span class="d-none d-md-inline">Quantità Presente </span><span class="text-danger">*</span>
@@ -136,7 +136,7 @@
                     </div>
 
                     <!-- Unit of Measurement -->
-                    <div class="col-6 col-sm-4">
+                    <div class="col-6 col-sm-3">
                         <label for="unit" class="form-label fw-semibold">
                             <i class="fa-solid fa-ruler text-info me-1 d-none d-md-inline"></i>
                             Unità
@@ -157,7 +157,7 @@
                     </div>
 
                     <!-- Minimum Stock Alert -->
-                    <div class="col-12 col-sm-4">
+                    <div class="col-12 col-sm-3">
                         <label for="lowStockAlert" class="form-label fw-semibold">
                             <i class="fa-solid fa-bell text-danger me-1 d-none d-md-inline"></i>
                             <span class="d-none d-lg-inline">Avviso di bassa qtà </span>
@@ -172,6 +172,25 @@
                         />
                         <small class="form-text text-muted d-none d-md-block">
                             Verrai notificato quando la quantità minima verra raggiunta
+                        </small>
+                    </div>
+
+                    <!-- Priotity -->
+                    <div class="col-12 col-sm-3">
+                        <label for="buyPriority" class="form-label fw-semibold">
+                            <i class="fa-solid fa-exclamation text-warning me-1 d-none d-md-inline"></i>
+                            <span class="d-none d-lg-inline">Priorità di acquisto </span>
+                        </label>
+                        <input
+                            type="number"
+                            class="form-control form-control-lg"
+                            id="buyPriority"
+                            name="buyPriority"
+                            min="-1"
+                            placeholder="Priorità di acquisto"
+                        />
+                        <small class="form-text text-muted d-none d-md-block">
+                            Più alta la priorità, più prioritario sarà l'acquisto
                         </small>
                     </div>
 

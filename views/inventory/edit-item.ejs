@@ -127,9 +127,29 @@
                                         <input type="number" class="form-control form-control-lg" name="lowStockAlert" id="lowStockAlert" min="0" placeholder="Avvisa quando sotto questa quantità" value="<%= item.lowStockAlert || '' %>">
                                         <small class="form-text text-muted">Riceverai un avviso quando la quantità scende sotto questo valore</small>
                                     </div>
+
+                                    <!-- Priotity -->
+                                    <div class="col-12 col-sm-3">
+                                        <label for="buyPriority" class="form-label fw-semibold">
+                                            <i class="fa-solid fa-exclamation text-warning me-1 d-none d-md-inline"></i>
+                                            <span class="d-none d-lg-inline">Priorità di acquisto </span>
+                                        </label>
+                                        <input
+                                            type="number"
+                                            class="form-control form-control-lg"
+                                            id="buyPriority"
+                                            name="buyPriority"
+                                            min="-1"
+                                            placeholder="Priorità di acquisto"
+                                            value="<%= item.buyPriority || '' %>"
+                                        />
+                                        <small class="form-text text-muted d-none d-md-block">
+                                            Più alta la priorità, più prioritario sarà l'acquisto
+                                        </small>
+                                    </div>
                                     
                                     <!-- Expiration Date -->
-                                    <div class="col-md-6">
+                                    <div class="col-md-3">
                                         <label for="expirationDate" class="form-label fw-semibold">
                                             <i class="fa-solid fa-calendar-xmark text-warning me-1"></i>
                                             Data di Scadenza

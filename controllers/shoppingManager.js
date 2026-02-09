@@ -26,7 +26,7 @@ exports.getShoppingList = (req, res, next) => {
                 }
             });
 
-            result = _.filter(result, list => !_.includes(toRemove, list.item._id));
+            result = _.orderBy(_.filter(result, list => !_.includes(toRemove, list.item._id)), 'buyPriority', 'desc');
 
             res.render('shoppingManager/shoppingManager', {
                 pageTitle: 'Shopping Manager',

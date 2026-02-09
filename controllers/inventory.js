@@ -39,14 +39,13 @@ exports.getEditItemPage = (req, res, next) => {
 
 // POST
 exports.postAddItem = (req, res, next) => {
-    console.log('req.body', req.body);
-
     const item = new Item({
         name: req.body.name,
         category: req.body.category,
         qty: req.body.qty,
         unit: req.body.unit,
         lowStockAlert: req.body.lowStockAlert,
+        buyPriority: req.body.buyPriority,
         storageLocation: req.body.storageLocation,
         expirationDate: req.body.expirationDate,
         price: req.body.price,
@@ -91,6 +90,7 @@ exports.postEditItem = (req, res, next) => {
         item.qty = req.body.qty;
         item.unit = req.body.unit;
         item.lowStockAlert = req.body.lowStockAlert;
+        item.buyPriority = req.body.buyPriority;
         item.storageLocation = req.body.storageLocation;
         item.expirationDate = req.body.expirationDate;
         item.price = req.body.price;
@@ -111,7 +111,7 @@ exports.postEditItem = (req, res, next) => {
 exports.postEditQuantity = (req, res, next) => {
     const id = req.body.itemId;
     const newQty = req.body.newQty;
-    
+
     Item.findById({
         _id: id
     }).then(item => {
@@ -119,7 +119,7 @@ exports.postEditQuantity = (req, res, next) => {
         return item.save();
     }).then(result => {
         console.log('Updated item', result);
-        res.status(200).json({ message: 'Item updated successfully'});
+        res.status(200).json({ message: 'Item updated successfully' });
     }).catch(err => {
         res.status(500).json({ message: 'Error updating item: ' + err, itemName: result.name });
         console.log('Error updating item', err);

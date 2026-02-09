@@ -25,6 +25,11 @@ const itemSchema = new Schema({
         required: false,
         default: 0
     },
+    buyPriority: {
+        type: Number,
+        required: false,
+        default: 0
+    },
     storageLocation: {
         type: String,
         required: false

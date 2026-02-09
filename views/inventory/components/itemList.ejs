@@ -123,6 +123,23 @@
                                 </div>
                             <% } %>
 
+                            <!-- Priority -->
+                            <% if (item.buyPriority) { %>
+                                <div class="col-6 col-sm-4">
+                                    <div class="detail-item">
+                                        <div class="detail-icon text-warning">
+                                            <i class="fa-solid fa-exclamation"></i>
+                                        </div>
+                                        <div class="detail-content">
+                                            <div class="detail-label">Priorità d'acquisto</div>
+                                            <div class="detail-value">
+                                                <%= item.buyPriority %>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% } %>
+
                             <!-- Preferred Supplier -->
                             <% if (item.preferredSupplier) { %>
                                 <div class="col-6 col-sm-4">
