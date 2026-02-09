@@ -12,17 +12,17 @@ exports.getShoppingList = (req, res, next) => {
             let toRemove = [];
             _.each(result, (shopList, i) => {
                 let qtyToBuy = (shopList.item.lowStockAlert || 0) - (shopList.item.qty || 0);
-                
+
                 if (qtyToBuy > 0) {
                     shopList.itemQty = qtyToBuy;
-                } else if (qtyToBuy <= 0) {
+                } else if (qtyToBuy <= 0 && !shopList.forceBuy) {
                     toRemove.push(shopList.item._id);
                     ShoppingManager.deleteOne({ _id: shopList._id })
-                    .then(result => {
-                        console.log('Deleted item', result);
-                    }).catch(err => {
-                        console.log('Error deleting item', err);
-                    });
+                        .then(result => {
+                            console.log('Deleted item', result);
+                        }).catch(err => {
+                            console.log('Error deleting item', err);
+                        });
                 }
             });
 
@@ -75,7 +75,6 @@ exports.editItemQty = (req, res, next) => {
 
 
 exports.upsertList = (req, res, next) => {
-    console.log('upsertList');
     Item.aggregate([
         {
             "$match": {
@@ -116,7 +115,7 @@ exports.upsertList = (req, res, next) => {
     ]).then(itemsToAdd => {
         itemsToAdd.forEach(item => {
             let qtyToBuy = (item.lowStockAlert || 0) - (item.qty || 0);
-            
+
             if (qtyToBuy > 0 && qtyToBuy !== _.get(item, 'shopList.itemQty', 0)) {
                 ShoppingManager.findOneAndUpdate({
                     item: item._id
@@ -137,4 +136,30 @@ exports.upsertList = (req, res, next) => {
         });
         res.redirect('/shopping-manager');
     })
+}
+
+exports.addItem = (req, res, next) => {
+    let itemid = req.body.itemId;
+    Item.findById(itemid)
+        .then(item => {
+            const itemToBuy = new ShoppingManager({
+                itemName: item.name,
+                itemQty: item.qty,
+                item: itemid,
+                forceBuy: true,
+                createdAt: new Date()
+            })
+
+            itemToBuy.save()
+                .then(result => {
+                    console.log('(addItem - Saving ShoppingManager) Saved item', result);
+                    res.status(200).json({ message: 'Item saved successfully' });
+                }).catch(err => {
+                    res.status(500).json({ message: 'Error saving item: ' + err });
+                    console.log('(addItem - Saving ShoppingManager) Error saving item', err);
+                });
+        }).catch(err => {
+            res.status(500).json({ message: 'Error saving item: ' + err });
+            console.log('(addItem - Finding Item) Error saving item', err);
+        });
 }

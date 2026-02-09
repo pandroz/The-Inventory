@@ -15,6 +15,11 @@ const shoppingListSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'Item'
     },
+    forceBuy: {
+        type: Boolean,
+        required: false,
+        default: false
+    },
     createdAt: {
         type: Date,
         required: false,

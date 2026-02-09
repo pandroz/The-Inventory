@@ -182,6 +182,21 @@ const deleteItem = (itemId) => {
 
 
 const addToShoppingList = (itemId) => {
-    // TODO : Add to shopping list
-    console.log('[TODO] Add to shopping list', itemId);
+    axios.post('/shopping-manager/add-item', {
+        itemId: itemId
+    }, {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }).then(response => {
+        if (response.status === 200) {
+            console.log('Item added to shopping list successfully');
+            toastMessage('success', 'Item added to shopping list successfully', `Item ${res.data.itemName} added to shopping list successfully`);
+        } else {
+            toastMessage('error', 'Error adding item to shopping list', `Error adding item ${res.data.itemName} to shopping list: ${res.data.message}`);
+            console.error('Failed to add item to shopping list');
+        }
+    }).catch(error => {
+        console.error('Error adding item to shopping list', error);
+    });
 }
