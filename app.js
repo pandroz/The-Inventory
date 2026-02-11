@@ -4,6 +4,7 @@ process.loadEnvFile('./.env');
 
 const express = require('express');
 const bodyParser = require('body-parser');
+const tgBot = require('./util/telegramBot');
 
 
 const mongoose = require('mongoose');
@@ -42,8 +43,14 @@ console.log('Connecting to DB...')
 mongoose.connect(`mongodb+srv://${process.env.APPUSERNAME}:${process.env.APPPWD}@inventario-spesa.ru11fas.mongodb.net/${process.env.DBNAME}?appName=inventario-spesa`)
     .then(client => {
         console.log('Connected to DB');
-        app.listen(3000);
     })
     .catch(err => {
         console.log('Error connecting to DB', err);
     })
+
+console.log('Starting Telegram bot...')
+tgBot.launch()
+    .then(() => console.log('Telegram bot started'))
+    .catch(err => console.error('Bot launch error:', err));
+
+app.listen(3000);
