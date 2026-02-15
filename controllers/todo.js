@@ -6,8 +6,10 @@ const { generateToken } = require('../middleware/csrf');
 // GET
 exports.getTodo = (req, res, next) => {
     const csrfToken = generateToken(req, res);
-    
-    Todo.find()
+
+    Todo.find({
+        userId: req.user._id
+    })
         .sort({ createdAt: -1 })
         .then(todos => {
             res.render('todo/todo', {
@@ -42,6 +44,7 @@ exports.addTodo = (req, res, next) => {
         recurringStartDate: req.body.recurringStartDate,
         recurringEndDate: req.body.recurringEndDate,
         completedOn: null,
+        userId: req.user._id,
         createdAt: new Date()
     });
 

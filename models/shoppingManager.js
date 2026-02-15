@@ -25,6 +25,11 @@ const shoppingListSchema = new Schema({
         required: false,
         default: false
     },
+    userId: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    },
     createdAt: {
         type: Date,
         required: false,

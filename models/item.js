@@ -60,6 +60,11 @@ const itemSchema = new Schema({
         type: Date,
         required: false
     },
+    userId: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    },
     createdAt: {
         type: Date,
         required: false,

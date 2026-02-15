@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 const MongoDbSessionStore = require('connect-mongodb-session')(session);
 const cookieParser = require('cookie-parser');
+const flash = require('connect-flash');
 require('dotenv').config();
 
 // MODELS
@@ -32,6 +33,7 @@ const shoppingManagerRoutes = require('./routes/shoppingManager');
 const apiRoutes = require('./routes/api');
 const errorRoutes = require('./routes/error');
 
+// MIDDLEWARE
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -45,6 +47,7 @@ app.use(session({
     },
     store: store
 }))
+app.use(flash());
 
 app.use((req, res, next) => {
     if (!req.session.userId) {
@@ -52,9 +55,6 @@ app.use((req, res, next) => {
     }
     User.findById(req.session.userId)
         .then(user => {
-            console.log('==== USER FOUND ====');
-            console.log('User found', user);
-            console.log('====================');
             req.user = user;
             next();
         })

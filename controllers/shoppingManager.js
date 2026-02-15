@@ -6,7 +6,9 @@ const { generateToken } = require('../middleware/csrf');
 exports.getShoppingList = (req, res, next) => {
     const csrfToken = generateToken(req, res);
 
-    ShoppingManager.find()
+    ShoppingManager.find({
+        userId: req.user._id
+    })
         .sort({ createdAt: -1 })
         .populate('item')
         .then(result => {
@@ -158,6 +160,7 @@ exports.addItem = (req, res, next) => {
                 itemQty: item.qty,
                 item: itemid,
                 forceBuy: true,
+                userId: req.user._id,
                 createdAt: new Date()
             })
 

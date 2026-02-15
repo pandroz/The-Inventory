@@ -4,8 +4,10 @@ const { generateToken } = require('../middleware/csrf');
 // GET
 exports.getInvetory = (req, res, next) => {
     const csrfToken = generateToken(req, res);
-    
-    Item.find()
+
+    Item.find({
+        userId: req.user._id
+    })
         .sort({ createdAt: -1 })
         .then(items => {
             res.render('inventory/inventory', {
@@ -61,6 +63,7 @@ exports.postAddItem = (req, res, next) => {
         preferredSupplier: req.body.preferredSupplier,
         notes: req.body.notes,
         imageUrl: req.body.selectedImage,
+        userId: req.user._id,
         createdAt: new Date()
     });
 

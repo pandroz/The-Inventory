@@ -8,7 +8,8 @@ exports.getLogin = (req, res, next) => {
     res.render('auth/login', {
         pageTitle: "Login - Pandro's Home",
         path: '/login',
-        csrfToken: csrfToken
+        csrfToken: csrfToken,
+        errorMessage: req.flash('error')
     });
 };
 
@@ -18,7 +19,8 @@ exports.getRegister = (req, res, next) => {
     res.render('auth/register', {
         pageTitle: "Register - Pandro's Home",
         path: '/register',
-        csrfToken: csrfToken
+        csrfToken: csrfToken,
+        errorMessage: req.flash('error')
     });
 };
 
@@ -30,10 +32,12 @@ exports.postLogin = (req, res, next) => {
         ]
     }).then(user => {
         if (!user) {
+            req.flash('error', 'Username/email o password errati');
             res.redirect('/login');
         } else {
             argon2.verify(user.password, req.body.password).then(isVerified => {
                 if (!isVerified) {
+                    req.flash('error', 'Username/email o password errati');
                     return res.redirect('/login');
                 } else {
                     req.session.isLoggedIn = true;
@@ -66,9 +70,10 @@ exports.postRegister = (req, res, next) => {
     User.findOne({
         email: email
     }).then(user => {
-        if (user)
+        if (user) {
+            req.flash('error', 'Un utente con questa email è già esistente');
             return res.redirect('/register');
-        else {
+        } else {
             argon2.hash(password).then(hashedPassword => {
                 const user = new User({
                     username: username,
