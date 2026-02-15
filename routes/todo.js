@@ -1,6 +1,8 @@
 const express = require('express');
 
 const todoController = require('../controllers/todo');
+const isAuth = require('../middleware/isAuth');
+const { csrfProtection } = require('../middleware/csrf');
 
 const router = express.Router();
 
@@ -8,12 +10,12 @@ const router = express.Router();
 router.get('/', todoController.getTodo);
 
 // POST
-router.post('/add-todo', todoController.addTodo);
+router.post('/add-todo', isAuth, csrfProtection, todoController.addTodo);
 
-router.post('/delete-todo', todoController.deleteTodo);
+router.post('/delete-todo', isAuth, csrfProtection, todoController.deleteTodo);
 
-router.post('/todo-status', todoController.updateStatus);
+router.post('/todo-status', isAuth, csrfProtection, todoController.updateStatus);
 
-router.post('/filter-todos', todoController.filterTodos);
+router.post('/filter-todos', isAuth, csrfProtection, todoController.filterTodos);
 
 module.exports = router;

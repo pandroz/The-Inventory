@@ -1,18 +1,20 @@
 const express = require('express');
 
 const shoppingManagerController = require('../controllers/shoppingManager');
+const isAuth = require('../middleware/isAuth');
+const { csrfProtection } = require('../middleware/csrf');
 
 const router = express.Router();
 
-router.get('/', shoppingManagerController.getShoppingList);
+router.get('/', isAuth, csrfProtection, shoppingManagerController.getShoppingList);
 
-router.get('/upsert-list', shoppingManagerController.upsertList);
+router.get('/upsert-list', isAuth, csrfProtection, shoppingManagerController.upsertList);
 
-router.post('/add-item', shoppingManagerController.addItem);
+router.post('/add-item', isAuth, csrfProtection, shoppingManagerController.addItem);
 
-router.post('/delete-item', shoppingManagerController.deleteItem);
+router.post('/delete-item', isAuth, csrfProtection, shoppingManagerController.deleteItem);
 
-router.post('/update-item', shoppingManagerController.updateItem);
+router.post('/update-item', isAuth, csrfProtection, shoppingManagerController.updateItem);
 
 
 module.exports = router;

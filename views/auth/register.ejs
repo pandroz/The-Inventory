@@ -1,0 +1,139 @@
+    <%- include('../includes/header.ejs') %>
+    <link rel="stylesheet" href="/css/register.css">
+    
+    </head>
+    <body>
+        <div class="register-page">
+            <div class="container">
+                <div class="row justify-content-center align-items-center min-vh-100 py-4">
+                    <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5">
+                        <!-- Register Card -->
+                        <div class="card border-0 shadow-sm rounded-3 register-card">
+                            <!-- Card Header -->
+                            <div class="card-header bg-white border-0 pt-4 px-4 pb-3">
+                                <div class="text-center">
+                                    <div class="logo-wrapper mb-3">
+                                        <i class="fa-solid fa-user-plus"></i>
+                                    </div>
+                                    <h4 class="mb-1 fw-semibold text-dark">Crea il tuo account</h4>
+                                    <p class="text-muted mb-0">Inizia a gestire la tua casa</p>
+                                </div>
+                            </div>
+
+                            <!-- Card Body -->
+                            <div class="card-body p-4">
+                                <form action="/register" method="POST" id="registerForm">
+                                    <!-- Username Input -->
+                                    <div class="mb-3">
+                                        <label for="username" class="form-label fw-semibold">
+                                            <i class="fa-solid fa-user text-primary me-1"></i>
+                                            Username
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <input type="text" class="form-control form-control-lg" id="username" name="username" placeholder="Username" required autocomplete="username" />
+                                        <small class="form-text text-muted">
+                                            Minimo 3 caratteri, solo lettere, numeri e underscore
+                                        </small>
+                                    </div>
+
+                                    <!-- Email Input -->
+                                    <div class="mb-3">
+                                        <label for="email" class="form-label fw-semibold">
+                                            <i class="fa-solid fa-envelope text-primary me-1"></i>
+                                            Email
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <input type="email" class="form-control form-control-lg" id="email" name="email" placeholder="Email" required autocomplete="email" />
+                                        <small class="form-text text-muted">
+                                            Useremo questa email per confermare il tuo account
+                                        </small>
+                                    </div>
+
+                                    <!-- Password Input -->
+                                    <div class="mb-3">
+                                        <label for="password" class="form-label fw-semibold">
+                                            <i class="fa-solid fa-lock text-primary me-1"></i>
+                                            Password
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <div class="position-relative">
+                                            <input type="password" class="form-control form-control-lg" id="password" name="password" placeholder="Crea una password sicura" required autocomplete="new-password" />
+                                            <button type="button" class="password-toggle-btn" id="togglePassword" aria-label="Toggle password visibility">
+                                                <i class="fa-solid fa-eye"></i>
+                                            </button>
+                                        </div>
+                                        <!-- Password Strength Indicator -->
+                                        <div class="password-strength mt-2">
+                                            <div class="strength-bar">
+                                                <div class="strength-bar-fill" id="strengthBar"></div>
+                                            </div>
+                                            <small class="strength-text" id="strengthText">Inserisci una password</small
+                                            >
+                                        </div>
+                                    </div>
+
+                                    <!-- Confirm Password Input -->
+                                    <div class="mb-3">
+                                        <label for="confirmPassword" class="form-label fw-semibold">
+                                            <i class="fa-solid fa-lock-open text-primary me-1"></i>
+                                            Conferma Password
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <div class="position-relative">
+                                            <input type="password" class="form-control form-control-lg" id="confirmPassword" name="confirmPassword" placeholder="Ripeti la password" required autocomplete="new-password" />
+                                            <button type="button" class="password-toggle-btn" id="toggleConfirmPassword" aria-label="Toggle confirm password visibility"> 
+                                                <i class="fa-solid fa-eye"></i>
+                                            </button>
+                                        </div>
+                                        <small class="form-text match-indicator d-none" id="matchIndicator"></small>
+                                    </div>
+
+                                    <!-- Terms & Conditions -->
+                                    <div class="mb-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="termsAccept" name="termsAccept" required style="cursor: pointer" />
+                                            <label class="form-check-label" for="termsAccept" style="cursor: pointer">
+                                                Accetto i <a href="/terms" target="_blank" >Termini e Condizioni</a> e la <a href="/privacy" target="_blank">Privacy Policy</a>
+                                                <span class="text-danger">*</span>
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <!-- Submit Button -->
+                                    <div class="d-grid mb-3">
+                                        <button type="submit" class="btn btn-primary btn-lg">
+                                            <i class="fa-solid fa-user-plus me-2"></i>
+                                            Crea Account
+                                        </button>
+                                    </div>
+
+                                    <!-- Divider -->
+                                    <div class="divider my-4">
+                                        <span>oppure</span>
+                                    </div>
+
+                                    <!-- Login Link -->
+                                    <div class="text-center mt-4">
+                                        <p class="text-muted mb-0">
+                                            Hai già un account?
+                                            <a href="/login" class="login-link">Accedi</a>
+                                        </p>
+                                    </div>
+
+                                    <!-- _csrf Token -->
+                                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Footer Text -->
+                        <div class="text-center mt-4">
+                            <p class="text-white-50 small mb-0">© 2024 Pandro's Home</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <script src="/js/register.js"></script>
+<%- include('../includes/footer.ejs') %>

@@ -174,7 +174,10 @@ function updateItem(updateObj) {
         qty: newQty,
         isBought: isBought
     }, {
-        headers: { 'Content-Type': 'application/json' }
+        headers: {
+            'Content-Type': 'application/json',
+            'x-csrf-token': _csrf
+        }
     })
         .then(res => {
             if (res.status === 200) {
@@ -194,7 +197,10 @@ function deleteItem(itemId) {
     axios.post('shopping-manager/delete-item', {
         itemId: itemId
     }, {
-        headers: { 'Content-Type': 'application/json' }
+        headers: {
+            'Content-Type': 'application/json',
+            'x-csrf-token': _csrf
+        }
     })
         .then(res => {
             if (res.status == 200) {

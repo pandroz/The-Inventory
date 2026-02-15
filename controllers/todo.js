@@ -1,9 +1,12 @@
 const Todo = require('../models/todo');
 const _ = require('lodash');
 const moment = require('moment');
+const { generateToken } = require('../middleware/csrf');
 
 // GET
 exports.getTodo = (req, res, next) => {
+    const csrfToken = generateToken(req, res);
+    
     Todo.find()
         .sort({ createdAt: -1 })
         .then(todos => {
@@ -16,7 +19,9 @@ exports.getTodo = (req, res, next) => {
                 categories: _.uniq(todos.map(todo => todo.category)),
                 assignees: _.filter(_.uniq(todos.map(todo => todo.assignedTo)), _.identity),
                 moment: moment,
-                _: _
+                _: _,
+                user: req.user,
+                csrfToken
             });
         }).catch(err => {
             console.log('Error fetching To-Dos', err);

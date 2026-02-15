@@ -1,0 +1,268 @@
+/* Body and Background */
+body {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    min-height: 100vh;
+    font-family:
+        -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.login-page {
+    min-height: 100vh;
+}
+
+/* Login Card - Matching other pages' card style */
+.login-card {
+    border-left: 4px solid #0d6efd !important;
+    animation: slideUp 0.4s ease;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Logo Wrapper */
+.logo-wrapper {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    box-shadow: 0 4px 12px rgba(13, 110, 253, 0.2);
+}
+
+.logo-wrapper i {
+    font-size: 2rem;
+    color: #0d6efd;
+}
+
+/* Form Labels - Consistent with other forms */
+.form-label {
+    color: #495057;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.form-label i {
+    font-size: 0.9rem;
+}
+
+/* Form Controls - Matching other pages */
+.form-control:focus,
+.form-select:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+}
+
+.form-control-lg {
+    border-radius: 10px;
+}
+
+/* Password Toggle Button */
+.password-toggle-btn {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #6c757d;
+    cursor: pointer;
+    padding: 0.5rem;
+    transition: all 0.2s ease;
+}
+
+.password-toggle-btn:hover {
+    color: #0d6efd;
+}
+
+/* Checkbox - Matching other forms */
+.form-check-input:checked {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+.form-check-input:focus {
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.form-check-label {
+    font-size: 0.9rem;
+    color: #495057;
+}
+
+/* Forgot Password Link */
+.forgot-link {
+    color: #0d6efd;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.forgot-link:hover {
+    color: #0a58ca;
+    text-decoration: underline;
+}
+
+/* Primary Button - Matching other pages */
+.btn-primary {
+    background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+    border: none;
+    padding: 0.75rem 2rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #0a58ca 0%, #084298 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(13, 110, 253, 0.3);
+}
+
+/* Social Button */
+.btn-social {
+    background: white;
+    border: 2px solid #dee2e6;
+    transition: all 0.2s ease;
+}
+
+.btn-social:hover {
+    border-color: #0d6efd;
+    background: #f8f9fa;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.btn-social i.fa-google {
+    color: #ea4335;
+}
+
+/* Divider - Matching other pages */
+.divider {
+    position: relative;
+    text-align: center;
+}
+
+.divider::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: #e9ecef;
+}
+
+.divider span {
+    position: relative;
+    background: white;
+    padding: 0 1rem;
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+/* Sign Up Link */
+.signup-link {
+    color: #0d6efd;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.signup-link:hover {
+    color: #0a58ca;
+    text-decoration: underline;
+}
+
+/* Responsive Design */
+@media (max-width: 767.98px) {
+    .login-card {
+        border-radius: 16px;
+    }
+
+    .card-header,
+    .card-body {
+        padding: 1.5rem 1.25rem !important;
+    }
+
+    .logo-wrapper {
+        width: 70px;
+        height: 70px;
+    }
+
+    .logo-wrapper i {
+        font-size: 1.75rem;
+    }
+
+    .form-control-lg {
+        font-size: 1rem;
+        padding: 0.5rem 0.75rem;
+    }
+
+    .btn-lg {
+        font-size: 1rem;
+        padding: 0.6rem 1rem;
+    }
+
+    .form-label {
+        font-size: 0.9rem;
+    }
+
+    .row.align-items-center {
+        flex-direction: column;
+        align-items: flex-start !important;
+    }
+
+    .row.align-items-center .col-6 {
+        width: 100%;
+    }
+
+    .row.align-items-center .text-end {
+        text-align: left !important;
+        margin-top: 0.5rem;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .login-page .container {
+        padding: 1rem;
+    }
+
+    .card-header {
+        padding-top: 2rem !important;
+    }
+}
+
+/* Loading State */
+.btn-primary.loading {
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+.btn-primary.loading::after {
+    content: "";
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid #fff;
+    border-top-color: transparent;
+    border-radius: 50%;
+    display: inline-block;
+    margin-left: 0.5rem;
+    animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}

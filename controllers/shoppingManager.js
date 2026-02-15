@@ -1,8 +1,11 @@
 const ShoppingManager = require('../models/shoppingManager');
 const Item = require('../models/item');
 const _ = require('lodash');
+const { generateToken } = require('../middleware/csrf');
 
 exports.getShoppingList = (req, res, next) => {
+    const csrfToken = generateToken(req, res);
+
     ShoppingManager.find()
         .sort({ createdAt: -1 })
         .populate('item')
@@ -32,7 +35,9 @@ exports.getShoppingList = (req, res, next) => {
                 pageTitle: 'Shopping Manager',
                 path: '/shopping-manager',
                 searchType: 'shoppingManager',
-                shoppingList: result
+                shoppingList: result,
+                user: req.user,
+                csrfToken
             });
         })
 };

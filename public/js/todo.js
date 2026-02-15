@@ -149,7 +149,8 @@ const deleteTodo = (todoId, todoDesc) => {
         todoId: todoId
     }, {
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'x-csrf-token': _csrf
         }
     }).then(res => {
         if (res.status == 200) {
@@ -178,7 +179,8 @@ const updateStatus = (todoId, done) => {
         done: done
     }, {
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'x-csrf-token': _csrf
         }
     }).then(res => {
         if (res.status == 200) {
@@ -204,7 +206,8 @@ const getTodoList = (filter) => {
         filter: filter
     }, {
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'x-csrf-token': _csrf
         }
     }).then(res => {
         if (res.status == 200) {

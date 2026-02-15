@@ -5,7 +5,8 @@
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
-    "startDev": "nodemon app.js"
+    "startDev": "nodemon app.js",
+    "generate-secret": "node -e \"console.log('NEW_SECRET=' + require('crypto').randomBytes(32).toString('hex'))\""
   },
   "author": "Pandro",
   "license": "ISC",
@@ -13,11 +14,17 @@
     "nodemon": "^3.1.11"
   },
   "dependencies": {
+    "argon2": "^0.44.0",
     "axios": "^1.13.4",
     "body-parser": "^2.2.2",
+    "connect-flash": "^0.1.1",
+    "connect-mongodb-session": "^5.0.0",
+    "cookie-parser": "^1.4.7",
+    "csrf-csrf": "^3.0.6",
     "dotenv": "^17.2.4",
     "ejs": "^4.0.1",
     "express": "^5.2.1",
+    "express-session": "^1.19.0",
     "lodash": "^4.17.23",
     "moment": "^2.30.1",
     "mongoose": "^9.1.3",

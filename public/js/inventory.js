@@ -140,7 +140,8 @@ const updateItemQuantity = (itemId, newQty) => {
         newQty: newQty
     }, {
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'x-csrf-token': _csrf
         }
     }).then(res => {
         if (res.status == 200) {
@@ -162,7 +163,8 @@ const deleteItem = (itemId) => {
         itemId: itemId
     }, {
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'x-csrf-token': _csrf
         },
     }).then(response => {
         if (response.status === 200) {
@@ -186,7 +188,8 @@ const addToShoppingList = (itemId) => {
         itemId: itemId
     }, {
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'x-csrf-token': _csrf
         }
     }).then(response => {
         if (response.status === 200) {

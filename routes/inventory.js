@@ -3,24 +3,26 @@ const path = require('path');
 const express = require('express');
 
 const inventoryController = require('../controllers/inventory');
+const isAuth = require('../middleware/isAuth');
+const { csrfProtection } = require('../middleware/csrf');
 
 const router = express.Router();
 
 // GET
-router.get('/', inventoryController.getInvetory);
+router.get('/', isAuth, inventoryController.getInvetory);
 
-router.get('/edit-item/:itemId', inventoryController.getEditItemPage);
+router.get('/edit-item/:itemId', isAuth, inventoryController.getEditItemPage);
 
 
 
 // POST
-router.post('/add-item', inventoryController.postAddItem);
+router.post('/add-item', isAuth, csrfProtection, inventoryController.postAddItem);
 
-router.post('/delete-item', inventoryController.postDeleteItem);
+router.post('/delete-item', isAuth, csrfProtection, inventoryController.postDeleteItem);
 
-router.post('/edit-item', inventoryController.postEditItem);
+router.post('/edit-item', isAuth, csrfProtection, inventoryController.postEditItem);
 
-router.post('/edit-quantity', inventoryController.postEditQuantity);
+router.post('/edit-quantity', isAuth, csrfProtection, inventoryController.postEditQuantity);
 
 
 module.exports = router;

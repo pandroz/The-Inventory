@@ -1,0 +1,119 @@
+<%- include('../includes/header.ejs') %>
+    <link rel="stylesheet" href="/css/login.css">
+</head>
+<body>
+
+<div class="login-page">
+    <div class="container">
+        <div class="row justify-content-center align-items-center min-vh-100 py-4">
+            <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5">
+                
+                <!-- Login Card -->
+                <div class="card border-0 shadow-sm rounded-3 login-card">
+                    
+                    <!-- Card Header -->
+                    <div class="card-header bg-white border-0 pt-4 px-4 pb-3">
+                        <div class="text-center">
+                            <div class="logo-wrapper mb-3">
+                                <i class="fa-solid fa-house-chimney"></i>
+                            </div>
+                            <h4 class="mb-1 fw-semibold text-dark">Bentornato!</h4>
+                            <p class="text-muted mb-0">Accedi al tuo account</p>
+                        </div>
+                    </div>
+
+                    <!-- Card Body -->
+                    <div class="card-body p-4">
+                        <form action="/login" method="POST" id="loginForm">
+                            
+                            <!-- Email/Username Input -->
+                            <div class="mb-3">
+                                <label for="username_or_email" class="form-label fw-semibold">
+                                    <i class="fa-solid fa-user text-primary me-1"></i>
+                                    Email o Username
+                                    <span class="text-danger">*</span>
+                                </label>
+                                <input type="text" class="form-control form-control-lg" id="username_or_email" name="username_or_email" placeholder="Email / Username" required autocomplete="username">
+                            </div>
+
+                            <!-- Password Input -->
+                            <div class="mb-3">
+                                <label for="password" class="form-label fw-semibold">
+                                    <i class="fa-solid fa-lock text-primary me-1"></i>
+                                    Password
+                                    <span class="text-danger">*</span>
+                                </label>
+                                <div class="position-relative">
+                                    <input type="password" class="form-control form-control-lg" id="password" name="password" placeholder="Password" required autocomplete="current-password">
+                                    <button type="button" class="password-toggle-btn" id="togglePassword" aria-label="Toggle password visibility">
+                                        <i class="fa-solid fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Remember Me & Forgot Password -->
+                            <div class="row align-items-center mb-4">
+                                <div class="col-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="rememberMe" name="rememberMe" style="cursor: pointer;">
+                                        <label class="form-check-label" for="rememberMe" style="cursor: pointer;">
+                                            Ricordami
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-6 text-end">
+                                    <a href="/forgot-password" class="forgot-link">
+                                        Password dimenticata?
+                                    </a>
+                                </div>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <div class="d-grid mb-3">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="fa-solid fa-right-to-bracket me-2"></i>
+                                    Accedi
+                                </button>
+                            </div>
+
+                            <!-- Divider -->
+                            <div class="divider my-4">
+                                <span>oppure</span>
+                            </div>
+
+                            <!-- Sign Up Link -->
+                            <div class="text-center mt-4">
+                                <p class="text-muted mb-0">
+                                    Non hai un account? 
+                                    <a href="/register" class="signup-link">Registrati</a>
+                                </p>
+                            </div>
+
+                            <!-- Reset Password Link -->
+                            <div class="text-center mt-4">
+                                <p class="text-muted mb-0">
+                                    <a href="/reset-password" class="signup-link">Resetta la password</a>
+                                </p>
+                            </div>
+
+                            <!-- _csrf Token -->
+                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                        </form>
+                    </div>
+
+                </div>
+
+                <!-- Footer Text -->
+                <div class="text-center mt-4">
+                    <p class="text-white-50 small mb-0">
+                        © 2024 Pandro's Home
+                    </p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/js/login.js"></script>
+<%- include('../includes/footer.ejs') %>

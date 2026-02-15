@@ -1,7 +1,10 @@
 const Item = require('../models/item');
+const { generateToken } = require('../middleware/csrf');
 
 // GET
 exports.getInvetory = (req, res, next) => {
+    const csrfToken = generateToken(req, res);
+    
     Item.find()
         .sort({ createdAt: -1 })
         .then(items => {
@@ -10,7 +13,9 @@ exports.getInvetory = (req, res, next) => {
                 path: '/inventory',
                 searchType: 'item',
                 itemAmount: items.length,
-                items: items
+                items: items,
+                csrfToken,
+                user: req.user
             });
         }).catch(err => {
             console.log('Error fetching items', err);
@@ -18,6 +23,8 @@ exports.getInvetory = (req, res, next) => {
 }
 
 exports.getEditItemPage = (req, res, next) => {
+    const csrfToken = generateToken(req, res);
+
     const id = req.params.itemId;
     Item.findById({
         _id: id
@@ -26,7 +33,9 @@ exports.getEditItemPage = (req, res, next) => {
             res.render('inventory/edit-item', {
                 pageTitle: 'Edit Item',
                 path: '/inventory',
-                item: item
+                item: item,
+                csrfToken,
+                user: req.user
             });
         }).catch(err => {
             console.log('Error fetching item', err);
