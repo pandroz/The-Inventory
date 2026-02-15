@@ -1,0 +1,251 @@
+body {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    min-height: 100vh;
+    font-family:
+        -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+.profile-page {
+    animation: fadeIn 0.4s ease;
+}
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+.card {
+    border-left: 4px solid #0d6efd !important;
+    animation: slideUp 0.4s ease;
+}
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+.danger-card {
+    border-left-color: #dc3545 !important;
+}
+.avatar-wrapper {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    margin: 0 auto;
+}
+.avatar-img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid #e9ecef;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+.avatar-edit-btn {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #0d6efd;
+    border: 3px solid #fff;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+.avatar-edit-btn:hover {
+    background: #0a58ca;
+    transform: scale(1.1);
+}
+.user-bio {
+    max-width: 300px;
+    margin: 0 auto;
+    line-height: 1.5;
+}
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 12px;
+    margin-bottom: 1rem;
+    transition: all 0.2s ease;
+}
+.stat-item:hover {
+    background: #e9ecef;
+    transform: translateX(4px);
+}
+.stat-item:last-child {
+    margin-bottom: 0;
+}
+.stat-icon {
+    min-width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: #fff;
+}
+.stat-icon-inventory {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+.stat-icon-todos {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+.stat-icon-shopping {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+.stat-content {
+    flex: 1;
+}
+.stat-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #2c3e50;
+}
+.stat-label {
+    font-size: 0.85rem;
+    color: #6c757d;
+}
+.info-item {
+    display: flex;
+    align-items: start;
+    gap: 1rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 10px;
+    transition: all 0.2s ease;
+}
+.info-item.editing {
+    background: #fff;
+    border: 2px solid #0d6efd;
+}
+.info-icon {
+    min-width: 40px;
+    height: 40px;
+    background: #fff;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    color: #0d6efd;
+}
+.info-content {
+    flex: 1;
+    min-width: 0;
+}
+.info-label {
+    font-size: 0.75rem;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.25rem;
+    font-weight: 600;
+}
+.info-value {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #2c3e50;
+    word-break: break-word;
+}
+.info-content .form-control,
+.info-content .input-group {
+    margin-top: 0.25rem;
+}
+.info-content textarea.form-control {
+    resize: vertical;
+    min-height: 80px;
+}
+.preference-item {
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e9ecef;
+}
+.preference-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+.form-check-input:checked {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+.password-toggle-btn {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: 0 0;
+    border: none;
+    color: #6c757d;
+    cursor: pointer;
+    padding: 0.5rem;
+    transition: all 0.2s ease;
+    z-index: 10;
+}
+.password-toggle-btn:hover {
+    color: #0d6efd;
+}
+.btn-primary {
+    background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+    border: none;
+    transition: all 0.3s ease;
+}
+.btn-primary:hover {
+    background: linear-gradient(135deg, #0a58ca 0%, #084298 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(13, 110, 253, 0.3);
+}
+.btn-outline-danger:hover {
+    transform: translateY(-2px);
+}
+.modal-content {
+    border-radius: 16px;
+    border: none;
+}
+@media (max-width: 991.98px) {
+    .avatar-wrapper {
+        width: 120px;
+        height: 120px;
+    }
+    .stat-value {
+        font-size: 1.5rem;
+    }
+    .info-item {
+        padding: 0.75rem;
+    }
+}
+@media (max-width: 767.98px) {
+    .profile-page .container-fluid {
+        padding: 1rem;
+    }
+    .card-body {
+        padding: 1.5rem 1.25rem !important;
+    }
+    .stat-item {
+        padding: 0.75rem;
+    }
+    .stat-icon {
+        min-width: 45px;
+        height: 45px;
+        font-size: 1.25rem;
+    }
+    .stat-value {
+        font-size: 1.25rem;
+    }
+    .info-icon {
+        min-width: 35px;
+        height: 35px;
+    }
+}

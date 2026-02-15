@@ -332,11 +332,11 @@ body.sidebar-collapsed .nav-item:hover::before {
 }
 
 .user-action-link {
-    font-size: 0.75rem;
-    color: #adb5bd;
-    margin-top: 0.25rem;
-    text-decoration: none;
-    transition: color 0.2s ease;
+    font-size: 0.75rem !important;
+    color: #adb5bd !important;
+    margin-top: 0.25rem !important;
+    text-decoration: none !important;
+    transition: color 0.2s ease !important;
 }
 
 body.sidebar-collapsed .user-details {

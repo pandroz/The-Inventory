@@ -57,6 +57,22 @@ const userSchema = new Schema({
         type: Boolean,
         default: false
     },
+    userBio: {
+        type: String,
+        default: ''
+    },
+    isVerified: {
+        type: Boolean,
+        default: false
+    },
+    isDeleted: {
+        type: Boolean,
+        default: false
+    },
+    language: {
+        type: String,
+        default: 'it'
+    },
     createdAt: {
         type: Date,
         default: Date.now
