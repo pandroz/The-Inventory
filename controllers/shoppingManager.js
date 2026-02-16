@@ -63,11 +63,13 @@ exports.updateItem = (req, res, next) => {
     const itemQty = req.body.qty;
     const itemName = req.body.itemName;
     const isBought = req.body.isBought;
+    const userId = req.user._id;
 
     let newDoc = {
         itemQty: itemQty,
         itemName: itemName,
-        isBought: isBought
+        isBought: isBought,
+        userId: userId
     };
 
     newDoc = _.omitBy(newDoc, _.isUndefined);
@@ -91,6 +93,7 @@ exports.upsertList = (req, res, next) => {
     Item.aggregate([
         {
             "$match": {
+                "userId": req.user._id,
                 "$expr": {
                     "$or": [
                         {
@@ -131,6 +134,7 @@ exports.upsertList = (req, res, next) => {
 
             if (qtyToBuy > 0 && qtyToBuy !== _.get(item, 'shopList.itemQty', 0)) {
                 ShoppingManager.findOneAndUpdate({
+                    userId: req.user._id,
                     item: item._id
                 }, {
                     itemName: item.name,
