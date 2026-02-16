@@ -19,6 +19,7 @@ exports.getProfile = (req, res, next) => {
                 pageTitle: "Profile - Pandro's Home",
                 path: '/profile',
                 user: user,
+                telegramUserError: req.flash('telegramUserError'),
                 stats: {
                     itemAmount: await Item.countDocuments({ userId: req.user._id }),
                     todoAmount: await Todo.countDocuments({ userId: req.user._id }),
@@ -34,7 +35,7 @@ exports.editProfile = async (req, res, next) => {
 
     let tgUser = await TgUser.findOne({
         username: telegramUsername
-    });
+    });    
     
     console.log('edit profile', name, email, phoneNumber, telegramUsername, userBio);
     User.findById(req.session.userId)
@@ -44,9 +45,10 @@ exports.editProfile = async (req, res, next) => {
             user.phoneNumber = phoneNumber;
             user.userBio = userBio;
 
-            if (tgUser) {
+            if (tgUser)
                 user.telegramId = tgUser._id;
-            }
+            else
+                req.flash('telegramUserError', 'Il tuo utente Telegram non si è ancora registrato sul bot. Per favore, invia il comando /start al bot @pandroHomeBot per registrarti prima di collegare il tuo account.');
 
             user.save();
             res.redirect('/profile');

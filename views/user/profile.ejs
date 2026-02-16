@@ -206,15 +206,18 @@
                                         <div class="info-content">
                                             <div class="info-label">Telegram</div>
                                             <div class="info-value" id="telegramDisplay">
-                                                <% if (user.telegramId) { %>
-                                                    @<%= user.telegramId.username %>
+                                                <% if (typeof user.telegramId !== 'undefined') { %>
+                                                    @<%= user.telegramId.username || 'Non fornito' %>
                                                 <% } else { %>
                                                     Non collegato
+                                                <% } %>
+                                                <% if (telegramUserError && telegramUserError.length > 0) { %>
+                                                    <div class="text-danger small mt-1"><%= telegramUserError[0] %></div>
                                                 <% } %>
                                             </div>
                                             <div class="input-group d-none edit-input" id="telegramInputGroup">
                                                 <span class="input-group-text">@</span>
-                                                <input type="text" class="form-control" id="telegramInput" name="telegramUsername" value="<%= user.telegramId.username || '' %>" placeholder="username">
+                                                <input type="text" class="form-control" id="telegramInput" name="telegramUsername" value="<%= typeof user.telegramId !== 'undefined' ? user.telegramId.username : '' %>" placeholder="username">
                                             </div>
                                         </div>
                                     </div>
