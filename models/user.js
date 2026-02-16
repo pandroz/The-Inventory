@@ -45,9 +45,10 @@ const userSchema = new Schema({
         type: String,
         default: ''
     },
-    telgramId: {
+    telegramId: {
         type: Schema.Types.ObjectId,
-        ref: 'TgUser'
+        ref: 'TgUser',
+        strictPopulate: false
     },
     avatarUrl: {
         type: String,

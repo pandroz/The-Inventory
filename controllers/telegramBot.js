@@ -2,12 +2,11 @@ const _ = require('lodash');
 
 const TgUser = require('../models/tgUser');
 const ShoppingManager = require('../models/shoppingManager');
-const tgUser = require('../models/tgUser');
 
 exports.startBot = async (ctx) => {
     try {
         // Store or update user in database
-        await tgUser.findOneAndUpdate(
+        await TgUser.findOneAndUpdate(
             {
                 telegramId: ctx.from.id
             },
@@ -33,7 +32,7 @@ exports.startBot = async (ctx) => {
 
 exports.stopBot = async (ctx) => {
     try {
-        await tgUser.findOneAndUpdate(
+        await TgUser.findOneAndUpdate(
             { 
                 telegramId: ctx.from.id 
             },

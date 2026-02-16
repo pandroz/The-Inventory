@@ -118,8 +118,6 @@ document.getElementById('profileForm')?.addEventListener('submit', function(e) {
     toggleEditMode();
 
     this.submit();
-    
-    alert('Profilo aggiornato con successo!');
 });
 
 // Password Toggle

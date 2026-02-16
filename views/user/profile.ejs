@@ -91,7 +91,7 @@
                                 <i class="fa-solid fa-box"></i>
                             </div>
                             <div class="stat-content">
-                                <div class="stat-value"><%= stats.itemsCount || 0 %></div>
+                                <div class="stat-value"><%= stats.itemAmount || 0 %></div>
                                 <div class="stat-label">Articoli in Dispensa</div>
                             </div>
                         </div>
@@ -101,7 +101,7 @@
                                 <i class="fa-solid fa-list-check"></i>
                             </div>
                             <div class="stat-content">
-                                <div class="stat-value"><%= stats.todosCount || 0 %></div>
+                                <div class="stat-value"><%= stats.todoAmount || 0 %></div>
                                 <div class="stat-label">Attività da Fare</div>
                             </div>
                         </div>
@@ -111,7 +111,7 @@
                                 <i class="fa-solid fa-cart-shopping"></i>
                             </div>
                             <div class="stat-content">
-                                <div class="stat-value"><%= stats.shoppingItemsCount || 0 %></div>
+                                <div class="stat-value"><%= stats.shoppingListAmount || 0 %></div>
                                 <div class="stat-label">Lista della Spesa</div>
                             </div>
                         </div>
@@ -138,7 +138,7 @@
                         </div>
                     </div>
                     <div class="card-body p-4">
-                        <form id="profileForm">
+                        <form method="POST" id="profileForm" action="/profile/edit-profile">
                             <div class="row g-3">
                                 
                                 <!-- Nome -->
@@ -207,14 +207,14 @@
                                             <div class="info-label">Telegram</div>
                                             <div class="info-value" id="telegramDisplay">
                                                 <% if (user.telegramId) { %>
-                                                    @<%= user.telegramId %>
+                                                    @<%= user.telegramId.username %>
                                                 <% } else { %>
                                                     Non collegato
                                                 <% } %>
                                             </div>
                                             <div class="input-group d-none edit-input" id="telegramInputGroup">
                                                 <span class="input-group-text">@</span>
-                                                <input type="text" class="form-control" id="telegramInput" name="telegramId" value="<%= user.telegramId || '' %>" placeholder="username">
+                                                <input type="text" class="form-control" id="telegramInput" name="telegramUsername" value="<%= user.telegramId.username || '' %>" placeholder="username">
                                             </div>
                                         </div>
                                     </div>
