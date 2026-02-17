@@ -280,11 +280,11 @@
                                     </div>
                                 </div>
                                 <select class="form-select form-select-lg" id="language" name="language">
-                                    <option value="it" selected>🇮🇹 Italiano</option>
-                                    <option value="en">🇬🇧 English</option>
-                                    <option value="es">🇪🇸 Español</option>
-                                    <option value="fr">🇫🇷 Français</option>
-                                    <option value="de">🇩🇪 Deutsch</option>
+                                    <option value="it" <% if (user.language == 'it') { %> selected <% } %>>🇮🇹 Italiano</option>
+                                    <option value="en" <% if (user.language == 'en') { %> selected <% } %>>🇬🇧 English</option>
+                                    <option value="es" <% if (user.language == 'es') { %> selected <% } %>>🇪🇸 Español</option>
+                                    <option value="fr" <% if (user.language == 'fr') { %> selected <% } %>>🇫🇷 Français</option>
+                                    <option value="de" <% if (user.language == 'de') { %> selected <% } %>>🇩🇪 Deutsch</option>
                                 </select>
                             </div>
 
@@ -359,6 +359,9 @@
                                     Salva Preferenze
                                 </button>
                             </div>
+
+                            <!-- csrf token -->
+                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
 
                         </form>
                     </div>

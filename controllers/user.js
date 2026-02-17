@@ -31,26 +31,24 @@ exports.getProfile = (req, res, next) => {
 };
 
 exports.editProfile = async (req, res, next) => {
-    const { name, email, phoneNumber, telegramUsername, userBio } = req.body;
 
     let tgUser = await TgUser.findOne({
         username: telegramUsername
-    });    
-    
-    console.log('edit profile', name, email, phoneNumber, telegramUsername, userBio);
+    });
+
     User.findById(req.session.userId)
         .then(user => {
-            user.name = name;
-            user.email = email;
-            user.phoneNumber = phoneNumber;
-            user.userBio = userBio;
 
-            if (tgUser)
-                user.telegramId = tgUser._id;
-            else
-                req.flash('telegramUserError', 'Il tuo utente Telegram non si è ancora registrato sul bot. Per favore, invia il comando /start al bot @pandroHomeBot per registrarti prima di collegare il tuo account.');
+            if (user) {
+                if (tgUser)
+                    req.body.telegramId = tgUser ? tgUser._id : null;
+                else
+                    req.flash('telegramUserError', 'Il tuo utente Telegram non si è ancora registrato sul bot. Per favore, invia il comando /start al bot @pandroHomeBot per registrarti prima di collegare il tuo account.');
 
-            user.save();
+                user.updateUser(req.body);
+            }
+
+
             res.redirect('/profile');
         })
         .catch(err => console.log(err));

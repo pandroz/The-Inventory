@@ -84,4 +84,30 @@ const userSchema = new Schema({
     }
 });
 
+userSchema.methods.setActiveStatus = function(activeStatus) {
+    this.isActive = activeStatus;
+    this.lastActive = Date.now();
+    return this.save();
+};
+
+userSchema.methods.blockUser = function() {
+    this.isBlocked = true;
+    return this.save();
+};
+
+userSchema.methods.updateUser = function(data) {
+    const { name, lastName, email, phoneNumber, telegramUsername, language, userBio } = data;
+
+    this.name = name || this.name;
+    this.lastName = lastName || this.lastName;
+    this.email = email || this.email;
+    this.phoneNumber = phoneNumber || this.phoneNumber;
+    this.userBio = userBio || this.userBio;
+    this.language = language || this.language;
+
+    this.updatedAt = Date.now();
+
+    return this.save();
+}
+
 module.exports = mongoose.model('User', userSchema);

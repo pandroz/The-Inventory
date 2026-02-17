@@ -90,6 +90,7 @@ app.use((req, res, next) => {
     }
     User.findById(req.session.userId)
         .then(user => {
+            user.setActiveStatus(true);
             req.user = user;
             next();
         })
