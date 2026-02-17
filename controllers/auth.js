@@ -4,12 +4,13 @@ const { generateToken } = require('../middleware/csrf');
 const User = require('../models/user');
 
 exports.getLogin = (req, res, next) => {
-    const csrfToken = generateToken(req, res);    
+    const csrfToken = generateToken(req, res);
     res.render('auth/login', {
         pageTitle: "Login - Pandro's Home",
         path: '/login',
         csrfToken: csrfToken,
-        errorMessage: req.flash('error')
+        errorMessage: req.flash('error'),
+        sessionExpiredError: req.flash('sessionExpiredError')
     });
 };
 
@@ -55,8 +56,16 @@ exports.postLogin = (req, res, next) => {
 }
 
 exports.postLogout = (req, res, next) => {
+    User.findById(req.session.userId)
+        .then(user => {
+            if (user) {
+                user.setActiveStatus(false);
+            }
+        })
+        .catch(err => console.log('Error setting user inactive on logout', err));
+
     req.session.destroy(err => {
-        console.log(err);
+        if (err) console.log('Error destroying session on logout', err);
         res.redirect('/login');
     });
 }

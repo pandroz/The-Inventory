@@ -46,9 +46,43 @@ app.use(session({
     cookie: {
         maxAge: 1000 * 60 * 60 // 1 hour
     },
+    rolling: true,
     store: store
 }))
 app.use(flash());
+
+// Session expiration checker
+app.use((req, res, next) => {
+    // Skip for public routes
+    if (req.path.startsWith('/login') || 
+        req.path.startsWith('/register') || 
+        req.path.match(/\.(css|js|png|jpg|jpeg|gif|ico|svg)$/)) {
+        return next();
+    }
+
+    // Check if session exists and has a user
+    if (req.session && req.session.user) {
+        const now = Date.now();
+        const sessionExpiry = new Date(req.session.cookie._expires).getTime();
+        
+        console.log('Current time:', now);
+        console.log('Session expires at:', sessionExpiry);
+        console.log('Time remaining:', (sessionExpiry - now) / 1000, 'seconds');
+        
+        // Check if session has expired
+        if (now > sessionExpiry) {
+            console.log('Session expired - logging out user');
+            req.session.destroy((err) => {
+                if (err) console.log('Session destroy error:', err);
+                return res.redirect('/login');
+            });
+            return;
+        }
+    }
+    
+    next();
+});
+
 
 app.use((req, res, next) => {
     if (!req.session.userId) {

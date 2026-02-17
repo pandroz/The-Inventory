@@ -7,7 +7,7 @@ const { csrfProtection } = require('../middleware/csrf');
 const router = express.Router();
 
 // GET
-router.get('/', todoController.getTodo);
+router.get('/', isAuth, todoController.getTodo);
 
 // POST
 router.post('/add-todo', isAuth, csrfProtection, todoController.addTodo);
