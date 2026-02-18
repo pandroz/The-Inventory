@@ -158,22 +158,30 @@ function changePassword() {
     }
     
     // TODO: Send to server
-    console.log('Changing password...');
+    axios.post('/profile/change-password', {
+        currentPassword: current,
+        newPassword: newPass,
+        confirmNewPassword: confirm
+    }).then(response => {
+        console.log('Password change response:', response);
+        if (response.status === 200) {
+            console.log('Password changed successfully');
+            toastMessage('success', 'Password cambiata con successo!');
+        }
+    });
     
     const modal = bootstrap.Modal.getInstance(document.getElementById('changePasswordModal'));
     modal.hide();
-    alert('Password cambiata con successo!');
     document.getElementById('changePasswordForm').reset();
 }
 
 // Preferences Form
 document.getElementById('preferencesForm')?.addEventListener('submit', function(e) {
-    e.preventDefault();
-    
     const formData = new FormData(this);
     const prefs = Object.fromEntries(formData);
     
     // Add switches
+    prefs.language = document.getElementById('languageSelect').value;
     prefs.emailNotifications = document.getElementById('emailNotifications').checked;
     prefs.todoReminders = document.getElementById('todoReminders').checked;
     prefs.shoppingNotifications = document.getElementById('shoppingNotifications').checked;

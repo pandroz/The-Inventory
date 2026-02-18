@@ -266,7 +266,7 @@
                         </h6>
                     </div>
                     <div class="card-body p-4">
-                        <form id="preferencesForm">
+                        <form method="POST" action="/profile/edit-preferences" id="preferencesForm">
                             
                             <!-- Language Selection -->
                             <div class="preference-item mb-4">
@@ -299,7 +299,14 @@
                                         <p class="text-muted small mb-0">Ricevi aggiornamenti via email</p>
                                     </div>
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" role="switch" id="emailNotifications" name="emailNotifications" checkedstyle="width: 3rem; height: 1.5rem; cursor: pointer;">
+                                        <input class="form-check-input"
+                                            type="checkbox" 
+                                            role="switch" 
+                                            id="emailNotifications"
+                                            name="emailNotifications"
+                                            checkedstyle="width: 3rem; height: 1.5rem; cursor: pointer;"
+                                            <% if (user.userPreferences && user.userPreferences.emailNotifications) { %> checked <% } %>
+                                        >
                                     </div>
                                 </div>
                             </div>
@@ -315,7 +322,14 @@
                                         <p class="text-muted small mb-0">Ricevi promemoria per le tue attività</p>
                                     </div>
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" role="switch" id="todoReminders" name="todoReminders" checked style="width: 3rem; height: 1.5rem; cursor: pointer;">
+                                        <input class="form-check-input"
+                                            type="checkbox" 
+                                            role="switch"
+                                            id="todoReminders"
+                                            name="todoReminders"
+                                            style="width: 3rem; height: 1.5rem; cursor: pointer;"
+                                            <% if (user.userPreferences && user.userPreferences.todoReminders) { %> checked <% } %>
+                                        >
                                     </div>
                                 </div>
                             </div>
@@ -331,7 +345,14 @@
                                         <p class="text-muted small mb-0">Avvisi per articoli in scadenza</p>
                                     </div>
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" role="switch" id="shoppingNotifications" name="shoppingNotifications" checked style="width: 3rem; height: 1.5rem; cursor: pointer;">
+                                        <input class="form-check-input"
+                                            type="checkbox"
+                                            role="switch"
+                                            id="shoppingNotifications"
+                                            name="shoppingNotifications"
+                                            style="width: 3rem; height: 1.5rem; cursor: pointer;"
+                                            <% if (user.userPreferences && user.userPreferences.shoppingNotifications) { %> checked <% } %>
+                                        >
                                     </div>
                                 </div>
                             </div>
@@ -347,7 +368,14 @@
                                         <p class="text-muted small mb-0">Notifiche quando gli articoli stanno per finire</p>
                                     </div>
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" role="switch" id="lowStockAlerts" name="lowStockAlerts" checked style="width: 3rem; height: 1.5rem; cursor: pointer;">
+                                        <input class="form-check-input"
+                                            type="checkbox"
+                                            role="switch"
+                                            id="lowStockAlerts"
+                                            name="lowStockAlerts"
+                                            style="width: 3rem; height: 1.5rem; cursor: pointer;"
+                                            <% if (user.userPreferences && user.userPreferences.lowStockAlerts) { %> checked <% } %>
+                                        >
                                     </div>
                                 </div>
                             </div>

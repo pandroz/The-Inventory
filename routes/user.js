@@ -11,7 +11,10 @@ router.get('/', isAuth, userController.getProfile);
 
 // POST
 router.post('/edit-profile', isAuth, csrfProtection, userController.editProfile);
-// router.post('/change-password', isAuth, userController.postChangePassword);
+
+router.post('/edit-preferences', isAuth, csrfProtection, userController.editPreferences);
+
+router.post('/change-password', isAuth, userController.postChangePassword);
 // router.post('/delete-account', isAuth, userController.postDeleteAccount);
 // router.post('/update-preferences', isAuth, userController.postUpdatePreferences);
 

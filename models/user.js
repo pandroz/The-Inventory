@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const tgUser = require('./tgUser');
+const userPreferences = require('./userPreferences');
 
 const Schema = mongoose.Schema;
 
@@ -70,9 +71,10 @@ const userSchema = new Schema({
         type: Boolean,
         default: false
     },
-    language: {
-        type: String,
-        default: 'it'
+    userPreferences: {
+        type: Schema.Types.ObjectId,
+        ref: 'UserPreferences',
+        strictPopulate: false
     },
     createdAt: {
         type: Date,
