@@ -2,6 +2,8 @@ const _ = require('lodash');
 
 const TgUser = require('../models/tgUser');
 const ShoppingManager = require('../models/shoppingManager');
+const utils = require('../util/utils');
+const tgUser = require('../models/tgUser');
 
 exports.startBot = async (ctx) => {
     try {
@@ -33,10 +35,10 @@ exports.startBot = async (ctx) => {
 exports.stopBot = async (ctx) => {
     try {
         await TgUser.findOneAndUpdate(
-            { 
-                telegramId: ctx.from.id 
+            {
+                telegramId: ctx.from.id
             },
-            { 
+            {
                 isActive: false,
                 lastActive: Date.now()
             }
@@ -69,7 +71,7 @@ exports.getShoppingList = (ctx) => {
         .populate('item')
         .sort({ buyPriority: -1 })
         .then(result => {
-            ctx.replyWithHTML(formatShoppingList(result));
+            ctx.replyWithHTML(utils.formatShoppingList(result));
         });
 }
 
@@ -77,26 +79,30 @@ exports.getGG = (ctx) => {
     ctx.reply('HAI RAGIONE!');
 }
 
+exports.sendMessageToUser = async (bot, telegramId, message) => {
+    try {
+        await bot.telegram.sendMessage(telegramId, message, {
+            parse_mode: 'HTML'
+        });
+        
+        return { success: true };
+    } catch (error) {
+        console.error(`Failed to send message to ${telegramId}:`, error);
 
+        // If user blocked the bot, mark as inactive
+        if (error.response && error.response.error_code === 403) {
+            await tgUser.findOneAndUpdate({
+                telegramId: telegramId
+            },
+            {
+                isActive: false,
+                hasBlockedBot: true
+            });
+        }
 
-
-
-function formatShoppingList(items) {
-    console.log('Items: ', items);
-    if (items.length === 0) {
-        return '🛒 Your shopping list is empty!';
+        return { 
+            success: false,
+            error: error.message 
+        };
     }
-
-    let message = '╔══════🛒 Shopping List ═════╗\n\n';
-
-    items.forEach((item, index) => {
-        console.log('Item: ', item);
-        message += `  ${index + 1}│ <b>${item.itemName}</b>\n`;
-        message += `   ╰─ Quantità: <code>${item.itemQty}</code>\n\n`;
-    });
-
-    message += `╚═══════════════════════╝\n`;
-    message += `📦 Totale: <b>${items.length}</b> cose da comprare`;
-
-    return message;
 }

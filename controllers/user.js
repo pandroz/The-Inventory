@@ -43,27 +43,26 @@ exports.getProfile = (req, res, next) => {
 };
 
 exports.editProfile = async (req, res, next) => {
+    const telegramUsername = req.body.telegramUsername;
 
     let tgUser = await TgUser.findOne({
         username: telegramUsername
     });
 
-    User.findById(req.session.userId)
-        .then(user => {
-
-            if (user) {
-                if (tgUser)
-                    req.body.telegramId = tgUser ? tgUser._id : null;
-                else
-                    req.flash('telegramUserError', 'Il tuo utente Telegram non si è ancora registrato sul bot. Per favore, invia il comando /start al bot @pandroHomeBot per registrarti prima di collegare il tuo account.');
-
-                user.updateUser(req.body);
-            }
-
-
-            res.redirect('/profile');
-        })
-        .catch(err => console.log(err));
+    if (!tgUser) {
+        req.flash('telegramUserError', `Non è stato possibile trovare un utente Telegram con username @${telegramUsername}. Assicurati di aver inviato il comando /start al bot @pandroHomeBot con lo stesso username prima di collegare il tuo account.`);
+        res.redirect('/profile');
+    } else {
+        try {
+            req.body.telegramId = tgUser ? tgUser._id : null;
+            req.user.updateUser(req.body);
+        } catch (err) {
+            console.log('Error updating user profile:', err);
+            req.flash('telegramUserError', 'Si è verificato un errore durante l\'aggiornamento del profilo. Riprova più tardi.');
+        }
+        
+        res.redirect('/profile');
+    }
 };
 
 exports.editPreferences = (req, res, next) => {

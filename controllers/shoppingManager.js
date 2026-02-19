@@ -2,6 +2,8 @@ const ShoppingManager = require('../models/shoppingManager');
 const Item = require('../models/item');
 const _ = require('lodash');
 const { generateToken } = require('../middleware/csrf');
+const tgBot = require('../util/telegramBot');
+const utils = require('../util/utils');
 
 exports.getShoppingList = (req, res, next) => {
     const csrfToken = generateToken(req, res);
@@ -179,5 +181,38 @@ exports.addItem = (req, res, next) => {
         }).catch(err => {
             res.status(500).json({ message: 'Error saving item: ' + err });
             console.log('(addItem - Finding Item) Error saving item', err);
+        });
+}
+
+exports.sendListOnTelegram = (req, res, next) => {
+    ShoppingManager.find({
+        userId: req.user._id
+    }).sort({ buyPriority: -1 })
+        .then(items => {
+            let message = utils.formatShoppingList(items);
+
+            req.user.populate('telegramId').then(user => {
+                tgBot.sendMessageToUser(tgBot, user.telegramId.telegramId, message)
+                    .then(result => {
+                        if (result.success) {
+                            res.status(200).json({ message: `Shopping list sent to ${user.telegramId.username} successfully` });
+                        } else {
+                            res.status(500).json({ message: 'Error sending shopping list to Telegram: ' + result.error });
+                        }
+                    }).catch(err => {
+                        res.status(500).json({ message: 'Error sending shopping list to Telegram: ' + err });
+                        console.log('Error sending shopping list to Telegram', err);
+                    });
+            }).catch(err => {
+                res.status(500).json({ message: 'Error retrieving user Telegram ID: ' + err });
+                console.log('Error retrieving user Telegram ID', err);
+            });
+
+
+
+
+        }).catch(err => {
+            res.status(500).json({ message: 'Error sending shopping list to Telegram: ' + err });
+            console.log('Error sending shopping list to Telegram', err);
         });
 }

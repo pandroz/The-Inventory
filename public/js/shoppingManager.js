@@ -152,6 +152,11 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log('upsertList');
         upsertList();
     });
+
+    document.getElementById('sendList')?.addEventListener('click', (e) => {
+        console.log('sendList');
+        sendList();
+    });
 });
 
 
@@ -231,6 +236,26 @@ const upsertList = async () => {
     await axios.get('/shopping-manager/upsert-list');
     window.location.reload();
 };
+
+
+const sendList = async () => {
+    await axios.post('/shopping-manager/send-list', {}, {
+        headers: {
+            'Content-Type': 'application/json',
+            'x-csrf-token': _csrf
+        }
+    }).then(res => {
+        if (res.status == 200) {
+            toastMessage('success', 'Success', res.data.message);
+        } else {
+            toastMessage('error', 'Error', res.data.message);
+        }
+    }).catch(err => {
+        console.error('Error sending shopping list to Telegram:', err);
+        toastMessage('error', 'Error', 'Failed to send shopping list to Telegram');
+    });
+};
+
 
 // Fade out animation
 const style = document.createElement('style');

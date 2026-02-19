@@ -16,5 +16,7 @@ router.post('/delete-item', isAuth, csrfProtection, shoppingManagerController.de
 
 router.post('/update-item', isAuth, csrfProtection, shoppingManagerController.updateItem);
 
+router.post('/send-list', isAuth, csrfProtection, shoppingManagerController.sendListOnTelegram);
+
 
 module.exports = router;

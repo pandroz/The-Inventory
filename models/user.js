@@ -98,14 +98,14 @@ userSchema.methods.blockUser = function() {
 };
 
 userSchema.methods.updateUser = function(data) {
-    const { name, lastName, email, phoneNumber, telegramUsername, language, userBio } = data;
+    const { name, lastName, email, phoneNumber, telegramId, language, userBio } = data;
 
     this.name = name || this.name;
     this.lastName = lastName || this.lastName;
     this.email = email || this.email;
     this.phoneNumber = phoneNumber || this.phoneNumber;
     this.userBio = userBio || this.userBio;
-    this.language = language || this.language;
+    this.telegramId = telegramId || this.telegramId;
 
     this.updatedAt = Date.now();
 

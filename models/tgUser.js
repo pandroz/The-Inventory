@@ -15,6 +15,10 @@ const tgUserSchema = new Schema({
         type: Boolean,
         default: true
     },
+    hasBlockedBot: {
+        type: Boolean,
+        default: false
+    },
     lastActive: {
         type: Date,
         default: Date.now

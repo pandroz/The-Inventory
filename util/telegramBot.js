@@ -20,6 +20,8 @@ bot.command('info', TelegramBot.getInfo);
 bot.command('GG', TelegramBot.getGG);
 
 
+// Handle unknown commands
+bot.sendMessageToUser = TelegramBot.sendMessageToUser;
 
 
 // Handle all text messages
