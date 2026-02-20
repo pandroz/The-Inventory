@@ -22,10 +22,15 @@
             </div>
         </div>
 
-        
-        <div id="shoppingManangerList" class="row">
-            <%- include('./components/shoppingManagerList.ejs') %>
+        <div class="container shopping-list-container py-3">
+            <div class="row g-3 justify-content-center">
+                <div id="shoppingManagerList" class="row">
+                    <%- include('./components/shoppingManagerList.ejs') %>
+                </div>
+            </div>
         </div>
+
+
     </div>
     <script src="/js/shoppingManager.js"></script>
 <%- include('../includes/footer.ejs') %>

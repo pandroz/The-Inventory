@@ -22,6 +22,8 @@ const store = new MongoDbSessionStore({
     collection: 'sessions'
 })
 
+const SESSION_TIMEOUT_MS = 1000 * 60 * 60; // 1 hour
+
 app.set('view engine', 'ejs');
 app.set('views', 'views');
 
@@ -44,7 +46,7 @@ app.use(session({
     resave: false,
     saveUninitialized: true,
     cookie: {
-        maxAge: 1000 * 60 * 60 // 1 hour
+        maxAge: SESSION_TIMEOUT_MS
     },
     rolling: true,
     store: store
@@ -74,7 +76,7 @@ app.use((req, res, next) => {
             console.log('Session expired - logging out user');
             req.session.destroy((err) => {
                 if (err) console.log('Session destroy error:', err);
-                return res.redirect('/login');
+                return res.redirect('/logout');
             });
             return;
         }
