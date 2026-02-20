@@ -186,16 +186,23 @@ exports.addItem = (req, res, next) => {
 
 exports.sendListOnTelegram = (req, res, next) => {
     ShoppingManager.find({
-        userId: req.user._id
+        userId: req.user._id,
+        isBought: {
+            $ne: true
+        }
     }).sort({ buyPriority: -1 })
         .then(items => {
+            if (items.length === 0) {
+                res.status(200).json({ message: 'Non ci sono oggetti da comprare' });
+                return;
+            }
             let message = utils.formatShoppingList(items);
 
             req.user.populate('telegramId').then(user => {
                 tgBot.sendMessageToUser(tgBot, user.telegramId.telegramId, message)
                     .then(result => {
                         if (result.success) {
-                            res.status(200).json({ message: `Shopping list sent to ${user.telegramId.username} successfully` });
+                            res.status(200).json({ message: `Lista della spesa inviata a ${user.telegramId.username}` });
                         } else {
                             res.status(500).json({ message: 'Error sending shopping list to Telegram: ' + result.error });
                         }

@@ -8,7 +8,6 @@ exports.formatShoppingList =(items) => {
     let message = '╔══════🛒 Shopping List ═════╗\n\n';
 
     items.forEach((item, index) => {
-        console.log('Item: ', item);
         message += `  ${index + 1}│ <b>${item.itemName}</b>\n`;
         message += `   ╰─ Quantità: <code>${item.itemQty}</code>\n\n`;
     });
