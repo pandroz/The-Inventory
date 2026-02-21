@@ -1,5 +1,5 @@
 <% shoppingList.forEach((item, index) => { %>
-    <article class="col-12 col-md-6 col-xl-5" id="item_<%= item._id %>">
+    <article class="col-12 col-md-6 col-xl-5 mb-3" id="item_<%= item._id %>">
         <div class="shopping-item card border-0 shadow-sm rounded-3 <%= item.isBought ? 'item-bought' : '' %>" data-item-id="<%= item._id %>">
             <div class="card-body p-3">
                 <div class="row align-items-center g-2 g-md-3">
