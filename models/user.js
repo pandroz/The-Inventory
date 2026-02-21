@@ -97,8 +97,8 @@ userSchema.methods.blockUser = function() {
     return this.save();
 };
 
-userSchema.methods.updateUser = function(data) {
-    const { name, lastName, email, phoneNumber, telegramId, language, userBio } = data;
+userSchema.methods.updateUser = async function(data) {
+    const { name, lastName, email, phoneNumber, telegramId, userBio } = data;
 
     this.name = name || this.name;
     this.lastName = lastName || this.lastName;
@@ -106,9 +106,8 @@ userSchema.methods.updateUser = function(data) {
     this.phoneNumber = phoneNumber || this.phoneNumber;
     this.userBio = userBio || this.userBio;
     this.telegramId = telegramId || this.telegramId;
-
     this.updatedAt = Date.now();
-
+    
     return this.save();
 }
 

@@ -55,7 +55,14 @@ exports.editProfile = async (req, res, next) => {
     } else {
         try {
             req.body.telegramId = tgUser ? tgUser._id : null;
-            req.user.updateUser(req.body);
+            User.findById(req.session.userId)
+                .then(user => {
+                    if (!user) {
+                        return res.redirect('/login');
+                    }
+                    user.updateUser(req.body);
+                })
+                .catch(err => console.log(err));
         } catch (err) {
             console.log('Error updating user profile:', err);
             req.flash('telegramUserError', 'Si è verificato un errore durante l\'aggiornamento del profilo. Riprova più tardi.');

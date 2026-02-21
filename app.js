@@ -18,7 +18,7 @@ const MONGODB_URI = `mongodb+srv://${process.env.APPUSERNAME}:${process.env.APPP
 
 const app = express();
 const store = new MongoDbSessionStore({
-    uri: MONGODB_URI,
+    uri: process.env.MONGO_URI,
     collection: 'sessions'
 })
 
@@ -56,8 +56,8 @@ app.use(flash());
 // Session expiration checker
 app.use((req, res, next) => {
     // Skip for public routes
-    if (req.path.startsWith('/login') || 
-        req.path.startsWith('/register') || 
+    if (req.path.startsWith('/login') ||
+        req.path.startsWith('/register') ||
         req.path.match(/\.(css|js|png|jpg|jpeg|gif|ico|svg)$/)) {
         return next();
     }
@@ -66,11 +66,11 @@ app.use((req, res, next) => {
     if (req.session && req.session.user) {
         const now = Date.now();
         const sessionExpiry = new Date(req.session.cookie._expires).getTime();
-        
+
         console.log('Current time:', now);
         console.log('Session expires at:', sessionExpiry);
         console.log('Time remaining:', (sessionExpiry - now) / 1000, 'seconds');
-        
+
         // Check if session has expired
         if (now > sessionExpiry) {
             console.log('Session expired - logging out user');
@@ -81,7 +81,6 @@ app.use((req, res, next) => {
             return;
         }
     }
-    
     next();
 });
 
