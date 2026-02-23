@@ -212,7 +212,7 @@
                                                     Non collegato
                                                 <% } %>
                                                 <% if (telegramUserError && telegramUserError.length > 0) { %>
-                                                    <div class="text-danger small mt-1"><%= telegramUserError[0] %></div>
+                                                    <div class="text-danger small mt-1"><%- telegramUserError[0] %></div>
                                                 <% } %>
                                             </div>
                                             <div class="input-group d-none edit-input" id="telegramInputGroup">
@@ -289,6 +289,29 @@
                                     <option value="fr" <% if (user.language == 'fr') { %> selected <% } %>>🇫🇷 Français</option>
                                     <option value="de" <% if (user.language == 'de') { %> selected <% } %>>🇩🇪 Deutsch</option>
                                 </select>
+                            </div>
+
+                            <!-- Telegram Notifications -->
+                            <div class="preference-item mb-4">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <label class="form-label fw-semibold mb-1">
+                                            <i class="fa-brands fa-telegram text-primary me-2"></i>
+                                            Notifiche Telegram
+                                        </label>
+                                        <p class="text-muted small mb-0">Ricevi aggiornamenti su Telegram</p>
+                                    </div>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input"
+                                            type="checkbox" 
+                                            role="switch" 
+                                            id="telegramNotifications"
+                                            name="telegramNotifications"
+                                            checkedstyle="width: 3rem; height: 1.5rem; cursor: pointer;"
+                                            <% if (user.userPreferences && user.userPreferences.telegramNotifications) { %> checked <% } %>
+                                        >
+                                    </div>
+                                </div>
                             </div>
 
                             <!-- Email Notifications -->

@@ -2,7 +2,7 @@ const ShoppingManager = require('../models/shoppingManager');
 const Item = require('../models/item');
 const _ = require('lodash');
 const { generateToken } = require('../middleware/csrf');
-const tgBot = require('../util/telegramBot');
+const tgBot = require('../services/telegramBot');
 const utils = require('../util/utils');
 
 exports.getShoppingList = (req, res, next) => {

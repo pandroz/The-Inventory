@@ -11,10 +11,10 @@ require('dotenv').config();
 
 // MODELS
 const User = require('./models/user');
-const tgBot = require('./util/telegramBot');
+const tgBot = require('./services/telegramBot');
 
-
-const MONGODB_URI = `mongodb+srv://${process.env.APPUSERNAME}:${process.env.APPPWD}@inventario-spesa.ru11fas.mongodb.net/${process.env.DBNAME}?appName=inventario-spesa`;
+// JOBS
+const { initJobs, stopJobs, getAgenda } = require('./jobs');
 
 const app = express();
 const store = new MongoDbSessionStore({
@@ -98,6 +98,7 @@ app.use((req, res, next) => {
         .catch(err => console.log(err));
 })
 
+
 app.use('/inventory', inventoryRoutes);
 app.use('/todo', todoRoutes);
 app.use('/shopping-manager', shoppingManagerRoutes);
@@ -107,18 +108,38 @@ app.use(authRoutes);
 app.use(errorRoutes);
 
 
+// CONNECT TO DB AND START AGENDA
 console.log('Connecting to DB...')
-mongoose.connect(MONGODB_URI)
-    .then(client => {
+mongoose.connect(process.env.MONGO_URI)
+    .then(async client => {
         console.log('Connected to DB');
+        await initJobs();
     })
     .catch(err => {
         console.log('Error connecting to DB', err);
     })
 
+
+
+// Telegram bot    
 console.log('Starting Telegram bot...')
 tgBot.launch()
     .then(() => console.log('Telegram bot started'))
     .catch(err => console.error('Bot launch error:', err));
+
+
+
+process.on('SIGTERM', async () => {
+    await stopJobs();
+    await mongoose.disconnect();
+    process.exit(0);
+});
+
+process.on('SIGINT', async () => {
+    await stopJobs();
+    await mongoose.disconnect();
+    process.exit(0);
+});
+
 
 app.listen(3000);

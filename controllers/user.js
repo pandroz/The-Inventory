@@ -50,7 +50,7 @@ exports.editProfile = async (req, res, next) => {
     });
 
     if (!tgUser) {
-        req.flash('telegramUserError', `Non è stato possibile trovare un utente Telegram con username @${telegramUsername}. Assicurati di aver inviato il comando /start al bot @pandroHomeBot con lo stesso username prima di collegare il tuo account.`);
+        req.flash('telegramUserError', `Non è stato possibile trovare un utente Telegram con username @${telegramUsername}. Assicurati di aver inviato il comando /start al bot <a href="https://t.me/pandroHomeBot" target="_blank">@pandroHomeBot</a> e di averlo aggiunto al gruppo @pandroHomeBot con lo stesso username prima di collegare il tuo account.`);
         res.redirect('/profile');
     } else {
         try {

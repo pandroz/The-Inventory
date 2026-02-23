@@ -15,6 +15,10 @@ const userSchema = new Schema({
         type: String,
         default: 'it'
     },
+    telegramNotifications: {
+        type: Boolean,
+        default: false
+    },
     emailNotifications: {
         type: Boolean,
         default: false
@@ -42,10 +46,11 @@ const userSchema = new Schema({
 });
 
 userSchema.methods.updatePreferences = function (preferences) {
-    const { language, emailNotifications, todoReminders, shoppingNotifications, lowStockAlerts, theme } = preferences;
+    const { language, emailNotifications, telegramNotifications, todoReminders, shoppingNotifications, lowStockAlerts, theme } = preferences;
 
     this.language = language || this.language;
     this.emailNotifications = emailNotifications !== undefined ? emailNotifications === 'on' : false;
+    this.telegramNotifications = telegramNotifications !== undefined ? telegramNotifications === 'on' : false;
     this.todoReminders = todoReminders !== undefined ? todoReminders === 'on' : false;
     this.shoppingNotifications = shoppingNotifications !== undefined ? shoppingNotifications === 'on' : false;
     this.lowStockAlerts = lowStockAlerts !== undefined ? lowStockAlerts === 'on' : false;

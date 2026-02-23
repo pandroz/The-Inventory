@@ -79,6 +79,13 @@ exports.getGG = (ctx) => {
     ctx.reply('HAI RAGIONE!');
 }
 
+/**
+ * Send a message to a user with the given Telegram ID
+ * @param {import('telegraf').Telegraf} bot - The Telegram bot
+ * @param {number} telegramId - The Telegram ID of the user
+ * @param {string} message - The message to send
+ * @returns {Promise<{success: boolean, error?: string}>} - A promise that resolves to an object with a success flag and an optional error message
+ */
 exports.sendMessageToUser = async (bot, telegramId, message) => {
     try {
         await bot.telegram.sendMessage(telegramId, message, {
