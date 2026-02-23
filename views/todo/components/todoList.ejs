@@ -1,5 +1,5 @@
 <% todos.forEach(todo => { %>
-<article class="todo mt-3" id="todo_<%= todo._id %>" data-priority="<%= todo.priority ? todo.priority.toLowerCase() : '' %>">
+<article class="todo mt-3" <% if (todo.done) { %> style="display: none" <% } %> id="todo_<%= todo._id %>" data-priority="<%= todo.priority ? todo.priority.toLowerCase() : '' %>">
     <div class="row">
         <div class="col-md-12">
             <div class="card shadow-sm border-0 rounded-3 overflow-hidden todo-card priority-<%= todo.priority ? todo.priority.toLowerCase().replace(/\s+/g, '-') : 'none' %>">

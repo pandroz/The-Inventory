@@ -1,23 +1,40 @@
 const Item = require('../models/item');
 const { generateToken } = require('../middleware/csrf');
 
+const ITEM_PER_PAGE = 10;
+
 // GET
-exports.getInvetory = (req, res, next) => {
+exports.getInvetory = async (req, res, next) => {
     const csrfToken = generateToken(req, res);
+
+    let page = +req.query.page || 1;
+
+    let totalItems = await Item.countDocuments({
+        userId: req.user._id
+    });
 
     Item.find({
         userId: req.user._id
     })
+        .skip((page - 1) * ITEM_PER_PAGE)
+        .limit(ITEM_PER_PAGE)
         .sort({ createdAt: -1 })
         .then(items => {
             res.render('inventory/inventory', {
                 pageTitle: 'Dispensa',
                 path: '/inventory',
                 searchType: 'item',
-                itemAmount: items.length,
+                itemAmount: totalItems,
                 items: items,
                 csrfToken,
-                user: req.user
+                user: req.user,
+                totalItems,
+                currentPage: page,
+                hasNextPage: page * ITEM_PER_PAGE < totalItems,
+                hasPrevPage: page > 1,
+                nextPage: page + 1,
+                prevPage: page - 1,
+                lastPage: Math.ceil(totalItems / ITEM_PER_PAGE)
             });
         }).catch(err => {
             console.log('Error fetching items', err);

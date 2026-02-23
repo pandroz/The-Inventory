@@ -3,14 +3,24 @@ const _ = require('lodash');
 const moment = require('moment');
 const { generateToken } = require('../middleware/csrf');
 
+const TODO_PER_PAGE = 10;
+
 // GET
-exports.getTodo = (req, res, next) => {
+exports.getTodo = async (req, res, next) => {
     const csrfToken = generateToken(req, res);
+
+    let page = +req.query.page || 1;
+
+    let totalToDos = await Todo.countDocuments({
+        userId: req.user._id
+    });
 
     Todo.find({
         userId: req.user._id
     })
         .sort({ createdAt: -1 })
+        .skip((page -1) * TODO_PER_PAGE)
+        .limit(TODO_PER_PAGE)
         .then(todos => {
             res.render('todo/todo', {
                 pageTitle: 'To Do List',
@@ -23,7 +33,15 @@ exports.getTodo = (req, res, next) => {
                 moment: moment,
                 _: _,
                 user: req.user,
-                csrfToken
+                csrfToken,
+                totalToDos,
+                currentPage: page,
+                hasNextPage: page * TODO_PER_PAGE < totalToDos,
+                hasPrevPage: page > 1,
+                nextPage: page + 1,
+                prevPage: page - 1,
+                lastPage: Math.ceil(totalToDos / TODO_PER_PAGE)
+
             });
         }).catch(err => {
             console.log('Error fetching To-Dos', err);
@@ -96,7 +114,6 @@ exports.updateStatus = (req, res, next) => {
 
 
 exports.filterTodos = (req, res, next) => {
-    console.log('filter', req.body.filter);
     const filter = req.body.filter;
     Todo.find(filter)
         .then(todos => {

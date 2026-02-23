@@ -17,14 +17,14 @@
                                     <select class="form-select" aria-label="Default select example" id="statusFilter">
                                         <option value="">Tutte</option>
                                         <option value="true">Completed</option>
-                                        <option value="false">Uncompleted</option>
+                                        <option value="false" active>Uncompleted</option>
                                     </select>
                                 </div>
 
                                 <div class="col-md-3">
                                     <label for="categoryFilter" class="form-label">Categoria</label>
                                     <select class="form-select" aria-label="Default select example" id="categoryFilter">
-                                        <option value="" active></option>
+                                        <option value="" active>-</option>
                                         <% categories.forEach((category) => { %>
                                             <option value="<%= category %>"><%= category %></option>
                                         <% }) %>
@@ -34,7 +34,7 @@
                                 <div class="col-md-3">
                                     <label for="priorityFilter" class="form-label">Priority</label>
                                     <select class="form-select" aria-label="Default select example" id="priorityFilter">
-                                        <option value="" active></option>
+                                        <option value="" active>-</option>
                                         <option value="Bassa">🟢 Bassa</option>
                                         <option value="Media">🟡 Media</option>
                                         <option value="Alta">🔴 Alta</option>
@@ -45,7 +45,7 @@
                                 <div class="col-md-3">
                                     <label for="assigneeFilter" class="form-label">Assegnato a</label>
                                     <select class="form-select" aria-label="Default select example" id="assigneeFilter">
-                                        <option value="" active></option>
+                                        <option value="" active>-</option>
                                         <% assignees.forEach((assignee) => { %>
                                             <option value="<%= assignee %>"><%= assignee %></option>
                                         <% }) %>
