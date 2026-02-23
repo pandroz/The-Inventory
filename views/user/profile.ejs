@@ -291,6 +291,29 @@
                                 </select>
                             </div>
 
+                            <!-- Daily Report -->
+                            <div class="preference-item mb-4">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <label class="form-label fw-semibold mb-1">
+                                            <i class="fa-brands fa-telegram text-primary me-2"></i>
+                                            Iscrizione al report giornaliero
+                                        </label>
+                                        <p class="text-muted small mb-0">Ricevi un report giornaliero alle 8:00 su Telegram</p>
+                                    </div>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input"
+                                            type="checkbox" 
+                                            role="switch" 
+                                            id="dailyReportSubscription"
+                                            name="dailyReportSubscription"
+                                            checkedstyle="width: 3rem; height: 1.5rem; cursor: pointer;"
+                                            <% if (user.userPreferences && user.userPreferences.dailyReportSubscription) { %> checked <% } %>
+                                        >
+                                    </div>
+                                </div>
+                            </div>
+
                             <!-- Telegram Notifications -->
                             <div class="preference-item mb-4">
                                 <div class="d-flex justify-content-between align-items-center">

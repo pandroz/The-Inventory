@@ -46,6 +46,11 @@ module.exports = (agenda) => {
                     "$unwind": "$userPreferences"
                 },
                 {
+                    "$match": {
+                        "userPreferences.dailyReportSubscription": true
+                    }
+                },
+                {
                     "$lookup": {
                         "from": "items",
                         "localField": "_id",
