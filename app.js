@@ -35,6 +35,7 @@ const shoppingManagerRoutes = require('./routes/shoppingManager');
 const apiRoutes = require('./routes/api');
 const errorRoutes = require('./routes/error');
 const userRoutes = require('./routes/user');
+const socialRoutes = require('./routes/social');
 
 // MIDDLEWARE
 app.use(cookieParser());
@@ -104,6 +105,7 @@ app.use('/todo', todoRoutes);
 app.use('/shopping-manager', shoppingManagerRoutes);
 app.use('/profile', userRoutes);
 app.use('/api', apiRoutes);
+app.use('/social', socialRoutes);
 app.use(authRoutes);
 app.use(errorRoutes);
 
