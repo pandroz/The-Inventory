@@ -1,5 +1,6 @@
 const Agenda = require('./agenda');
 const defineJobDailyReport = require('./definitions/dailyReport');
+const defineJobReminders = require('./definitions/reminders');
 const mongoose = require('mongoose');
 
 var agenda;
@@ -11,6 +12,7 @@ async function initJobs() {
 
     // Register all job definitions
     defineJobDailyReport(agenda);
+    defineJobReminders(agenda);
 
     // Start the agenda scheduler
     await agenda.start();
@@ -18,6 +20,7 @@ async function initJobs() {
 
     // await agenda.now('Daily Report for Items Close to expiry');
     // agenda.schedule('in 3 seconds', 'Daily Report', {});
+    await agenda.schedule('in 3 seconds', 'Reminders', {});
     await agenda.every('0 8 * * *', 'Daily Report', {});
     console.log('Scheduled Daily Report job');
 
