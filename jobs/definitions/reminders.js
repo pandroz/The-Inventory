@@ -1,16 +1,17 @@
 const _ = require('lodash');
 const ToDo = require('../../models/todo');
+const tgUser = require('../../models/tgUser');
 const tgBot = require('../../services/telegramBot');
 
 module.exports = (agenda) => {
     return agenda.define('Reminders', async (job) => {
         try {
             console.log(`${new Date().toISOString()} - [JOBS - Reminders Job] Checking reminders`);
-            
-            const SAME_DAY_MIDNIGTH = new Date().setHours(0,0,0,0);
-            const TOMORROW_MIDNIGHT = new Date(new Date().setDate(new Date().getDate() + 1)).setHours(0, 0, 0, 0);
 
-            const toDos = await ToDo.aggregate([
+            const SAME_DAY_MIDNIGTH = new Date(new Date().setHours(0, 0, 0, 0));
+            const TOMORROW_MIDNIGHT = new Date(new Date(new Date().setDate(new Date().getDate() + 1)).setHours(0, 0, 0, 0));
+
+            let pipeline = [
                 {
                     $match: {
                         done: {
@@ -63,13 +64,30 @@ module.exports = (agenda) => {
                 {
                     $unwind: '$user'
                 }
-            ]);
+            ];
 
-            console.log(`${new Date().toISOString()} - [JOBS - Reminders Job] Found ${toDos.length} toDos`);
-            console.log(`${new Date().toISOString()} - [JOBS - Reminders Job] ToDos: ${JSON.stringify(toDos, null, 4)} `);
+            const userTodo = await ToDo.aggregate(pipeline);
 
-            
-            await tgBot.sendMessageToUser(tgBot, telegramUser.telegramId, htmlMessage);
+            console.log(`${new Date().toISOString()} - [JOBS - Reminders Job] Found ${userTodo.length} toDos`);
+            console.log(`${new Date().toISOString()} - [JOBS - Reminders Job] ToDos: ${JSON.stringify(userTodo, null, 4)} `);
+
+            await _.each(userTodo, async (user, userId) => {
+                let toDoList = _.get(user, 'todo', []);
+
+                let htmlMessage = `<b>${user.user.name} ${user.user.lastName}</b>\n\n`;
+
+                toDoList.forEach((todo, i) => {
+                    htmlMessage += `${i + 1}. <b>${todo.description}</b>\n\n`;
+                });
+
+                let telegramUser = await tgUser.findOne(user.user.telegramId);
+                console.log('telegramUser', telegramUser);
+                // if (telegramUser)
+                    // Comment this line to avoid spamming messages for now
+                    // await tgBot.sendMessageToUser(tgBot, telegramUser.telegramId, htmlMessage);
+
+            });
+
 
 
         } catch (error) {

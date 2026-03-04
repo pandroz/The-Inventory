@@ -21,6 +21,10 @@ async function initJobs() {
     // await agenda.now('Daily Report for Items Close to expiry');
     // agenda.schedule('in 3 seconds', 'Daily Report', {});
     await agenda.schedule('in 3 seconds', 'Reminders', {});
+    
+    // Scheduled jobs
+    await agenda.every('*/5 * * * *', 'Reminders', {});
+    console.log('Scheduled Reminders job');
     await agenda.every('0 8 * * *', 'Daily Report', {});
     console.log('Scheduled Daily Report job');
 
