@@ -26,10 +26,17 @@ router.post('/register', csrfModule.csrfProtection, authController.postRegister)
 router.use((err, req, res, next) => {
     if (err.code === 'EBADCSRFTOKEN') {
         return req.session.destroy(err => {
-            req.flash('sessionExpiredError', 'Sessione scaduta. Per favore, effettua nuovamente il login.');
-            return res.status(403).json({ error: 'Invalid CSRF token' }).redirect('/login');
+            try {
+                req.flash('sessionExpiredError', 'Sessione scaduta. Per favore, effettua nuovamente il login.');
+
+            } catch (e) {
+                console.log(e);
+            } finally {
+                res.redirect(200, '/login');
+                return;
+            }
         });
-    }
+    };
     next(err);
 });
 

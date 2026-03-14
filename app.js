@@ -144,4 +144,11 @@ process.on('SIGINT', async () => {
 });
 
 
-app.listen(3000);
+const https = require('https');
+const fs    = require('fs');
+https.createServer({
+    key:  fs.readFileSync('key.pem'),
+    cert: fs.readFileSync('cert.pem'),
+}, app).listen(3443);
+
+// app.listen(3000);
