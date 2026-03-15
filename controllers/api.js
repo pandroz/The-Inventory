@@ -24,3 +24,17 @@ exports.searchImagesParse = async (req, res, next) => {
             res.status(500).json({ error: 'Failed to fetch images' });
         })
 }
+
+
+
+exports.barcode = async (req, res, next) => {
+    const barcode = req.body.barcode;
+    const format = req.body.format;
+
+    console.log('(barcode) Barcode:',  barcode);
+    console.log('(barcode) Format:',  format);
+
+    if (!barcode) {
+        return res.status(400).json({ error: 'Barcode required' });
+    }
+}

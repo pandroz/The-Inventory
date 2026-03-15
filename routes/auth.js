@@ -32,8 +32,8 @@ router.use((err, req, res, next) => {
             } catch (e) {
                 console.log(e);
             } finally {
-                res.redirect(200, '/login');
-                return;
+                return res.redirect(200, '/login');
+
             }
         });
     };

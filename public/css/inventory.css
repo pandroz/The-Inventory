@@ -604,3 +604,137 @@ button > svg {
 .capitalize {
     text-transform: capitalize;
 }
+
+
+
+
+/* Shell border matches the form card's left-border style on hover */
+.bc-shell {
+    border-color: #dee2e6 !important;
+    transition: border-color .25s;
+}
+
+.bc-shell.bc-active {
+    border-color: #0d6efd !important;
+    border-left: 4px solid #0d6efd !important;
+}
+
+/* Status dot */
+.bc-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #adb5bd;
+    flex-shrink: 0;
+    transition: background .3s, box-shadow .3s;
+}
+
+.bc-dot.scanning {
+    background: #28a745;
+    box-shadow: 0 0 0 3px rgba(40, 167, 69, .2);
+    animation: bcPulse 1.6s infinite;
+}
+
+.bc-dot.error {
+    background: #dc3545;
+}
+
+.bc-dot.busy {
+    background: #ffc107;
+    animation: bcPulse .6s infinite;
+}
+
+@keyframes bcPulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: .35;
+    }
+}
+
+/* Corner brackets */
+.bc-corners {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.bc-c {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+}
+
+.bc-c.tl {
+    top: 30px;
+    left: 30px;
+    border-top: 2px solid #0d6efd;
+    border-left: 2px solid #0d6efd;
+}
+
+.bc-c.tr {
+    top: 30px;
+    right: 30px;
+    border-top: 2px solid #0d6efd;
+    border-right: 2px solid #0d6efd;
+}
+
+.bc-c.bl {
+    bottom: 30px;
+    left: 30px;
+    border-bottom: 2px solid #0d6efd;
+    border-left: 2px solid #0d6efd;
+}
+
+.bc-c.br {
+    bottom: 30px;
+    right: 30px;
+    border-bottom: 2px solid #0d6efd;
+    border-right: 2px solid #0d6efd;
+}
+
+/* Scan line */
+.bc-scanline {
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #0d6efd, transparent);
+    box-shadow: 0 0 8px #0d6efd;
+    animation: bcLine 2s linear infinite;
+    top: 10px;
+}
+
+@keyframes bcLine {
+    0% {
+        top: 10px;
+    }
+
+    100% {
+        top: calc(100% - 10px);
+    }
+}
+
+/* Flash */
+.bc-flash {
+    position: absolute;
+    inset: 0;
+    background: rgba(13, 110, 253, .18);
+    pointer-events: none;
+    animation: bcFlash .35s ease-out forwards;
+}
+
+@keyframes bcFlash {
+    0% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}

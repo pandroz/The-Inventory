@@ -22,6 +22,71 @@
                         <input type="text" class="form-control form-control-lg" id="name" name="name" placeholder="es. Latte, Pane, Mele" required />
                     </div>
 
+                    <div class="col-12">
+                        <label class="form-label fw-semibold">
+                            <i class="fa-solid fa-barcode text-primary me-1"></i>
+                            Scansione Barcode
+                            <span class="text-muted fw-normal small ms-1">— opzionale</span>
+                        </label>
+
+                        <div class="bc-shell border rounded-3 overflow-hidden" id="bcShell">
+
+                            <!-- ── Collapsed state: single trigger button ── -->
+                            <div class="bc-trigger d-flex align-items-center gap-3 p-3 bg-light" id="bcTrigger">
+                                <button type="button" class="btn btn-primary d-flex align-items-center gap-2 px-3 py-2"
+                                    id="bcStartBtn">
+                                    <i class="fa-solid fa-camera fs-6"></i>
+                                    <span class="fw-semibold small">Attiva Scanner</span>
+                                </button>
+                                <div id="bcStatus" class="d-flex align-items-center gap-2 small text-muted">
+                                    <span class="bc-dot" id="bcDot"></span>
+                                    <span id="bcStatusText">In attesa…</span>
+                                </div>
+                                <button type="button" class="btn-close ms-auto d-none" id="bcStopBtn"
+                                    aria-label="Stop scanner"></button>
+                            </div>
+
+                            <!-- ── Camera viewport (hidden until active) ── -->
+                            <div class="bc-viewport d-none position-relative bg-black" id="bcViewport"
+                                style="height: 160px;">
+                                <video id="bcVideo" autoplay muted playsinline class="w-100 h-100"
+                                    style="object-fit:cover;"></video>
+
+                                <!-- Corner brackets -->
+                                <div class="bc-corners" aria-hidden="true">
+                                    <span class="bc-c tl"></span>
+                                    <span class="bc-c tr"></span>
+                                    <span class="bc-c bl"></span>
+                                    <span class="bc-c br"></span>
+                                    <span class="bc-scanline" id="bcScanline"></span>
+                                </div>
+
+                                <!-- Format pill -->
+                                <span class="badge bg-primary position-absolute bottom-0 start-50 translate-middle-x mb-2 d-none bc-format-badge" id="bcFormatBadge"></span>
+
+                                <!-- Flash overlay -->
+                                <div class="bc-flash d-none" id="bcFlash"></div>
+                            </div>
+
+                            <!-- ── Last scan result (appears after first scan) ── -->
+                            <div class="bc-result d-none border-top px-3 py-2 bg-white d-flex align-items-center gap-2" id="bcResult">
+                                <i class="fa-solid fa-circle-check text-success"></i>
+                                <span class="small fw-semibold text-secondary">Scansionato:</span>
+                                <code class="small text-primary fw-bold" id="bcResultValue"></code>
+                                <span class="badge bg-secondary ms-auto" id="bcResultFormat"
+                                    style="font-size:.7rem;"></span>
+                            </div>
+
+                        </div><!-- /.bc-shell -->
+
+                        <!-- HTTPS warning (mobile needs https) -->
+                        <div class="alert alert-warning py-2 px-3 mt-2 small d-none" id="bcHttpsWarn" role="alert">
+                            <i class="fa-solid fa-triangle-exclamation me-1"></i>
+                            La fotocamera richiede <strong>HTTPS</strong> su mobile. Usa un tunnel (es. ngrok) oppure un
+                            certificato SSL.
+                        </div>
+                    </div>
+
                     <!-- Category -->
                     <div class="col-12 col-md-6">
                         <label for="category" class="form-label fw-semibold">

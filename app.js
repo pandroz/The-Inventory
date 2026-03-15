@@ -1,4 +1,6 @@
 // LIBRARIES
+const fs = require('fs');
+const https = require('https');
 const path = require('path');
 const express = require('express');
 const mongoose = require('mongoose');
@@ -144,11 +146,9 @@ process.on('SIGINT', async () => {
 });
 
 
-const https = require('https');
-const fs    = require('fs');
+// app.listen(3000);
+
 https.createServer({
-    key:  fs.readFileSync('key.pem'),
+    key: fs.readFileSync('key.pem'),
     cert: fs.readFileSync('cert.pem'),
 }, app).listen(3443);
-
-// app.listen(3000);
