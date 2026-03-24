@@ -56,14 +56,18 @@ const itemSchema = new Schema({
         required: false,
         default: ''
     },
-    updated: {
-        type: Date,
-        required: false
-    },
     userId: {
         type: Schema.Types.ObjectId,
         ref: 'User',
         required: true
+    },
+    barcode: {
+        type: String,
+        required: false
+    },
+    updated: {
+        type: Date,
+        required: false
     },
     createdAt: {
         type: Date,

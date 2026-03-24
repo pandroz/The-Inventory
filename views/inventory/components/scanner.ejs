@@ -1,0 +1,298 @@
+<div class="col-12">
+    <label class="form-label fw-semibold">
+        <i class="fa-solid fa-barcode text-primary me-1"></i>
+        Scansione Barcode
+    </label>
+
+    <div class="bc-shell border rounded-3 overflow-hidden" id="bcShell">
+        <!-- Controls -->
+        <div class="d-flex align-items-center gap-2 p-3 bg-light flex-wrap">
+            <select id="bcCameraSelect" class="form-select form-select-sm d-none" style="max-width:200px;">
+                <option value="">Camera</option>
+            </select>
+
+            <button type="button" class="btn btn-primary" id="bcStartBtn">
+                <i class="fa-solid fa-camera"></i> Attiva Scanner
+            </button>
+
+            <button
+                type="button"
+                class="btn btn-outline-secondary btn-sm d-none"
+                id="bcFullscreenBtn"
+            >
+                <i class="fa-solid fa-expand"></i>
+            </button>
+
+            <button type="button" class="btn btn-outline-warning btn-sm d-none" id="bcTorchBtn">
+                <i class="fa-solid fa-bolt"></i>
+            </button>
+
+            <button type="button" class="btn-close d-none" id="bcStopBtn"></button>
+
+            <div class="ms-auto small text-muted">
+                <span id="bcStatusText">In attesa…</span>
+            </div>
+        </div>
+
+        <!-- Scanner -->
+        <div id="bcViewport" class="d-none position-relative" style="height: 220px"></div>
+
+        <!-- Result -->
+        <div id="bcResult" class="d-none border-top p-2">
+            <strong>Scansionato:</strong>
+            <code id="bcResultValue"></code>
+            <span id="bcResultFormat" class="badge bg-secondary"></span>
+        </div>
+    </div>
+</div>
+
+<!-- Fullscreen -->
+
+<div
+    id="bcOverlay"
+    style="display: none; position: fixed; inset: 0; background: #000; z-index: 9999"
+></div>
+
+<style>
+#bcViewport,
+#bcOverlay {
+    position: relative;
+    overflow: hidden;
+    background: #000;
+}
+
+#bcViewport video,
+#bcOverlay video {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+}
+</style>
+
+<script>
+(function () {
+
+    const API_ENDPOINT = "/api/barcode";
+    const SCAN_COOLDOWN = 2500;
+
+    const $ = id => document.getElementById(id);
+
+    let scanning = false;
+    let fullscreen = false;
+    let lastValue = null;
+    let lastTime = 0;
+
+    let currentTrack = null;
+    let torchOn = false;
+    let currentDeviceId = null;
+    let camerasLoaded = false;
+
+    function setStatus(text) {
+        $("bcStatusText").textContent = text;
+    }
+
+    async function loadCameras() {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const cams = devices.filter(d => d.kind === "videoinput");
+
+        const select = $("bcCameraSelect");
+        select.innerHTML = "";
+
+        cams.forEach((cam, i) => {
+            const opt = document.createElement("option");
+            opt.value = cam.deviceId;
+            opt.textContent = cam.label || `Camera ${i + 1}`;
+
+            // Prefer back camera
+            if (/back|rear|environment/i.test(cam.label)) {
+                opt.selected = true;
+                currentDeviceId = cam.deviceId;
+            }
+
+            select.appendChild(opt);
+        });
+
+        if (cams.length > 1) {
+            select.classList.remove("d-none");
+        }
+
+        camerasLoaded = true;
+    }
+
+    function stopScanner() {
+        try { Quagga.stop(); } catch (_) {}
+
+        scanning = false;
+        currentTrack = null;
+
+        $("bcViewport").classList.add("d-none");
+        $("bcStartBtn").classList.remove("d-none");
+        $("bcStopBtn").classList.add("d-none");
+        $("bcFullscreenBtn").classList.add("d-none");
+        $("bcTorchBtn").classList.add("d-none");
+
+        closeFullscreen();
+        setStatus("Fotocamera pronta");
+    }
+
+    async function startScanner() {
+        stopScanner();
+
+        const container = fullscreen ? $("bcOverlay") : $("bcViewport");
+        container.classList.remove("d-none");
+
+        setStatus("Scansione in corso…");
+
+        Quagga.init({
+            inputStream: {
+                type: "LiveStream",
+                target: container,
+                constraints: currentDeviceId
+                    ? { deviceId: { exact: currentDeviceId } }
+                    : { facingMode: { ideal: "environment" } },
+                area: {
+                    top: "20%",
+                    right: "10%",
+                    left: "10%",
+                    bottom: "20%"
+                }
+            },
+            locator: {
+                patchSize: "medium",
+                halfSample: false
+            },
+            numOfWorkers: navigator.hardwareConcurrency || 4,
+            frequency: 10,
+            decoder: {
+                readers: [
+                    "ean_reader",
+                    "ean_8_reader",
+                    "upc_reader",
+                    "code_128_reader"
+                ]
+            },
+            locate: true
+        }, async err => {
+            if (err) {
+                console.error(err);
+                setStatus("Errore scanner");
+                return;
+            }
+
+            Quagga.start();
+            scanning = true;
+
+            currentTrack = Quagga.CameraAccess.getActiveTrack();
+
+            $("bcTorchBtn").classList.remove("d-none");
+
+            setupCameraFeatures();
+
+            // Load cameras AFTER permission
+            if (!camerasLoaded) {
+                await loadCameras();
+            }
+        });
+
+        Quagga.offDetected();
+        Quagga.onDetected(onDetected);
+
+        $("bcStartBtn").classList.add("d-none");
+        $("bcStopBtn").classList.remove("d-none");
+        $("bcFullscreenBtn").classList.remove("d-none");
+    }
+
+    function setupCameraFeatures() {
+        if (!currentTrack) return;
+
+        const caps = currentTrack.getCapabilities?.();
+
+        if (caps?.focusMode) {
+            currentTrack.applyConstraints({
+                advanced: [{ focusMode: "continuous" }]
+            }).catch(() => {});
+        }
+    }
+
+    function toggleTorch() {
+        if (!currentTrack) return;
+
+        torchOn = !torchOn;
+
+        currentTrack.applyConstraints({
+            advanced: [{ torch: torchOn }]
+        }).catch(() => {});
+    }
+
+    function openFullscreen() {
+        fullscreen = true;
+        $("bcOverlay").style.display = "block";
+
+        if (scanning) startScanner();
+    }
+
+    function closeFullscreen() {
+        if (!fullscreen) return;
+
+        fullscreen = false;
+        $("bcOverlay").style.display = "none";
+
+        if (scanning) startScanner();
+    }
+
+    function onDetected(data) {
+        const code = data?.codeResult?.code;
+        if (!code) return;
+
+        const now = Date.now();
+        if (code === lastValue && now - lastTime < SCAN_COOLDOWN) return;
+
+        lastValue = code;
+        lastTime = now;
+
+        if (navigator.vibrate) navigator.vibrate(120);
+
+        $("bcResultValue").textContent = code;
+        $("bcResultFormat").textContent = data.codeResult.format;
+        $("bcResult").classList.remove("d-none");
+
+        stopScanner();
+        callApi(code, data.codeResult.format);
+    }
+
+    async function callApi(barcode, format) {
+        setStatus("Ricerca prodotto…");
+
+        try {
+            const res = await fetch(API_ENDPOINT, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ barcode, format })
+            });
+
+            const data = await res.json();
+            if (!res.ok) throw new Error();
+
+            setStatus("Completato ✓");
+        } catch {
+            setStatus("Errore API");
+        }
+    }
+
+    // Camera switching
+    $("bcCameraSelect").addEventListener("change", function () {
+        currentDeviceId = this.value;
+        if (scanning) startScanner();
+    });
+
+    $("bcStartBtn").addEventListener("click", startScanner);
+    $("bcStopBtn").addEventListener("click", stopScanner);
+    $("bcFullscreenBtn").addEventListener("click", openFullscreen);
+    $("bcOverlay").addEventListener("click", closeFullscreen);
+    $("bcTorchBtn").addEventListener("click", toggleTorch);
+
+})();
+</script>
+
+
+
