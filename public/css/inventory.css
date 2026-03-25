@@ -12,7 +12,8 @@
 }
 
 button > i,
-button > svg {
+button > svg,
+button > span {
     pointer-events: none;
 }
 
