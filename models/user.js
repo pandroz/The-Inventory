@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const tgUser = require('./tgUser');
 const userPreferences = require('./userPreferences');
+const { google } = require('googleapis');
 
 const Schema = mongoose.Schema;
 
@@ -51,6 +52,10 @@ const userSchema = new Schema({
         ref: 'TgUser',
         strictPopulate: false
     },
+    googleTokens: {
+        type: Object,
+        default: null
+    },
     avatarUrl: {
         type: String,
         default: ''
@@ -86,18 +91,51 @@ const userSchema = new Schema({
     }
 });
 
-userSchema.methods.setActiveStatus = function(activeStatus) {
+userSchema.methods.setActiveStatus = function (activeStatus) {
     this.isActive = activeStatus;
     this.lastActive = Date.now();
     return this.save();
 };
 
-userSchema.methods.blockUser = function() {
+userSchema.methods.blockUser = function () {
     this.isBlocked = true;
     return this.save();
 };
 
-userSchema.methods.updateUser = async function(data) {
+userSchema.methods.unblockUser = function () {
+    this.isBlocked = false;
+    return this.save();
+}
+
+userSchema.methods.deleteUser = function () {
+    this.isDeleted = true;
+    return this.save();
+}
+
+userSchema.methods.restoreUser = function () {
+    this.isDeleted = false;
+    return this.save();
+}
+
+userSchema.methods.verifyUser = function () {
+    this.isVerified = true;
+    return this.save();
+}
+
+userSchema.statics.saveTokens = function (userId, tokens) {
+    return this.findByIdAndUpdate(userId, { googleTokens: tokens })
+        .then(user => {
+            if (!user) {
+                console.log('User not found for token saving');
+                return null;
+            } else {
+                console.log('Tokens saved for user:', user.username);
+                return user;
+            }
+        });
+}
+
+userSchema.methods.updateUser = async function (data) {
     const { name, lastName, email, phoneNumber, telegramId, userBio } = data;
 
     this.name = name || this.name;
@@ -107,7 +145,7 @@ userSchema.methods.updateUser = async function(data) {
     this.userBio = userBio || this.userBio;
     this.telegramId = telegramId || this.telegramId;
     this.updatedAt = Date.now();
-    
+
     return this.save();
 }
 

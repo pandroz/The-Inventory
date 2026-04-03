@@ -37,7 +37,8 @@ const shoppingManagerRoutes = require('./routes/shoppingManager');
 const apiRoutes = require('./routes/api');
 const errorRoutes = require('./routes/error');
 const userRoutes = require('./routes/user');
-const socialRoutes = require('./routes/social');
+const calendarRoutes = require('./routes/calendar');
+const dashboardRoutes = require('./routes/dashboard');
 
 // MIDDLEWARE
 app.use(cookieParser());
@@ -101,13 +102,13 @@ app.use((req, res, next) => {
         .catch(err => console.log(err));
 })
 
-
+app.use('/dashboard', dashboardRoutes);
 app.use('/inventory', inventoryRoutes);
 app.use('/todo', todoRoutes);
 app.use('/shopping-manager', shoppingManagerRoutes);
 app.use('/profile', userRoutes);
 app.use('/api', apiRoutes);
-app.use('/social', socialRoutes);
+app.use('/calendar', calendarRoutes);
 app.use(authRoutes);
 app.use(errorRoutes);
 

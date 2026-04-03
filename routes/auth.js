@@ -8,7 +8,7 @@ const router = express.Router();
 
 // GETs
 router.get('/', isAuth, (req, res, next) => {
-    res.redirect('/inventory');
+    res.redirect('/dashboard');
 });
 
 router.get('/login', authController.getLogin);

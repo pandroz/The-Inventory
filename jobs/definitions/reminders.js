@@ -69,7 +69,7 @@ module.exports = (agenda) => {
             const userTodo = await ToDo.aggregate(pipeline);
 
             console.log(`${new Date().toISOString()} - [JOBS - Reminders Job] Found ${userTodo.length} toDos`);
-            console.log(`${new Date().toISOString()} - [JOBS - Reminders Job] ToDos: ${JSON.stringify(userTodo, null, 4)} `);
+            // console.log(`${new Date().toISOString()} - [JOBS - Reminders Job] ToDos: ${JSON.stringify(userTodo, null, 4)} `);
 
             await _.each(userTodo, async (user, userId) => {
                 let toDoList = _.get(user, 'todo', []);
@@ -81,7 +81,7 @@ module.exports = (agenda) => {
                 });
 
                 let telegramUser = await tgUser.findOne(user.user.telegramId);
-                console.log('telegramUser', telegramUser);
+                // console.log('telegramUser', telegramUser);
                 // if (telegramUser)
                     // Comment this line to avoid spamming messages for now
                     // await tgBot.sendMessageToUser(tgBot, telegramUser.telegramId, htmlMessage);

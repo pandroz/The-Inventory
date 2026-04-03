@@ -37,12 +37,31 @@
                     <span class="section-text">Pandro's Home</span>
                 </div>
 
+                <a href="/dashboard"
+                    class="nav-item <% if (path == '/dashboard') { %> active <% } %>"
+                    data-tooltip="Dashboard"
+                >
+                    <div class="nav-icon">
+                        <i class="fa-regular fa-house"></i>
+                    </div>
+                    <span class="nav-text">Dashboard</span>
+                    <div class="nav-indicator"></div>
+                </a>
+            </div>
+
+
+            <div class="nav-section">
+                <div class="nav-section-title">
+                    <span class="section-text">Gestione</span>
+                </div>
+
+
                 <a href="/inventory"
                     class="nav-item <% if (path == '/inventory') { %> active <% } %>"
                     data-tooltip="Dispensa"
                 >
                     <div class="nav-icon">
-                        <i class="fa-regular fa-house"></i>
+                        <i class="fa-solid fa-box-open"></i>
                     </div>
                     <span class="nav-text">Dispensa</span>
                     <div class="nav-indicator"></div>
@@ -76,7 +95,7 @@
                     <span class="section-text">Social</span>
                 </div>
 
-                <a href="/social/calendar"
+                <a href="/calendar"
                     class="nav-item <% if (path == '/calendar') { %> active <% } %>"
                     data-tooltip="Calendario"
                 >
