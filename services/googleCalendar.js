@@ -1,29 +1,52 @@
 const { google } = require('googleapis');
-const oauth2Client = require('../middleware/googleAuth');
+const { getAuthenticatedClient } = require('../middleware/googleAuth');
+const User = require('../models/user');
 
-const getCalendarClient = (tokens) => {
-    oauth2Client.setCredentials(tokens);
-    return google.calendar({ version: 'v3', auth: oauth2Client });
+const getCalendarClient = async (user) => {
+    const { client, newTokens } = await getAuthenticatedClient(user.googleTokens);
+
+    // If tokens were refreshed, persist them so the next call doesn't fail too
+    if (newTokens) {
+        await User.saveTokens(user.id, newTokens);
+    }
+
+    return google.calendar({ version: 'v3', auth: client });
+}
+
+
+
+// CREATE EVENT
+exports.createEvent = async (user, eventData) => {
+    const calendar = await getCalendarClient(user);
+    return await calendar.events.insert({ calendarId: 'combi.alessandro.a@gmail.com', requestBody: eventData });
 };
 
-exports.createEvent = async (tokens, eventData) => {
-    const calendar = getCalendarClient(tokens);
-    return calendar.events.insert({ calendarId: 'primary', requestBody: eventData });
+
+
+// UPDATE EVENT
+exports.updateEvent = async (user, eventId, eventData) => {
+    const calendar = await getCalendarClient(user);
+    return await calendar.events.update({ calendarId: 'combi.alessandro.a@gmail.com', eventId, requestBody: eventData });
 };
 
-exports.updateEvent = async (tokens, eventId, eventData) => {
-    const calendar = getCalendarClient(tokens);
-    return calendar.events.update({ calendarId: 'primary', eventId, requestBody: eventData });
+
+
+// DELETE EVENT
+exports.deleteEvent = async (user, eventId) => {
+    const calendar = await getCalendarClient(user);
+    return await calendar.events.delete({ calendarId: 'combi.alessandro.a@gmail.com', eventId });
 };
 
-exports.deleteEvent = async (tokens, eventId) => {
-    const calendar = getCalendarClient(tokens);
-    return calendar.events.delete({ calendarId: 'primary', eventId });
-};
 
-exports.listEvents = async (tokens, syncToken = null) => {
-    const calendar = getCalendarClient(tokens);
-    const params = { calendarId: 'primary', singleEvents: true };
+
+// LIST EVENTS
+exports.listEvents = async (user, syncToken = null) => {
+    const calendar = await getCalendarClient(user);
+
+    const params = { calendarId: 'combi.alessandro.a@gmail.com', singleEvents: true, orderBy: 'startTime' };
+
     if (syncToken) params.syncToken = syncToken;
-    return calendar.events.list(params);
+
+    let calendarList = await calendar.events.list(params)
+    return calendarList;
 };

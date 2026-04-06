@@ -1,5 +1,5 @@
 const { google } = require('googleapis');
-const oauth2Client = require('../config/googleAuth');
+const { oauth2Client } = require('../config/googleAuth');
 const { v4: uuidv4 } = require('uuid');
 
 const BASE_URL = process.env.PUBLIC_BASE_URL; // e.g. https://a1b2-c3d4.ngrok-free.app

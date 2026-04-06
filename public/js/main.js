@@ -4,8 +4,13 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
+/**
+ * Show a toast message
+ * @param {string} type - Type of toast message (info, warning, danger, success)
+ * @param {string} title - Title of the toast message
+ * @param {string} body - Body of the toast message
+ */
 function toastMessage(type, title, body) {
-
     const toastMessage = document.getElementById('toastMessage');
     const toast = bootstrap.Toast.getOrCreateInstance(toastMessage)
 
