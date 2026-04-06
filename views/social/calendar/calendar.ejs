@@ -19,7 +19,6 @@
         <div class="d-flex align-items-center gap-3">
             <div class="sync-spinner" id="syncSpinner"></div>
 
-            <!-- Google connection status — pass `googleConnected` from controller -->
             <% if (googleConnected) { %>
                 <button class="btn btn-danger" id="btn-google-disconnect">Disconnect</button>
                 <span class="sync-badge connected">
@@ -148,13 +147,10 @@
             </div>
         </div>
 
-        <!-- Month Grid -->
-        <div class="month-grid" id="monthGrid">
-            <!-- Weekday headers -->
-            <% ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].forEach(d => { %>
-                <div class="weekday-header"><%= d %></div>
-            <% }) %>
-        </div>
+        <!-- Views — only one is visible at a time (controlled by JS) -->
+        <%- include('./components/month-view.ejs') %>
+        <%- include('./components/week-view.ejs') %>
+        <%- include('./components/day-view.ejs') %>
 
     </main>
 </div>
@@ -223,9 +219,8 @@
 <script>
     // ── Inject server-side events into JS ──────────────────────────────────
     // The controller passes `events` as an array of Event documents
-    const serverEvents   = <%- JSON.stringify(events) %>;
-    // const serverEvents = Array.isArray(_rawEvents) ? _rawEvents : Object.values(_rawEvents ?? {});
-    
+    const serverEvents = <%- JSON.stringify(events) %>;
+
 </script>
 <script src="js/calendar.js"></script>
 

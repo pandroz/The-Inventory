@@ -2,9 +2,13 @@
 const today = new Date();
 let currentYear = today.getFullYear();
 let currentMonth = today.getMonth(); // 0-indexed
+let currentDay = today.getDate();
+let currentView = 'month';
 
 // ── Helpers ────────────────────────────────────────────────────────────
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+const DAYS_LONG = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+const DAYS_SHORT = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 function toLocalISO(date) {
     const d = new Date(date);
@@ -28,31 +32,46 @@ function isEventAllDay(ev) {
     return !!ev.start.date && !ev.start.dateTime;
 }
 
+// Returns the Monday of the week containing the given date
+function getWeekStart(year, month, day) {
+    const d = new Date(year, month, day);
+    const dow = d.getDay(); // 0 = Sun
+    const diff = dow === 0 ? -6 : 1 - dow;
+    return new Date(year, month, day + diff);
+}
 
+// ── View Switch ────────────────────────────────────────────────────────
+function switchView(view) {
+    currentView = view;
 
+    document.getElementById('monthGrid').style.display = view === 'month' ? 'grid' : 'none';
+    document.getElementById('weekGrid').style.display = view === 'week' ? 'flex' : 'none';
+    document.getElementById('dayGrid').style.display = view === 'day' ? 'flex' : 'none';
 
+    if (view === 'month') renderMonth(currentYear, currentMonth);
+    if (view === 'week') renderWeek(currentYear, currentMonth, currentDay);
+    if (view === 'day') renderDay(currentYear, currentMonth, currentDay);
+}
 
-
-
+// ── Toolbar label helper ────────────────────────────────────────────────
+function setToolbarLabel(text, year) {
+    document.getElementById('monthLabel').textContent = text;
+    document.getElementById('yearLabel').textContent = year !== undefined ? year : '';
+}
 
 // ── Main Calendar Render ───────────────────────────────────────────────
 function renderMonth(year, month) {
-    document.getElementById('monthLabel').textContent = MONTHS[month];
-    document.getElementById('yearLabel').textContent = year;
+    setToolbarLabel(MONTHS[month], year);
 
     const grid = document.getElementById('monthGrid');
-    // Remove old day cells (keep 7 weekday headers)
-    const headers = grid.querySelectorAll('.weekday-header');
+    const headers = Array.from(grid.querySelectorAll('.weekday-header'));
     grid.innerHTML = '';
     headers.forEach(h => grid.appendChild(h));
 
-    // First day of the month (adjust so Mon = 0)
-    const firstDay = new Date(year, month, 1);
-    let startOffset = firstDay.getDay() - 1;
+    let startOffset = new Date(year, month, 1).getDay() - 1;
     if (startOffset < 0) startOffset = 6;
 
     const daysInMonth = new Date(year, month + 1, 0).getDate();
-    const daysInPrev = new Date(year, month, 0).getDate();
     const totalCells = Math.ceil((startOffset + daysInMonth) / 7) * 7;
 
     // Filter events for this month view window
@@ -88,7 +107,7 @@ function renderMonth(year, month) {
         dayEvents.slice(0, MAX_VISIBLE).forEach(ev => {
             if (ev.status === 'cancelled') return;
             const pill = document.createElement('div');
-            pill.className = `cal-event google`;
+            pill.className = 'cal-event google';
             pill.title = ev.summary;
             pill.textContent = (isEventAllDay(ev) ? '' : formatTime(getEventDate(ev)) + ' ') + ev.summary;
             pill.onclick = (e) => { e.stopPropagation(); openEventModal(ev.id); };
@@ -114,13 +133,252 @@ function renderMonth(year, month) {
     }
 }
 
+// ── Week View Render ───────────────────────────────────────────────────
+function renderWeek(year, month, day) {
+    currentYear = year; currentMonth = month; currentDay = day;
 
+    const weekStart = getWeekStart(year, month, day);
+    const weekEnd = new Date(weekStart); weekEnd.setDate(weekStart.getDate() + 6);
 
+    // Toolbar: show range, e.g. "April – May 2025" or "April 2025"
+    if (weekStart.getMonth() === weekEnd.getMonth()) {
+        setToolbarLabel(MONTHS[weekStart.getMonth()], weekStart.getFullYear());
+    } else {
+        setToolbarLabel(
+            MONTHS[weekStart.getMonth()].slice(0, 3) + ' – ' + MONTHS[weekEnd.getMonth()].slice(0, 3),
+            weekEnd.getFullYear()
+        );
+    }
 
+    const container = document.getElementById('weekGrid');
+    container.innerHTML = '';
 
+    const COL_TEMPLATE = '56px repeat(7, 1fr)';
 
+    // ── Header row ──
+    const headerRow = document.createElement('div');
+    headerRow.className = 'time-view-header';
+    headerRow.style.gridTemplateColumns = COL_TEMPLATE;
 
+    const corner = document.createElement('div');
+    corner.className = 'corner';
+    headerRow.appendChild(corner);
 
+    // Mon…Sun labels, index 0=Mon in our display but getDay() 1=Mon
+    const DAY_ORDER = [1, 2, 3, 4, 5, 6, 0]; // Mon…Sun
+    DAY_ORDER.forEach((_, i) => {
+        const d = new Date(weekStart); d.setDate(weekStart.getDate() + i);
+        const isToday = d.toDateString() === today.toDateString();
+
+        const hdr = document.createElement('div');
+        hdr.className = 'week-day-header';
+
+        const nameEl = document.createElement('span');
+        nameEl.className = 'wdh-name';
+        nameEl.textContent = DAYS_SHORT[d.getDay()];
+
+        const numEl = document.createElement('span');
+        numEl.className = 'wdh-num' + (isToday ? ' today-num' : '');
+        numEl.textContent = d.getDate();
+
+        hdr.appendChild(nameEl);
+        hdr.appendChild(numEl);
+
+        // Clicking the day number drills into day view
+        hdr.style.cursor = 'pointer';
+        hdr.addEventListener('click', () => {
+            currentYear = d.getFullYear(); currentMonth = d.getMonth(); currentDay = d.getDate();
+            document.querySelectorAll('.view-tab').forEach(t => t.classList.toggle('active', t.dataset.view === 'day'));
+            switchView('day');
+        });
+
+        headerRow.appendChild(hdr);
+    });
+    container.appendChild(headerRow);
+
+    // ── All-day row (only if any all-day events exist this week) ──
+    const allDayThisWeek = serverEvents.filter(ev => {
+        if (!isEventAllDay(ev) || ev.status === 'cancelled') return false;
+        const d = new Date(ev.start.date);
+        return d >= weekStart && d <= weekEnd;
+    });
+
+    if (allDayThisWeek.length) {
+        const allDayRow = document.createElement('div');
+        allDayRow.style.cssText = `display:grid; grid-template-columns:${COL_TEMPLATE}; border-bottom:1px solid var(--cal-border); background:var(--cal-surface);`;
+
+        const adCorner = document.createElement('div');
+        adCorner.style.cssText = 'border-right:1px solid var(--cal-border); font-size:9px; color:var(--cal-muted); padding:4px 6px; text-align:right; font-family:"DM Mono",monospace;';
+        adCorner.textContent = 'all-day';
+        allDayRow.appendChild(adCorner);
+
+        DAY_ORDER.forEach((_, i) => {
+            const d = new Date(weekStart); d.setDate(weekStart.getDate() + i);
+            const cell = document.createElement('div');
+            cell.style.cssText = 'border-right:1px solid var(--cal-border); padding:2px 4px; min-height:24px;';
+
+            allDayThisWeek
+                .filter(ev => new Date(ev.start.date).toDateString() === d.toDateString())
+                .forEach(ev => {
+                    const pill = document.createElement('div');
+                    pill.className = 'cal-event google';
+                    pill.textContent = ev.summary;
+                    pill.onclick = (e) => { e.stopPropagation(); openEventModal(ev.id); };
+                    cell.appendChild(pill);
+                });
+
+            allDayRow.appendChild(cell);
+        });
+        container.appendChild(allDayRow);
+    }
+
+    // ── Scrollable time grid ──
+    const scroll = document.createElement('div');
+    scroll.className = 'time-scroll';
+
+    const grid = document.createElement('div');
+    grid.className = 'time-grid';
+    grid.style.gridTemplateColumns = COL_TEMPLATE;
+
+    for (let h = 0; h < 24; h++) {
+        // Time label cell
+        const label = document.createElement('div');
+        label.className = 'time-label';
+        label.textContent = h.toString().padStart(2, '0') + ':00';
+        grid.appendChild(label);
+
+        // One slot per day of the week
+        DAY_ORDER.forEach((_, i) => {
+            const d = new Date(weekStart); d.setDate(weekStart.getDate() + i);
+
+            const slot = document.createElement('div');
+            slot.className = 'time-slot';
+
+            serverEvents
+                .filter(ev => {
+                    if (isEventAllDay(ev) || ev.status === 'cancelled') return false;
+                    const evDate = new Date(ev.start.dateTime);
+                    return evDate.toDateString() === d.toDateString() && evDate.getHours() === h;
+                })
+                .forEach(ev => {
+                    const pill = document.createElement('div');
+                    pill.className = 'cal-event google';
+                    pill.textContent = formatTime(ev.start.dateTime) + ' ' + ev.summary;
+                    pill.onclick = (e) => { e.stopPropagation(); openEventModal(ev.id); };
+                    slot.appendChild(pill);
+                });
+
+            slot.addEventListener('click', () => {
+                const start = new Date(d); start.setHours(h, 0, 0, 0);
+                const end = new Date(start); end.setHours(h + 1, 0, 0, 0);
+                openNewEventModal(start, end);
+            });
+
+            grid.appendChild(slot);
+        });
+    }
+
+    scroll.appendChild(grid);
+    container.appendChild(scroll);
+
+    // Scroll to 08:00 on open
+    requestAnimationFrame(() => { scroll.scrollTop = 48 * 8; });
+}
+
+// ── Day View Render ────────────────────────────────────────────────────
+function renderDay(year, month, day) {
+    currentYear = year; currentMonth = month; currentDay = day;
+
+    const d = new Date(year, month, day);
+    const isToday = d.toDateString() === today.toDateString();
+
+    setToolbarLabel(MONTHS[month], year);
+
+    const container = document.getElementById('dayGrid');
+    container.innerHTML = '';
+
+    // ── Date header ──
+    const dateHeader = document.createElement('div');
+    dateHeader.className = 'day-view-date-header';
+
+    const nameEl = document.createElement('span');
+    nameEl.className = 'dv-name';
+    nameEl.textContent = DAYS_LONG[d.getDay()];
+
+    const numEl = document.createElement('span');
+    numEl.className = 'dv-num' + (isToday ? ' today-num' : '');
+    numEl.textContent = day;
+
+    dateHeader.appendChild(nameEl);
+    dateHeader.appendChild(numEl);
+    container.appendChild(dateHeader);
+
+    // ── All-day events ──
+    const allDayEvs = serverEvents.filter(ev =>
+        isEventAllDay(ev) &&
+        ev.status !== 'cancelled' &&
+        new Date(ev.start.date).toDateString() === d.toDateString()
+    );
+
+    if (allDayEvs.length) {
+        const allDayRow = document.createElement('div');
+        allDayRow.className = 'day-allday-row';
+        allDayEvs.forEach(ev => {
+            const pill = document.createElement('div');
+            pill.className = 'cal-event google';
+            pill.textContent = ev.summary;
+            pill.onclick = () => openEventModal(ev.id);
+            allDayRow.appendChild(pill);
+        });
+        container.appendChild(allDayRow);
+    }
+
+    // ── Scrollable time grid ──
+    const scroll = document.createElement('div');
+    scroll.className = 'time-scroll';
+
+    const grid = document.createElement('div');
+    grid.className = 'time-grid';
+    grid.style.gridTemplateColumns = '56px 1fr';
+
+    for (let h = 0; h < 24; h++) {
+        const label = document.createElement('div');
+        label.className = 'time-label';
+        label.textContent = h.toString().padStart(2, '0') + ':00';
+        grid.appendChild(label);
+
+        const slot = document.createElement('div');
+        slot.className = 'time-slot';
+        slot.style.borderRight = 'none';
+
+        serverEvents
+            .filter(ev => {
+                if (isEventAllDay(ev) || ev.status === 'cancelled') return false;
+                const evDate = new Date(ev.start.dateTime);
+                return evDate.toDateString() === d.toDateString() && evDate.getHours() === h;
+            })
+            .forEach(ev => {
+                const pill = document.createElement('div');
+                pill.className = 'cal-event google';
+                pill.textContent = formatTime(ev.start.dateTime) + ' ' + ev.summary;
+                pill.onclick = (e) => { e.stopPropagation(); openEventModal(ev.id); };
+                slot.appendChild(pill);
+            });
+
+        slot.addEventListener('click', () => {
+            const start = new Date(d); start.setHours(h, 0, 0, 0);
+            const end = new Date(start); end.setHours(h + 1, 0, 0, 0);
+            openNewEventModal(start, end);
+        });
+
+        grid.appendChild(slot);
+    }
+
+    scroll.appendChild(grid);
+    container.appendChild(scroll);
+
+    requestAnimationFrame(() => { scroll.scrollTop = 48 * 8; });
+}
 
 // ── Mini Calendar ──────────────────────────────────────────────────────
 let miniYear = currentYear, miniMonth = currentMonth;
@@ -149,7 +407,14 @@ function renderMini(year, month) {
         el.textContent = d.getDate();
         if (d.getMonth() !== month) el.classList.add('other-month');
         if (d.toDateString() === today.toDateString()) el.classList.add('today');
-        el.onclick = () => { currentYear = d.getFullYear(); currentMonth = d.getMonth(); renderMonth(currentYear, currentMonth); };
+        el.onclick = () => {
+            currentYear = d.getFullYear();
+            currentMonth = d.getMonth();
+            currentDay = d.getDate();
+            if (currentView === 'month') renderMonth(currentYear, currentMonth);
+            if (currentView === 'week') renderWeek(currentYear, currentMonth, currentDay);
+            if (currentView === 'day') renderDay(currentYear, currentMonth, currentDay);
+        };
         grid.appendChild(el);
     }
 }
@@ -163,46 +428,54 @@ document.getElementById('miniNext').onclick = () => {
     renderMini(miniYear, miniMonth);
 };
 
+// ── Navigation (view-aware) ────────────────────────────────────────────
+function navigate(direction) {
+    // direction: +1 or -1
+    if (currentView === 'month') {
+        currentMonth += direction;
+        if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+        if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+        renderMonth(currentYear, currentMonth);
+        renderMini(currentYear, currentMonth);
 
+    } else if (currentView === 'week') {
+        const ws = getWeekStart(currentYear, currentMonth, currentDay);
+        ws.setDate(ws.getDate() + direction * 7);
+        currentYear = ws.getFullYear();
+        currentMonth = ws.getMonth();
+        currentDay = ws.getDate();
+        renderWeek(currentYear, currentMonth, currentDay);
+        renderMini(currentYear, currentMonth);
 
+    } else if (currentView === 'day') {
+        const d = new Date(currentYear, currentMonth, currentDay + direction);
+        currentYear = d.getFullYear();
+        currentMonth = d.getMonth();
+        currentDay = d.getDate();
+        renderDay(currentYear, currentMonth, currentDay);
+        renderMini(currentYear, currentMonth);
+    }
+}
 
+document.getElementById('prevMonth').onclick = () => navigate(-1);
+document.getElementById('nextMonth').onclick = () => navigate(+1);
 
-
-
-
-
-// ── Navigation ─────────────────────────────────────────────────────────
-document.getElementById('prevMonth').onclick = () => {
-    if (currentMonth === 0) { currentMonth = 11; currentYear--; } else currentMonth--;
-    renderMonth(currentYear, currentMonth);
-    renderMini(currentYear, currentMonth);
-};
-document.getElementById('nextMonth').onclick = () => {
-    if (currentMonth === 11) { currentMonth = 0; currentYear++; } else currentMonth++;
-    renderMonth(currentYear, currentMonth);
-    renderMini(currentYear, currentMonth);
-};
 document.getElementById('goToday').onclick = () => {
-    currentYear = today.getFullYear(); currentMonth = today.getMonth();
-    renderMonth(currentYear, currentMonth);
+    currentYear = today.getFullYear();
+    currentMonth = today.getMonth();
+    currentDay = today.getDate();
+    if (currentView === 'month') renderMonth(currentYear, currentMonth);
+    if (currentView === 'week') renderWeek(currentYear, currentMonth, currentDay);
+    if (currentView === 'day') renderDay(currentYear, currentMonth, currentDay);
     renderMini(currentYear, currentMonth);
 };
 
-
-
-
-
-
-
-
-
-// ── View Tabs (stub — extend with week/day views as needed) ────────────
+// ── View Tabs ──────────────────────────────────────────────────────────
 document.querySelectorAll('.view-tab').forEach(tab => {
     tab.onclick = () => {
         document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
         tab.classList.add('active');
-        // TODO: swap in week/day view render here
-        console.log(`Switched to ${tab.dataset.view} view (not implemented yet)`);
+        switchView(tab.dataset.view);
     };
 });
 
@@ -270,7 +543,7 @@ function openEventModal(eventId) {
 
 
 
-// ── Save Event (POST or PUT to your Express API) ───────────────────────
+// ── Save Event ─────────────────────────────────────────────────────────
 async function saveEvent() {
     const id = document.getElementById('eventId').value;
     const isNew = !id;
@@ -278,10 +551,10 @@ async function saveEvent() {
     const payload = {
         title: document.getElementById('eventTitle').value.trim(),
         description: document.getElementById('eventDescription').value.trim(),
-        location: document.getElementById('eventLocation').value.trim()
+        location: document.getElementById('eventLocation').value.trim(),
     };
 
-    let isAllDay = document.getElementById('eventAllDay').checked;
+    const isAllDay = document.getElementById('eventAllDay').checked;
 
     if (isAllDay) {
         payload.start = { date: document.getElementById('eventStart').value };
@@ -315,7 +588,7 @@ async function saveEvent() {
         }
 
         bootstrap.Modal.getInstance(document.getElementById('eventModal')).hide();
-        renderMonth(currentYear, currentMonth);
+        switchView(currentView); // re-render current view
         toastMessage('success', 'Event Saved', isNew ? 'Event created and synced to Google Calendar.' : 'Event updated.');
     } catch (err) {
         toastMessage('error', 'Error', 'Something went wrong. Please try again.');
@@ -343,7 +616,7 @@ async function deleteEvent() {
         if (idx !== -1) serverEvents.splice(idx, 1);
 
         bootstrap.Modal.getInstance(document.getElementById('eventModal')).hide();
-        renderMonth(currentYear, currentMonth);
+        switchView(currentView); // re-render current view
         toastMessage('success', 'Event Deleted', 'Event deleted.');
     } catch (err) {
         toastMessage('error', 'Error', 'Could not delete event. Please try again.');
@@ -358,17 +631,16 @@ async function deleteEvent() {
 
 
 // ── All-day toggle ─────────────────────────────────────────────────────
-let allDayCheckbox = document.getElementById('eventAllDay');
+const allDayCheckbox = document.getElementById('eventAllDay');
 allDayCheckbox.addEventListener('change', function () {
-    let eventStart = document.getElementById('eventStart');
-    let eventEnd = document.getElementById('eventEnd');
-
-    let prevStart = eventStart.value;
-    let prevEnd = eventEnd.value;
+    const eventStart = document.getElementById('eventStart');
+    const eventEnd = document.getElementById('eventEnd');
+    const prevStart = eventStart.value;
+    const prevEnd = eventEnd.value;
 
     eventStart.type = this.checked ? 'date' : 'datetime-local';
     eventEnd.type = this.checked ? 'date' : 'datetime-local';
-    
+
     if (this.checked) {
         eventStart.value = prevStart.split('T')[0];
         eventEnd.value = prevEnd.split('T')[0];
@@ -384,16 +656,12 @@ allDayCheckbox.addEventListener('change', function () {
 
 
 
-// ── All-day sync ─────────────────────────────────────────────────────
+// ── All-day date sync ──────────────────────────────────────────────────
 document.getElementById('eventStart').addEventListener('change', function () {
-    if (allDayCheckbox.checked) {
-        document.getElementById('eventEnd').value = this.value;
-    }
+    if (allDayCheckbox.checked) document.getElementById('eventEnd').value = this.value;
 });
 document.getElementById('eventEnd').addEventListener('change', function () {
-    if (allDayCheckbox.checked) {
-        document.getElementById('eventStart').value = this.value;
-    }
+    if (allDayCheckbox.checked) document.getElementById('eventStart').value = this.value;
 });
 
 
@@ -403,9 +671,9 @@ document.getElementById('eventEnd').addEventListener('change', function () {
 
 
 
-// ── Google Calendar Disconnect ────────────────────────────────────────
+// ── Google Calendar Disconnect ─────────────────────────────────────────
 document.getElementById('btn-google-disconnect').addEventListener('click', async () => {
-    if (!confirm('Disconnecting will remove all calendar events from this app. Are you sure?')) return
+    if (!confirm('Disconnecting will remove all calendar events from this app. Are you sure?')) return;
 
     try {
         const res = await fetch('/calendar/google/disconnect', { method: 'POST' });
@@ -415,7 +683,12 @@ document.getElementById('btn-google-disconnect').addEventListener('click', async
     } catch (err) {
         toastMessage('error', 'Error', 'Could not disconnect. Please try again.');
     }
-})
+});
+
 // ── Init ───────────────────────────────────────────────────────────────
+// Hide week/day containers; month is shown by default via CSS (display:grid)
+document.getElementById('weekGrid').style.display = 'none';
+document.getElementById('dayGrid').style.display = 'none';
+
 renderMonth(currentYear, currentMonth);
 renderMini(currentYear, currentMonth);
