@@ -15,6 +15,8 @@ router.get('/login', authController.getLogin);
 
 router.get('/register', authController.getRegister);
 
+router.get('/auth-check', isAuth, authController.authCheck);
+
 
 // POSTs
 router.post('/login', csrfModule.csrfProtection, authController.postLogin);

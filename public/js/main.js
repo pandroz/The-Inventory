@@ -4,8 +4,13 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
+/**
+ * Show a toast message
+ * @param {string} type - Type of toast message (info, warning, danger, success)
+ * @param {string} title - Title of the toast message
+ * @param {string} body - Body of the toast message
+ */
 function toastMessage(type, title, body) {
-
     const toastMessage = document.getElementById('toastMessage');
     const toast = bootstrap.Toast.getOrCreateInstance(toastMessage)
 
@@ -79,7 +84,7 @@ function search(value, searchType, force = false) {
 
 const searchBar = document.getElementById("searchBar")
 
-if(searchBar)
+if (searchBar)
     searchBar.addEventListener("keydown", event => {
         if (event.key === 'Enter') {
             const searchBar = document.getElementById("searchBar");
@@ -89,3 +94,51 @@ if(searchBar)
             search(value, searchType, true);
         }
     });
+
+
+function startPolling(url, interval, onSuccess, onError, options = {}) {
+
+    const poll = _.throttle(async () => {
+        try {
+            const response = await fetch(url, {
+                method: "GET",
+                headers: _.merge({ "Content-Type": "application/json" }, options.headers),
+                ..._.omit(options, "headers"),
+            });
+
+            if (!response.ok) throw new Error(`Bad response: ${response.status}`);
+
+            if (response.status === 200)
+                onSuccess();
+            else
+                onError();
+
+        } catch (error) {
+            const handler = _.isFunction(onError) ? onError : (e) => console.error("Poll fail:", e);
+            handler(error);
+        }
+
+    }, interval, { leading: true, trailing: false });
+
+    // START THE LOOP
+    const timer = setInterval(poll, interval);
+    poll();
+
+
+    return {
+        stop: _.once(() => {
+            clearInterval(timer);
+            poll.cancel();
+            console.log("Poll stop.");
+        })
+    };
+}
+
+// Start polling the auth-check endpoint every minute to check if the session is still active
+const poller = startPolling("/auth-check", 60 * 1000, () => {}, sessionTimedOut);
+
+
+function sessionTimedOut() {
+    toastMessage('warning', 'Sessione scaduta', 'La tua sessione è scaduta. Per favore, effettua nuovamente il login.');
+    poller.stop();
+}

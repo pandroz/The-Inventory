@@ -13,4 +13,14 @@ router.get('/google', isAuth, calendarController.redirectToGoogle);
 router.get('/callback', isAuth, calendarController.handleGoogleCallback);
 
 
+// POST, PUT, DELETE for events
+router.post('/events', isAuth, calendarController.createEvent);
+
+router.put('/events/:id', isAuth, calendarController.updateEvent);
+
+router.delete('/events/:id', isAuth, calendarController.deleteEvent);
+
+
+router.post('/google/disconnect', isAuth, calendarController.disconnectGoogleCalendar);
+
 module.exports = router;
