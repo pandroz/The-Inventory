@@ -41,6 +41,30 @@ exports.getCalendar = async (req, res, next) => {
 };
 
 
+exports.refreshEvents = async (req, res, next) => {
+    if (!req.user.googleTokens?.access_token) {
+        await User.clearTokens(req.user._id);
+    }
+
+    try {
+        events = await calendarService.listEvents(req.user);
+        res.json({ success: true, events: events.data?.items || [] });
+    } catch (error) {
+        let errorMessage = error.message;
+
+        if (_.startsWith(error.message, 'No refresh token is set')) {
+            console.error('Sync token expired, need to clear and re-authenticate');
+            req.user.googleTokens = null;
+            await User.clearTokens(req.user._id);
+            errorMessage = 'Session expired. Please reconnect your Google Calendar.';
+        } else {
+            console.error('[getCalendar] Error fetching calendar events:', error);
+        }
+
+        res.status(500).json({ success: false, message: errorMessage || 'Error refreshing events' });
+    }
+};
+
 
 
 // Event CRUD operations

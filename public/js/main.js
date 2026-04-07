@@ -1,6 +1,12 @@
+// STATE
+let authCheckPoller;
+
 document.addEventListener('DOMContentLoaded', () => {
     console.log('DOM fully loaded and parsed');
     document.getElementById('loading').style.display = 'none';
+
+    // Start polling the auth-check endpoint every minute to check if the session is still active
+    authCheckPoller = startPolling('/auth-check', 60 * 1000, 'GET', null, () => { }, sessionTimedOut);
 });
 
 
@@ -95,16 +101,31 @@ if (searchBar)
         }
     });
 
-
-function startPolling(url, interval, onSuccess, onError, options = {}) {
+/**
+ * Starts polling the given URL at the specified interval.
+ * @param {string} url - The URL to poll.
+ * @param {number} interval - The interval in milliseconds to poll the URL.
+ * @param {string} method - The HTTP method to use when polling the URL.
+ * @param {object} body - The body of the request.
+ * @param {function} onSuccess - The callback function to call when the polling is successful.
+ * @param {function} onError - The callback function to call when the polling fails.
+ * @param {object} [options] - The options to pass to the fetch function.
+ */
+function startPolling(url, interval, method, body, onSuccess, onError, options = {}) {
 
     const poll = _.throttle(async () => {
         try {
-            const response = await fetch(url, {
-                method: "GET",
+            const requestBody = {
+                method: method,
                 headers: _.merge({ "Content-Type": "application/json" }, options.headers),
                 ..._.omit(options, "headers"),
-            });
+            };
+
+            if (body) {
+                requestBody.body = JSON.stringify(body);
+            }
+
+            const response = await fetch(url, requestBody);
 
             if (!response.ok) throw new Error(`Bad response: ${response.status}`);
 
@@ -134,11 +155,7 @@ function startPolling(url, interval, onSuccess, onError, options = {}) {
     };
 }
 
-// Start polling the auth-check endpoint every minute to check if the session is still active
-const poller = startPolling("/auth-check", 60 * 1000, () => {}, sessionTimedOut);
-
-
 function sessionTimedOut() {
     toastMessage('warning', 'Sessione scaduta', 'La tua sessione è scaduta. Per favore, effettua nuovamente il login.');
-    poller.stop();
+    authCheckPoller.stop();
 }
