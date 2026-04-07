@@ -101,3 +101,11 @@ exports.postRegister = (req, res, next) => {
         res.redirect('/register');
     });
 }
+
+exports.authCheck = (req, res, next) => {
+    if (req.session && req.session.userId) {
+        return res.status(200).json({ message: 'Session active' });
+    } else {
+        return res.status(401).json({ message: 'Session expired' });
+    }
+}

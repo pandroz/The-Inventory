@@ -56,7 +56,19 @@ const userSchema = new Schema({
         type: Object,
         default: null
     },
-    avatarUrl: {
+    channelId: {
+        type: String,
+        default: null
+    },
+    channelExpiry: {
+        type: Date,
+        default: null
+    },
+    channelRefreshToken: {
+        type: String,
+        default: null
+    },
+    avatar: {
         type: String,
         default: ''
     },
@@ -122,19 +134,6 @@ userSchema.methods.verifyUser = function () {
     return this.save();
 }
 
-userSchema.statics.saveTokens = function (userId, tokens) {
-    return this.findByIdAndUpdate(userId, { googleTokens: tokens })
-        .then(user => {
-            if (!user) {
-                console.log('User not found for token saving');
-                return null;
-            } else {
-                console.log('Tokens saved for user:', user.username);
-                return user;
-            }
-        });
-}
-
 userSchema.methods.updateUser = async function (data) {
     const { name, lastName, email, phoneNumber, telegramId, userBio } = data;
 
@@ -147,6 +146,39 @@ userSchema.methods.updateUser = async function (data) {
     this.updatedAt = Date.now();
 
     return this.save();
+}
+
+
+
+userSchema.statics.saveTokens = function (userId, tokens) {
+    return this.findByIdAndUpdate(userId, { googleTokens: tokens })
+        .then(user => {
+            if (!user) {
+                console.log('User not found for token saving');
+                return null;
+            } else {
+                return user;
+            }
+        });
+}
+
+
+userSchema.statics.findChannelsExpiringWithin = function (timeframeMs) {
+    const now = Date.now();
+    return this.find({
+        googleTokens: { $ne: null },
+        channelExpiry: { $lte: new Date(now + timeframeMs) }
+    });
+
+}
+
+userSchema.statics.clearTokens = function (userId) {
+    return this.findByIdAndUpdate(userId, {
+        googleTokens: null,
+        channelId: null,
+        channelExpiry: null,
+        channelRefreshToken: null
+    });
 }
 
 module.exports = mongoose.model('User', userSchema);

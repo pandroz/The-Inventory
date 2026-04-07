@@ -30,11 +30,13 @@ const eventSchema = new mongoose.Schema(
             default: '',
         },
         start: {
-            dateTime: { type: Date, required: true },
+            dateTime: { type: Date },
+            date: { type: String }, // For all-day events
             timeZone: { type: String, default: 'UTC' },
         },
         end: {
-            dateTime: { type: Date, required: true },
+            dateTime: { type: Date },
+            date: { type: String }, // For all-day events
             timeZone: { type: String, default: 'UTC' },
         },
         // All-day events use a date string instead of dateTime (e.g. "2026-03-01")
@@ -81,10 +83,22 @@ const eventSchema = new mongoose.Schema(
     }
 );
 
+// Validation to ensure all-day events have date fields and timed events have dateTime fields
+eventSchema.pre('validate', function (next) {
+    if (this.isAllDay) {
+        if (!this.start.date) throw new Error('[Event Validation] All-day events must have a start.date');
+        if (!this.end.date) throw new Error('[Event Validation] All-day events must have an end.date');
+    } else {
+        if (!this.start.dateTime) throw new Error('[Event Validation] Timed events must have a start.dateTime');
+        if (!this.end.dateTime) throw new Error('[Event Validation] Timed events must have an end.dateTime');
+    }
+});
+
 // Quickly find all events for a user sorted by start date
 eventSchema.index({ userId: 1, 'start.dateTime': 1 });
 
-// Quickly look up by Google's event ID during webhook syncs
-eventSchema.index({ googleEventId: 1 });
+eventSchema.methods.deleteEvent = async function () {
+    return await this.model('Event').deleteOne({ _id: this._id });
+};
 
 module.exports = mongoose.model('Event', eventSchema);
