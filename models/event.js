@@ -97,10 +97,6 @@ eventSchema.pre('validate', function (next) {
 // Quickly find all events for a user sorted by start date
 eventSchema.index({ userId: 1, 'start.dateTime': 1 });
 
-// Quickly look up by Google's event ID during webhook syncs
-eventSchema.index({ googleEventId: 1 });
-
-
 eventSchema.methods.deleteEvent = async function () {
     return await this.model('Event').deleteOne({ _id: this._id });
 };
