@@ -1,10 +1,9 @@
 ---
-
 name: Bug Report
 about: Segnala un bug
 title: "[BUG][MODULO] "
 labels: bug
------------
+---
 
 ## 🐛 Descrizione
 
