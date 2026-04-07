@@ -32,6 +32,25 @@ function isEventAllDay(ev) {
     return !!ev.start.date && !ev.start.dateTime;
 }
 
+function eventCoversDate(ev, date) {
+    const dayStart = new Date(date); dayStart.setHours(0, 0, 0, 0);
+    const dayEnd = new Date(date); dayEnd.setHours(23, 59, 59, 999);
+
+    let evStart, evEnd;
+
+    if (isEventAllDay(ev)) {
+        evStart = new Date(ev.start.date);          // inclusive
+        evEnd = new Date(ev.end.date);            // exclusive per Google spec
+        evEnd.setDate(evEnd.getDate() - 1);         // make inclusive
+        evEnd.setHours(23, 59, 59, 999);
+    } else {
+        evStart = new Date(ev.start.dateTime);
+        evEnd = new Date(ev.end.dateTime);
+    }
+
+    return evStart <= dayEnd && evEnd >= dayStart;
+}
+
 // Returns the Monday of the week containing the given date
 function getWeekStart(year, month, day) {
     const d = new Date(year, month, day);
@@ -100,7 +119,7 @@ function renderMonth(year, month) {
 
         // Events for this day
         const dayEvents = visibleEvents.filter(ev =>
-            new Date(getEventDate(ev)).toDateString() === cellDate.toDateString()
+            ev.status !== 'cancelled' && eventCoversDate(ev, cellDate)
         );
 
         const MAX_VISIBLE = 3;
@@ -109,7 +128,9 @@ function renderMonth(year, month) {
             const pill = document.createElement('div');
             pill.className = 'cal-event google';
             pill.title = ev.summary;
-            pill.textContent = (isEventAllDay(ev) ? '' : formatTime(getEventDate(ev)) + ' ') + ev.summary;
+            const evStartDate = new Date(isEventAllDay(ev) ? ev.start.date : ev.start.dateTime);
+            const isContinuation = evStartDate.toDateString() !== cellDate.toDateString();
+            pill.textContent = (isContinuation ? '◀ ' : (isEventAllDay(ev) ? '' : formatTime(getEventDate(ev)) + ' ')) + ev.summary;
             pill.onclick = (e) => { e.stopPropagation(); openEventModal(ev.id); };
             cell.appendChild(pill);
         });
@@ -198,9 +219,18 @@ function renderWeek(year, month, day) {
 
     // ── All-day row (only if any all-day events exist this week) ──
     const allDayThisWeek = serverEvents.filter(ev => {
-        if (!isEventAllDay(ev) || ev.status === 'cancelled') return false;
-        const d = new Date(ev.start.date);
-        return d >= weekStart && d <= weekEnd;
+        if (ev.status === 'cancelled') return false;
+        // Treat timed events that span >1 day as all-day for row display
+        if (!isEventAllDay(ev)) {
+            const s = new Date(ev.start.dateTime);
+            const e = new Date(ev.end.dateTime);
+            const spansDays = s.toDateString() !== e.toDateString();
+            if (!spansDays) return false;
+        }
+        // Check the event overlaps any day in this week
+        return eventCoversDate(ev, weekStart) || eventCoversDate(ev, weekEnd) ||
+            (new Date(isEventAllDay(ev) ? ev.start.date : ev.start.dateTime) >= weekStart &&
+                new Date(isEventAllDay(ev) ? ev.start.date : ev.start.dateTime) <= weekEnd);
     });
 
     if (allDayThisWeek.length) {
@@ -217,8 +247,7 @@ function renderWeek(year, month, day) {
             const cell = document.createElement('div');
             cell.style.cssText = 'border-right:1px solid var(--cal-border); padding:2px 4px; min-height:24px;';
 
-            allDayThisWeek
-                .filter(ev => new Date(ev.start.date).toDateString() === d.toDateString())
+            allDayThisWeek.filter(ev => eventCoversDate(ev, d))
                 .forEach(ev => {
                     const pill = document.createElement('div');
                     pill.className = 'cal-event google';
@@ -257,8 +286,10 @@ function renderWeek(year, month, day) {
             serverEvents
                 .filter(ev => {
                     if (isEventAllDay(ev) || ev.status === 'cancelled') return false;
-                    const evDate = new Date(ev.start.dateTime);
-                    return evDate.toDateString() === d.toDateString() && evDate.getHours() === h;
+                    const s = new Date(ev.start.dateTime);
+                    const e = new Date(ev.end.dateTime);
+                    if (s.toDateString() !== e.toDateString()) return false; // multi-day → all-day row
+                    return s.toDateString() === d.toDateString() && s.getHours() === h;
                 })
                 .forEach(ev => {
                     const pill = document.createElement('div');
@@ -314,11 +345,14 @@ function renderDay(year, month, day) {
     container.appendChild(dateHeader);
 
     // ── All-day events ──
-    const allDayEvs = serverEvents.filter(ev =>
-        isEventAllDay(ev) &&
-        ev.status !== 'cancelled' &&
-        new Date(ev.start.date).toDateString() === d.toDateString()
-    );
+    const allDayEvs = serverEvents.filter(ev => {
+        if (ev.status === 'cancelled') return false;
+        if (isEventAllDay(ev)) return eventCoversDate(ev, d);
+        // Also surface timed events that span into this day
+        const s = new Date(ev.start.dateTime);
+        const e = new Date(ev.end.dateTime);
+        return s.toDateString() !== e.toDateString() && eventCoversDate(ev, d);
+    });
 
     if (allDayEvs.length) {
         const allDayRow = document.createElement('div');
@@ -354,8 +388,10 @@ function renderDay(year, month, day) {
         serverEvents
             .filter(ev => {
                 if (isEventAllDay(ev) || ev.status === 'cancelled') return false;
-                const evDate = new Date(ev.start.dateTime);
-                return evDate.toDateString() === d.toDateString() && evDate.getHours() === h;
+                const s = new Date(ev.start.dateTime);
+                const e = new Date(ev.end.dateTime);
+                if (s.toDateString() !== e.toDateString()) return false; // multi-day → all-day row
+                return s.toDateString() === d.toDateString() && s.getHours() === h;
             })
             .forEach(ev => {
                 const pill = document.createElement('div');
@@ -659,9 +695,6 @@ allDayCheckbox.addEventListener('change', function () {
 // ── All-day date sync ──────────────────────────────────────────────────
 document.getElementById('eventStart').addEventListener('change', function () {
     if (allDayCheckbox.checked) document.getElementById('eventEnd').value = this.value;
-});
-document.getElementById('eventEnd').addEventListener('change', function () {
-    if (allDayCheckbox.checked) document.getElementById('eventStart').value = this.value;
 });
 
 
