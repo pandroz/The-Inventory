@@ -506,6 +506,10 @@ document.getElementById('goToday').onclick = () => {
     renderMini(currentYear, currentMonth);
 };
 
+document.getElementById('syncBtn').onclick = async () => {
+    refreshEvents();
+};
+
 // ── View Tabs ──────────────────────────────────────────────────────────
 document.querySelectorAll('.view-tab').forEach(tab => {
     tab.onclick = () => {
@@ -666,6 +670,41 @@ async function deleteEvent() {
 
 
 
+// ── Refresh events ───────────────────────────────────────────────────
+async function refreshEvents() {
+    setSyncing(true);
+    try {
+        const res = await fetch('/calendar/refresh', { method: 'GET' });
+
+        if (res.ok) {
+            res.json().then(data => {
+                toastMessage('success', 'Sync Successful', data.message || 'Events refreshed from Google Calendar.')
+                serverEvents = data.events;
+
+                switch (currentView) {
+                    case 'month': renderMonth(currentYear, currentMonth); break;
+                    case 'week': renderWeek(currentYear, currentMonth, currentDay); break;
+                    case 'day': renderDay(currentYear, currentMonth, currentDay); break;
+                };
+            });
+        } else {
+            res.json().then(data => {
+                toastMessage('error', 'Sync Failed', data.message || 'Could not refresh events. Please try reconnecting your Google Calendar.');
+            });
+        }
+
+    } catch (error) {
+        console.error('Sync failed', error);
+    } finally {
+        setSyncing(false);
+    }
+}
+
+
+
+
+
+
 // ── All-day toggle ─────────────────────────────────────────────────────
 const allDayCheckbox = document.getElementById('eventAllDay');
 allDayCheckbox.addEventListener('change', function () {
@@ -705,7 +744,7 @@ document.getElementById('eventStart').addEventListener('change', function () {
 
 
 // ── Google Calendar Disconnect ─────────────────────────────────────────
-document.getElementById('btn-google-disconnect').addEventListener('click', async () => {
+document.getElementById('btn-google-disconnect')?.addEventListener('click', async () => {
     if (!confirm('Disconnecting will remove all calendar events from this app. Are you sure?')) return;
 
     try {
@@ -725,3 +764,16 @@ document.getElementById('dayGrid').style.display = 'none';
 
 renderMonth(currentYear, currentMonth);
 renderMini(currentYear, currentMonth);
+
+
+
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    // ── Auto-sync events ───────────────────────────────────────────────────
+    if (googleConnected) {
+        const eventSyncPoller = startPolling('/calendar/refresh', 30 * 1000, "GET", null, refreshEvents, () => { });
+    } else {
+        console.log('Google Calendar not connected; skipping event sync poller.');
+    }
+});

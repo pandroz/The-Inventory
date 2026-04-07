@@ -12,6 +12,8 @@ router.get('/google', isAuth, calendarController.redirectToGoogle);
 
 router.get('/callback', isAuth, calendarController.handleGoogleCallback);
 
+router.get('/refresh', isAuth, calendarController.refreshEvents);
+
 
 // POST, PUT, DELETE for events
 router.post('/events', isAuth, calendarController.createEvent);
