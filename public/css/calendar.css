@@ -562,6 +562,9 @@ body {
     cursor: pointer;
     transition: background 0.1s;
     background: var(--cal-surface);
+}
+
+.time-slot-week {
     max-width: 140px;
 }
 

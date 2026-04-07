@@ -281,7 +281,7 @@ function renderWeek(year, month, day) {
             const d = new Date(weekStart); d.setDate(weekStart.getDate() + i);
 
             const slot = document.createElement('div');
-            slot.className = 'time-slot';
+            slot.className = 'time-slot time-slot-week';
 
             serverEvents
                 .filter(ev => {
