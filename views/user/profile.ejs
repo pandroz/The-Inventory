@@ -210,6 +210,9 @@
                                                     @<%= user.telegramId.username || 'Non fornito' %>
                                                 <% } else { %>
                                                     Non collegato
+                                                    <a href="https://t.me/pandroHomeBot" target="_blank" class="ms-2">
+                                                        <button type="button" class="btn btn-sm btn-outline-primary ms-2" id="telegramConnectBtn" onclick=""><i class="fa-brands fa-telegram"></i> Connetti</button>
+                                                    </a>
                                                 <% } %>
                                                 <% if (telegramUserError && telegramUserError.length > 0) { %>
                                                     <div class="text-danger small mt-1"><%- telegramUserError[0] %></div>
@@ -218,6 +221,7 @@
                                             <div class="input-group d-none edit-input" id="telegramInputGroup">
                                                 <span class="input-group-text">@</span>
                                                 <input type="text" class="form-control" id="telegramInput" name="telegramUsername" value="<%= typeof user.telegramId !== 'undefined' ? user.telegramId.username : '' %>" placeholder="username">
+                                                <small class="text-muted d-none edit-input">Dopo che ti sei registrato, inserisci il tuo username</small>
                                             </div>
                                         </div>
                                     </div>

@@ -43,14 +43,14 @@ exports.getProfile = (req, res, next) => {
 };
 
 exports.editProfile = async (req, res, next) => {
-    const telegramUsername = req.body.telegramUsername;
+    const telegramUsername = req.body.telegramUsername || '';
 
     let tgUser = await TgUser.findOne({
         username: telegramUsername
     });
 
-    if (!tgUser) {
-        req.flash('telegramUserError', `Non è stato possibile trovare un utente Telegram con username @${telegramUsername}. Assicurati di aver inviato il comando /start al bot <a href="https://t.me/pandroHomeBot" target="_blank">@pandroHomeBot</a> e di averlo aggiunto al gruppo @pandroHomeBot con lo stesso username prima di collegare il tuo account.`);
+    if (telegramUsername && !tgUser) {
+        req.flash('telegramUserError', `Non è stato possibile trovare un utente Telegram con username @${telegramUsername}. Assicurati di aver inviato il comando /start al bot <a href="https://t.me/pandroHomeBot" target="_blank">@pandroHomeBot</a> e di aver scritto il tuo username Telegram correttamente.`);
         res.redirect('/profile');
     } else {
         try {
