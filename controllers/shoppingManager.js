@@ -1,225 +1,244 @@
-const ShoppingManager = require('../models/shoppingManager');
-const Item = require('../models/item');
-const _ = require('lodash');
-const { generateToken } = require('../middleware/csrf');
-const tgBot = require('../services/telegramBot');
-const utils = require('../util/utils');
+const ShoppingManager = require("../models/shoppingManager");
+const Item = require("../models/item");
+const _ = require("lodash");
+const { generateToken } = require("../middleware/csrf");
+const tgBot = require("../services/telegramBot");
+const utils = require("../util/utils");
 
 exports.getShoppingList = (req, res, next) => {
-    const csrfToken = generateToken(req, res);
+	const csrfToken = generateToken(req, res);
 
-    ShoppingManager.find({
-        userId: req.user._id
-    })
-        .sort({ createdAt: -1 })
-        .populate('item')
-        .then(result => {
+	ShoppingManager.find({
+		userId: req.user._id,
+	})
+		.sort({ createdAt: -1 })
+		.populate("item")
+		.then((result) => {
+			// Remove items that don't need to be bought
+			let toRemove = [];
+			_.each(result, (shopList, i) => {
+				let qtyToBuy = (shopList.item.lowStockAlert || 0) - (shopList.item.qty || 0);
 
-            // Remove items that don't need to be bought
-            let toRemove = [];
-            _.each(result, (shopList, i) => {
-                let qtyToBuy = (shopList.item.lowStockAlert || 0) - (shopList.item.qty || 0);
+				if (qtyToBuy > 0 && shopList.itemQty < qtyToBuy) {
+					shopList.itemQty = qtyToBuy;
+				} else if (qtyToBuy <= 0 && !shopList.forceBuy) {
+					toRemove.push(shopList.item._id);
+					ShoppingManager.deleteOne({ _id: shopList._id })
+						.then((result) => {
+							console.log("Deleted item", result);
+						})
+						.catch((err) => {
+							console.log("Error deleting item", err);
+						});
+				}
+			});
 
-                if (qtyToBuy > 0) {
-                    shopList.itemQty = qtyToBuy;
-                } else if (qtyToBuy <= 0 && !shopList.forceBuy) {
-                    toRemove.push(shopList.item._id);
-                    ShoppingManager.deleteOne({ _id: shopList._id })
-                        .then(result => {
-                            console.log('Deleted item', result);
-                        }).catch(err => {
-                            console.log('Error deleting item', err);
-                        });
-                }
-            });
+			result = _.orderBy(
+				_.filter(result, (list) => !_.includes(toRemove, list.item._id)),
+				"buyPriority",
+				"desc",
+			);
 
-            result = _.orderBy(_.filter(result, list => !_.includes(toRemove, list.item._id)), 'buyPriority', 'desc');
-
-            res.render('shoppingManager/shoppingManager', {
-                pageTitle: 'Shopping Manager',
-                path: '/shopping-manager',
-                searchType: 'shoppingManager',
-                shoppingList: result,
-                user: req.user,
-                csrfToken
-            });
-        })
+			res.render("shoppingManager/shoppingManager", {
+				pageTitle: "Shopping Manager",
+				path: "/shopping-manager",
+				searchType: "shoppingManager",
+				shoppingList: result,
+				user: req.user,
+				csrfToken,
+			});
+		});
 };
 
 exports.deleteItem = (req, res, next) => {
-    const id = req.body.itemId;
-    console.log('id is ==> ', id);
-    ShoppingManager.deleteOne({
-        _id: id
-    }).then(result => {
-        console.log('Deleted item', result);
-        res.status(200).json({ message: 'Item deleted successfully' });
-    }).catch(err => {
-        res.status(200).json({ message: 'Error deleting item: ' + err, itemName: result.name });
-        console.log('Error deleting item', err);
-    });
-}
+	const id = req.body.itemId;
+	console.log("id is ==> ", id);
+	ShoppingManager.deleteOne({
+		_id: id,
+	})
+		.then((result) => {
+			console.log("Deleted item", result);
+			res.status(200).json({ message: "Item deleted successfully" });
+		})
+		.catch((err) => {
+			res.status(200).json({ message: "Error deleting item: " + err, itemName: result.name });
+			console.log("Error deleting item", err);
+		});
+};
 
 exports.updateItem = (req, res, next) => {
-    const itemId = req.body.itemId;
-    const itemQty = req.body.qty;
-    const itemName = req.body.itemName;
-    const isBought = req.body.isBought;
-    const userId = req.user._id;
+	const itemId = req.body.itemId;
+	const itemQty = req.body.qty;
+	const itemName = req.body.itemName;
+	const isBought = req.body.isBought;
+	const userId = req.user._id;
 
-    let newDoc = {
-        itemQty: itemQty,
-        itemName: itemName,
-        isBought: isBought,
-        userId: userId
-    };
+	let newDoc = {
+		itemQty: itemQty,
+		itemName: itemName,
+		isBought: isBought,
+		userId: userId,
+	};
 
-    newDoc = _.omitBy(newDoc, _.isUndefined);
+	newDoc = _.omitBy(newDoc, _.isUndefined);
 
-    ShoppingManager.findOneAndUpdate({
-        _id: itemId
-    }, newDoc)
-        .then(result => {
-            console.log('Updated item', result);
-            res.status(200).json({ message: 'Item updated successfully' });
-        })
-        .catch(err => {
-            res.status(500).json({ message: 'Error updating item: ' + err });
-            console.log('Error updating item', err);
-        });
-
-}
-
+	ShoppingManager.findOneAndUpdate(
+		{
+			_id: itemId,
+		},
+		newDoc,
+	)
+		.then((result) => {
+			console.log("Updated item", result);
+			res.status(200).json({ message: "Item updated successfully" });
+		})
+		.catch((err) => {
+			res.status(500).json({ message: "Error updating item: " + err });
+			console.log("Error updating item", err);
+		});
+};
 
 exports.upsertList = (req, res, next) => {
-    Item.aggregate([
-        {
-            "$match": {
-                "userId": req.user._id,
-                "$expr": {
-                    "$or": [
-                        {
-                            "$gte": [new Date(), "$expirationDate"]
-                        },
-                        {
-                            "$gte": ["$lowStockAlert", "$qty"]
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "$project": {
-                "_id": 1,
-                "name": 1,
-                "lowStockAlert": 1,
-                "qty": 1
-            }
-        },
-        {
-            "$lookup": {
-                "from": "shoppingmanager",
-                "localField": "_id",
-                "foreignField": "item",
-                "as": "shopList"
-            }
-        },
-        {
-            "$unwind": {
-                "path": "$shopList",
-                "preserveNullAndEmptyArrays": true
-            }
+	Item.aggregate([
+		{
+			$match: {
+				userId: req.user._id,
+				$expr: {
+					$or: [
+						{
+							$gte: [new Date(), "$expirationDate"],
+						},
+						{
+							$gte: ["$lowStockAlert", "$qty"],
+						},
+					],
+				},
+			},
+		},
+		{
+			$project: {
+				_id: 1,
+				name: 1,
+				lowStockAlert: 1,
+				qty: 1,
+			},
+		},
+		{
+			$lookup: {
+				from: "shoppingmanager",
+				localField: "_id",
+				foreignField: "item",
+				as: "shopList",
+			},
+		},
+		{
+			$unwind: {
+				path: "$shopList",
+				preserveNullAndEmptyArrays: true,
+			},
+		},
+	]).then((itemsToAdd) => {
+		itemsToAdd.forEach((item) => {
+			let qtyToBuy = (item.lowStockAlert || 0) - (item.qty || 0);
+
+			if (qtyToBuy > 0 && qtyToBuy !== _.get(item, "shopList.itemQty", 0)) {
+				ShoppingManager.findOneAndUpdate(
+					{
+						userId: req.user._id,
+						item: item._id,
+					},
+					{
+						itemName: item.name,
+						itemQty: qtyToBuy,
+						updatedAt: new Date(),
+					},
+					{
+						new: true,
+						upsert: true,
+					},
+				)
+					.then((result) => {
+						console.log("Upserted item", result);
+					})
+					.catch((err) => {
+						console.log("Error upserting item", err);
+						res.redirect("/error");
+					});
+			}
+		});
+		res.redirect("/shopping-manager");
+	});
+};
+
+exports.addItem = async (req, res, next) => {
+	let itemid = req.body.itemId;
+
+	let item = await Item.findById(itemid);
+
+	ShoppingManager.findOneAndUpdate({
+        item: item._id,
+    },
+    {
+        forceBuy: true,
+        itemName: item.name,
+        item: item._id,
+        userId: req.user._id,
+    }, {
+        new: true,
+        upsert: true
+    }).then((smItem) => {7
+        if(smItem) {
+            smItem.itemQty = 1 + (smItem.itemQty || 0);
+            smItem.save();
         }
-    ]).then(itemsToAdd => {
-        itemsToAdd.forEach(item => {
-            let qtyToBuy = (item.lowStockAlert || 0) - (item.qty || 0);
-
-            if (qtyToBuy > 0 && qtyToBuy !== _.get(item, 'shopList.itemQty', 0)) {
-                ShoppingManager.findOneAndUpdate({
-                    userId: req.user._id,
-                    item: item._id
-                }, {
-                    itemName: item.name,
-                    itemQty: qtyToBuy,
-                    updatedAt: new Date()
-                }, {
-                    new: true,
-                    upsert: true
-                }).then(result => {
-                    console.log('Upserted item', result);
-                }).catch(err => {
-                    console.log('Error upserting item', err);
-                    res.redirect('/error');
-                });
-            }
-        });
-        res.redirect('/shopping-manager');
+        console.log("Updated item", smItem);
+        res.status(200).json(_.assignIn(smItem, {message: "Item updated successfully"}));
     })
-}
-
-exports.addItem = (req, res, next) => {
-    let itemid = req.body.itemId;
-    Item.findById(itemid)
-        .then(item => {
-            const itemToBuy = new ShoppingManager({
-                itemName: item.name,
-                itemQty: item.qty,
-                item: itemid,
-                forceBuy: true,
-                userId: req.user._id,
-                createdAt: new Date()
-            })
-
-            itemToBuy.save()
-                .then(result => {
-                    console.log('(addItem - Saving ShoppingManager) Saved item', result);
-                    res.status(200).json({ message: 'Item saved successfully' });
-                }).catch(err => {
-                    res.status(500).json({ message: 'Error saving item: ' + err });
-                    console.log('(addItem - Saving ShoppingManager) Error saving item', err);
-                });
-        }).catch(err => {
-            res.status(500).json({ message: 'Error saving item: ' + err });
-            console.log('(addItem - Finding Item) Error saving item', err);
-        });
-}
+    .catch((err) => {
+        res.status(500).json(_.assignIn(smItem, { message: "Error updating item: " + err }));
+        console.log("Error updating item", err);
+    });
+};
 
 exports.sendListOnTelegram = (req, res, next) => {
-    ShoppingManager.find({
-        userId: req.user._id,
-        isBought: {
-            $ne: true
-        }
-    }).sort({ buyPriority: -1 })
-        .then(items => {
-            if (items.length === 0) {
-                res.status(200).json({ message: 'Non ci sono oggetti da comprare' });
-                return;
-            }
-            let message = utils.formatShoppingList(items);
+	ShoppingManager.find({
+		userId: req.user._id,
+		isBought: {
+			$ne: true,
+		},
+	})
+		.sort({ buyPriority: -1 })
+		.then((items) => {
+			if (items.length === 0) {
+				res.status(200).json({ message: "Non ci sono oggetti da comprare" });
+				return;
+			}
+			let message = utils.formatShoppingList(items);
 
-            req.user.populate('telegramId').then(user => {
-                tgBot.sendMessageToUser(tgBot, user.telegramId.telegramId, message)
-                    .then(result => {
-                        if (result.success) {
-                            res.status(200).json({ message: `Lista della spesa inviata a ${user.telegramId.username}` });
-                        } else {
-                            res.status(500).json({ message: 'Error sending shopping list to Telegram: ' + result.error });
-                        }
-                    }).catch(err => {
-                        res.status(500).json({ message: 'Error sending shopping list to Telegram: ' + err });
-                        console.log('Error sending shopping list to Telegram', err);
-                    });
-            }).catch(err => {
-                res.status(500).json({ message: 'Error retrieving user Telegram ID: ' + err });
-                console.log('Error retrieving user Telegram ID', err);
-            });
-
-
-
-
-        }).catch(err => {
-            res.status(500).json({ message: 'Error sending shopping list to Telegram: ' + err });
-            console.log('Error sending shopping list to Telegram', err);
-        });
-}
+			req.user
+				.populate("telegramId")
+				.then((user) => {
+					tgBot
+						.sendMessageToUser(tgBot, user.telegramId.telegramId, message)
+						.then((result) => {
+							if (result.success) {
+								res.status(200).json({ message: `Lista della spesa inviata a ${user.telegramId.username}` });
+							} else {
+								res.status(500).json({ message: "Error sending shopping list to Telegram: " + result.error });
+							}
+						})
+						.catch((err) => {
+							res.status(500).json({ message: "Error sending shopping list to Telegram: " + err });
+							console.log("Error sending shopping list to Telegram", err);
+						});
+				})
+				.catch((err) => {
+					res.status(500).json({ message: "Error retrieving user Telegram ID: " + err });
+					console.log("Error retrieving user Telegram ID", err);
+				});
+		})
+		.catch((err) => {
+			res.status(500).json({ message: "Error sending shopping list to Telegram: " + err });
+			console.log("Error sending shopping list to Telegram", err);
+		});
+};
