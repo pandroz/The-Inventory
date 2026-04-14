@@ -194,9 +194,9 @@ const addToShoppingList = (itemId) => {
     }).then(response => {
         if (response.status === 200) {
             console.log('Item added to shopping list successfully');
-            toastMessage('success', 'Item added to shopping list successfully', `Item ${res.data.itemName} added to shopping list successfully`);
+            toastMessage('success', 'Item added to shopping list successfully', `Item ${response.data.itemName} added to shopping list successfully`);
         } else {
-            toastMessage('error', 'Error adding item to shopping list', `Error adding item ${res.data.itemName} to shopping list: ${res.data.message}`);
+            toastMessage('error', 'Error adding item to shopping list', `Error adding item ${response.data.itemName} to shopping list: ${response.data.message}`);
             console.error('Failed to add item to shopping list');
         }
     }).catch(error => {
