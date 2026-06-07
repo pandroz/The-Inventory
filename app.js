@@ -31,6 +31,7 @@ app.set('views', 'views');
 
 // ROUTES
 const authRoutes = require('./routes/auth');
+const webhookRoutes = require('./routes/webhook');
 const inventoryRoutes = require('./routes/inventory');
 const todoRoutes = require('./routes/todo');
 const shoppingManagerRoutes = require('./routes/shoppingManager');
@@ -109,6 +110,7 @@ app.use('/shopping-manager', shoppingManagerRoutes);
 app.use('/profile', userRoutes);
 app.use('/api', apiRoutes);
 app.use('/calendar', calendarRoutes);
+app.use('/webhooks', webhookRoutes);
 app.use(authRoutes);
 app.use(errorRoutes);
 
