@@ -18,8 +18,6 @@ Un'applicazione web self-hosted che combina inventario della dispensa, lista del
 - [🏗️ Struttura del Progetto](#️-struttura-del-progetto)
 - [🚀 Installazione](#-installazione)
 - [⚙️ Configurazione](#️-configurazione)
-- [▶️ Avvio](#avvio)
-- [📡 API Endpoints](#api-endpoints)
 - [🤖 Bot Telegram](#-bot-telegram)
 - [🗓️ Integrazione Google Calendar](#-integrazione-google-calendar)
 - [⏰ Job in Background](#job-in-background)
@@ -181,7 +179,7 @@ inventario-spesa/
 
 ```bash
 # 1. Clona il repository
-git clone https://github.com/tuo-username/inventario-spesa.git
+git clone https://github.com/pandroz/inventario-spesa.git
 cd inventario-spesa
 
 # 2. Installa le dipendenze
