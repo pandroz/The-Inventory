@@ -1,6 +1,6 @@
 # 🛒 Inventario Spesa
 
-**Dashboard personale di gestione della spesa, lista della compra e organizzazione quotidiana.**
+**Dashboard personale di gestione dell'inventario di casa, creazione automatica della lista della spesa e organizzazione quotidiana.**
 
 Un'applicazione web self-hosted che combina inventario della dispensa, lista della spesa intelligente, to-do list con promemoria, integrazione con Google Calendar e un bot Telegram — il tutto in un'unica interfaccia.
 
